@@ -14,15 +14,36 @@ module TSTP.Parser where
 
 import Control.Applicative ((*>), (<$>), (<*), (<*>))
 import Data.TSTP
-import Text.Parsec ((<|>), alphaNum, char, digit, lower,
+import Text.Parsec ((<|>), alphaNum, char, digit, lower, space,
                     many, noneOf, oneOf, string, parseTest)
 import Text.Parsec.ByteString (Parser)
 import Data.ByteString.Char8 (pack)
+import Text.Parsec (choice)
+import Text.Parsec (upper)
 
 
 tptpInput ∷ Parser F
 tptpInput = fofAnnotated <|> cnfAnnotated
 
+infixr 5 ▪,▸,▸▪,▪◂,▸▪◂
+
+(▸) ∷ Parser String → Parser String → Parser String
+a ▸ b = (++) <$> a <*> b
+
+(▪) ∷ Parser String → Parser String → Parser String
+a ▪ b = a ▸ spaces ▸ b
+
+(▸▪) ∷ Parser String → Parser String → Parser String
+a ▸▪ b = spaces ▸ a ▪ b
+
+(▪◂) ∷ Parser String → Parser String → Parser String
+a ▪◂ b = a ▪ b ▸ spaces
+
+(▸▪◂) ∷ Parser String → Parser String → Parser String
+a ▸▪◂ b = a ▸▪ spaces ▪◂ b ▸ spaces
+
+spaces ∷ Parser String
+spaces = (space >> many space >> return " ") <|> return ""
 
 runTest :: String -> IO ()
 runTest = parseTest formulaName . pack
@@ -40,35 +61,49 @@ fofAnnotated = do
 
 formulaName  ∷ Parser String
 formulaName = _word <|> _integer
-  where
-    _word         = _lowerWord <|> _singleQuoted
-    _integer      = (:) <$> oneOf "123456789" <*> many digit
-    _lowerWord    = (:) <$> lower <*> many (alphaNum <|> char '_')
-    _singleQuoted = char '\'' *> many (noneOf "'\\") <* char '\''
+
+_word         = _lowerWord <|> _singleQuoted
+_integer      = (:) <$> oneOf "123456789" <*> many digit
+_lowerWord    = (:) <$> lower <*> many (alphaNum <|> char '_')
+_singleQuoted = char '\'' *> many (noneOf "'\\") <* char '\''
 
 formulaRole ∷ Parser Role
 formulaRole = undefined
--- formulaRole = fof_logic_formula <|> fof_sequent
---   where
---     fof_sequent         = undefined
---     fof_logic_formula   = fof_binary_formula  <|> fof_unitary_formula
---     fof_binary_formula  = fof_binary_nonassoc <|> fof_binary_assoc
---     fof_binary_nonassoc = (++) <$> fof_unitary_formula
---                           <*> (++) <$> binary_connective <*> fof_unitary_formula
---     fof_binary_assoc    = fof_or_formula <|> fof_and_formula
---     fof_or_formula      = fof_unitary_formula vline fof_unitary_formula |
---       fof_or_formula vline fof_unitary_formula
---     fof_and_formula    = fof_unitary_formula & fof_unitary_formula |
---       fof_and_formula & fof_unitary_formula
---     fof_unitary_formula = fof_quantified_formula | fof_unary_formula |
---                          atomic_formula | (fof_logic_formula)fof_quantified_formula ::= fol_quantifier [fof_variable_list] :
---                          fof_unitary_formula
---     fof_variable_list  = variable | variable,fof_variable_list
---     fof_unary_formula  = unary_connective fof_unitary_formula |
---                          fol_infix_unary
+
+
+--fofFormula = undefined
 
 fofFormula ∷ Parser String
-fofFormula = undefined
+fofFormula = fof_logic_formula <|> fof_sequent
+  where
+    fof_sequent         = undefined
+    fof_logic_formula   = fof_binary_formula  <|> fof_unitary_formula
+    fof_binary_formula  = fof_binary_nonassoc <|> fof_binary_assoc
+    fof_binary_nonassoc = fof_unitary_formula ▸▪ binary_connective ▪◂ fof_unitary_formula
+    fof_binary_assoc    = fof_or_formula <|> fof_and_formula
+    fof_or_formula      = fof_unitary_formula ▸▪ string "|" ▪◂ fof_unitary_formula <|>
+                          fof_or_formula      ▸▪ string "|" ▪◂ fof_unitary_formula
+    fof_and_formula     = fof_unitary_formula ▸▪ string "&" ▪◂  fof_unitary_formula <|>
+                          fof_and_formula     ▸▪ string "&" ▪◂ fof_unitary_formula
+    fof_unitary_formula = fof_quantified_formula <|>  fof_unary_formula <|>
+                          atomic_formula <|>
+                          string "(" ▸▪ fof_logic_formula ▪◂ string ")"
+    fof_quantified_formula = fol_quantifier ▸▪
+                             string "[" ▪ fof_variable_list ▪ string "]" ▪
+                             string ":" ▪◂ fof_unitary_formula
+    fol_quantifier     = string "!" <|> string "?"
+    fof_variable_list  = variable <|> variable ▸▪ string "," ▪◂ fof_variable_list
+    fof_unary_formula  = (string "~" ▸▪◂ fof_unitary_formula) -- <|> fol_infix_unary
+    binary_connective  = choice $ map string ["<=>","=>","<=","<~>","~|" "~&"]
+    variable           = (:) <$> upper <*> many (alphaNum <|> char '_')
+    atomic_formula     = plain_atomic_formula <|> defined_atomic_formula <|>
+                         system_atomic_formula
+    plain_atomic_formula = constant <|> functor ( arguments )
+    arguments = term <|> term ▸▪ string "," ▪◂ arguments
+    term     = function_term <|> variable
+    function_term = plain_atomic_formula
+    constant = _word
+    functor  = _word
 
 formulaAnnotation ∷ Parser String
 formulaAnnotation = undefined
