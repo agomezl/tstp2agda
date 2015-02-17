@@ -70,7 +70,6 @@ _singleQuoted = char '\'' *> many (noneOf "'\\") <* char '\''
 formulaRole ∷ Parser Role
 formulaRole = undefined
 
-
 --fofFormula = undefined
 
 fofFormula ∷ Parser String
@@ -96,14 +95,16 @@ fofFormula = fof_logic_formula <|> fof_sequent
     fof_unary_formula  = (string "~" ▸▪◂ fof_unitary_formula) -- <|> fol_infix_unary
     binary_connective  = choice $ map string ["<=>","=>","<=","<~>","~|" "~&"]
     variable           = (:) <$> upper <*> many (alphaNum <|> char '_')
+    constant           = _word
+    functor            = _word
+
     atomic_formula     = plain_atomic_formula <|> defined_atomic_formula <|>
                          system_atomic_formula
-    plain_atomic_formula = constant <|> functor ( arguments )
+    plain_atomic_formula = constant <|>
+                           functor ▸ string "(" ▪ arguments string ▪◂ string ")"
     arguments = term <|> term ▸▪ string "," ▪◂ arguments
     term     = function_term <|> variable
     function_term = plain_atomic_formula
-    constant = _word
-    functor  = _word
 
 formulaAnnotation ∷ Parser String
 formulaAnnotation = undefined
