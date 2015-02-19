@@ -16,10 +16,13 @@ import Control.Applicative ((*>), (<$>), (<*), (<*>))
 import Data.TSTP
 import Text.Parsec ((<|>), alphaNum, char, digit, lower, space,
                     many, noneOf, oneOf, string, parseTest)
+import qualified Text.Parsec as P (spaces)
 import Text.Parsec.ByteString (Parser)
 import Data.ByteString.Char8 (pack)
 import Text.Parsec (choice)
 import Text.Parsec (upper)
+import Text.Parsec (try)
+import Text.Parsec (sepBy1)
 
 
 tptpInput ∷ Parser F
@@ -66,9 +69,26 @@ _word         = _lowerWord <|> _singleQuoted
 _integer      = (:) <$> oneOf "123456789" <*> many digit
 _lowerWord    = (:) <$> lower <*> many (alphaNum <|> char '_')
 _singleQuoted = char '\'' *> many (noneOf "'\\") <* char '\''
+_doubleQuoted = char '"' *> many (noneOf "'\\") <* char '"'
+variable      = (:) <$> upper <*> many (alphaNum <|> char '_')
+
 
 formulaRole ∷ Parser Role
-formulaRole = undefined
+formulaRole = spaces >> roles
+  where roles = (try string "axiom" >> Axiom) <|>
+                (try string "hypothesis" >> Hypothesis) <|>
+                (try string "definition" >> Definition) <|>
+                (try string "assumption" >> Assumption) <|>
+                (try string "lemma" >> Lemma) <|>
+                (try string "theorem" >> Theorem) <|>
+                (try string "conjecture" >> Conjecture) <|>
+                (try string "negated_conjecture" >> NegatedConjecture) <|>
+                (try string "plain" >> Plain) <|>
+                (try string "fi_domain" >> FiDomain) <|>
+                (try string "fi_functors" >> FiFunctors) <|>
+                (try string "fi_predicates" >> FiPredicates) <|>
+                (try string "type" >> Type)
+
 
 --fofFormula = undefined
 
@@ -92,9 +112,8 @@ fofFormula = fof_logic_formula <|> fof_sequent
                              string ":" ▪◂ fof_unitary_formula
     fol_quantifier     = string "!" <|> string "?"
     fof_variable_list  = variable <|> variable ▸▪ string "," ▪◂ fof_variable_list
-    fof_unary_formula  = (string "~" ▸▪◂ fof_unitary_formula) -- <|> fol_infix_unary
+    fof_unary_formula  = (string "~"  ▸▪◂ fof_unitary_formula) -- <|> fol_infix_unary
     binary_connective  = choice $ map string ["<=>","=>","<=","<~>","~|" "~&"]
-    variable           = (:) <$> upper <*> many (alphaNum <|> char '_')
     constant           = _word
     functor            = _word
 
@@ -107,7 +126,17 @@ fofFormula = fof_logic_formula <|> fof_sequent
     function_term = plain_atomic_formula
 
 formulaAnnotation ∷ Parser String
-formulaAnnotation = undefined
+formulaAnnotation = string "," ▪ source ▪ optional_info <|> return ""
+  where
+    source = sepBy1 general_data (char ':') <|> general_list
+    general_terms = sepBy1 source (char ',')
+    general_data = _word <|>
+                   _word ▸▪ string "(" general_terms ▪◂ string ")" <|>
+                   variable <|>
+                   _integer <|> --TODO: Add all the possible numeric values
+                   string "$fof(" ▪ fofFormula ▪◂ string ")"
+    general_list = try string "[]" <|> string "[" ▸▪ general_terms ▪◂ string "]"
+
 
 cnfAnnotated ∷ Parser F
 cnfAnnotated = undefined

@@ -19,7 +19,7 @@ data Role = Axiom
           | Lemma
           | Theorem
           | Conjecture
-          | Negated_conjecture
+          | NegatedConjecture
           | Plain
           | FiDomain
           | FiFunctors
