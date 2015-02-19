@@ -69,25 +69,28 @@ _word         = _lowerWord <|> _singleQuoted
 _integer      = (:) <$> oneOf "123456789" <*> many digit
 _lowerWord    = (:) <$> lower <*> many (alphaNum <|> char '_')
 _singleQuoted = char '\'' *> many (noneOf "'\\") <* char '\''
+
+_doubleQuoted ∷ Parser String
 _doubleQuoted = char '"' *> many (noneOf "'\\") <* char '"'
+
 variable      = (:) <$> upper <*> many (alphaNum <|> char '_')
 
 
 formulaRole ∷ Parser Role
 formulaRole = spaces >> roles
-  where roles = (try string "axiom" >> Axiom) <|>
-                (try string "hypothesis" >> Hypothesis) <|>
-                (try string "definition" >> Definition) <|>
-                (try string "assumption" >> Assumption) <|>
-                (try string "lemma" >> Lemma) <|>
-                (try string "theorem" >> Theorem) <|>
-                (try string "conjecture" >> Conjecture) <|>
-                (try string "negated_conjecture" >> NegatedConjecture) <|>
-                (try string "plain" >> Plain) <|>
-                (try string "fi_domain" >> FiDomain) <|>
-                (try string "fi_functors" >> FiFunctors) <|>
-                (try string "fi_predicates" >> FiPredicates) <|>
-                (try string "type" >> Type)
+  where roles = (try $ string "axiom" >> return Axiom) <|>
+                (try $ string "hypothesis" >> return Hypothesis) <|>
+                (try $ string "definition" >> return Definition) <|>
+                (try $ string "assumption" >> return Assumption) <|>
+                (try $ string "lemma" >> return Lemma) <|>
+                (try $ string "theorem" >> return Theorem) <|>
+                (try $ string "conjecture" >> return Conjecture) <|>
+                (try $ string "negated_conjecture" >> return NegatedConjecture) <|>
+                (try $ string "plain" >> return Plain) <|>
+                (try $ string "fi_domain" >> return FiDomain) <|>
+                (try $ string "fi_functors" >> return FiFunctors) <|>
+                (try $ string "fi_predicates" >> return FiPredicates) <|>
+                (try $ string "type" >> return Type)
 
 
 --fofFormula = undefined
@@ -113,29 +116,37 @@ fofFormula = fof_logic_formula <|> fof_sequent
     fol_quantifier     = string "!" <|> string "?"
     fof_variable_list  = variable <|> variable ▸▪ string "," ▪◂ fof_variable_list
     fof_unary_formula  = (string "~"  ▸▪◂ fof_unitary_formula) -- <|> fol_infix_unary
-    binary_connective  = choice $ map string ["<=>","=>","<=","<~>","~|" "~&"]
+    binary_connective  = choice $ map string ["<=>","=>","<=","<~>","~|", "~&"]
     constant           = _word
     functor            = _word
 
     atomic_formula     = plain_atomic_formula <|> defined_atomic_formula <|>
                          system_atomic_formula
     plain_atomic_formula = constant <|>
-                           functor ▸ string "(" ▪ arguments string ▪◂ string ")"
+                           spaces ▸ functor ▸ string "(" ▪ arguments ▪◂ string ")"
     arguments = term <|> term ▸▪ string "," ▪◂ arguments
     term     = function_term <|> variable
     function_term = plain_atomic_formula
 
+    defined_atomic_formula = defined_plain_formula <|> defined_infix_formula
+    defined_infix_formula = term ▸▪ string "=" ▪◂ term
+    defined_plain_formula = defined_constant <|>
+                            defined_constant ▸ string "(" ▪ arguments ▪◂ string ")"
+    defined_constant = string "$" ▸ _lowerWord
+    system_atomic_formula = undefined
+
 formulaAnnotation ∷ Parser String
 formulaAnnotation = string "," ▪ source ▪ optional_info <|> return ""
   where
-    source = sepBy1 general_data (char ':') <|> general_list
-    general_terms = sepBy1 source (char ',')
+    source = undefined -- TODO: sepBy1 general_data (char ':') <|> general_list
+    general_terms = undefined -- TODO: sepBy1 source (string ",")
     general_data = _word <|>
-                   _word ▸▪ string "(" general_terms ▪◂ string ")" <|>
+                   _word ▸▪ string "(" ▪ general_terms ▪◂ string ")" <|>
                    variable <|>
                    _integer <|> --TODO: Add all the possible numeric values
                    string "$fof(" ▪ fofFormula ▪◂ string ")"
-    general_list = try string "[]" <|> string "[" ▸▪ general_terms ▪◂ string "]"
+    general_list = try (string "[]") <|> string "[" ▸▪ general_terms ▪◂ string "]"
+    optional_info = undefined
 
 
 cnfAnnotated ∷ Parser F
