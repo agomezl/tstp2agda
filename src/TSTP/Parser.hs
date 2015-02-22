@@ -15,9 +15,10 @@
 module TSTP.Parser where
 
 import qualified Codec.TPTP.Base as Λ (Formula0(..),Term0(..))
-import Codec.TPTP.Base ( F(..),T(..))
+import Codec.TPTP.Base ( F(..),T(..),AtomicWord(..), TPTP_Input_(..),Role(..))
 import Data.Functor.Identity (Identity(..))
-import Data.TSTP (Formula(..), Term(..))
+import Data.TSTP (Formula(..), Term(..),Role(..))
+import qualified Data.TSTP as Ω (F(..))
 
 
 
@@ -35,3 +36,22 @@ tΔ (T (Identity t)) = tΓ t where
   tΓ (Λ.NumberLitTerm      r    ) = NumberLitTerm      r
   tΓ (Λ.DistinctObjectTerm s    ) = DistinctObjectTerm s
   tΓ (Λ.FunApp             s  t₀) = FunApp             s  (map tΔ t₀)
+
+pΛ ∷ TPTP_Input_ Identity → Ω.F
+pΛ (AFormula n r f a) = Ω.F n' r' f' a where
+  AtomicWord n' = n
+  f' = fΔ f
+  r' = case r of
+        (Role "hypothesis" )         → Hypothesis
+        (Role "definition" )         → Definition
+        (Role "assumption" )         → Assumption
+        (Role "lemma" )              → Lemma
+        (Role "theorem" )            → Theorem
+        (Role "conjecture" )         → Conjecture
+        (Role "negated_conjecture" ) → NegatedConjecture
+        (Role "plain" )              → Plain
+        (Role "fi_domain" )          → FiDomain
+        (Role "fi_functors" )        → FiFunctors
+        (Role "fi_predicates" )      → FiPredicates
+        (Role "type" )               → Type
+        _                            → Unknown

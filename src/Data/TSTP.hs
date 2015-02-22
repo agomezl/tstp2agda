@@ -10,8 +10,7 @@
 --------------------------------------------------------------------------------
 
 module Data.TSTP where
-import Codec.TPTP.Base (BinOp,Quant,InfixPred,V,AtomicWord)
-
+import Codec.TPTP.Base (BinOp,Quant,InfixPred,V,AtomicWord,Annotations)
 
 data Role = Axiom
           | Hypothesis
@@ -28,12 +27,10 @@ data Role = Axiom
           | Type
           | Unknown
 
-
-
 data F = F { name ∷ String,
              role ∷ Role,
              formula ∷ Formula,
-             annotations ∷ String
+             annotations ∷ Annotations
            }
 
 -- * General decorated formulae and terms
