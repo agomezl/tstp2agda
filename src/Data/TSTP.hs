@@ -11,6 +11,7 @@
 
 module Data.TSTP where
 import Codec.TPTP.Base (BinOp,Quant,InfixPred,V,AtomicWord,Annotations)
+import Data.Map (Map)
 
 data Role = Axiom
           | Hypothesis
@@ -26,12 +27,14 @@ data Role = Axiom
           | FiPredicates
           | Type
           | Unknown
+          deriving (Eq,Ord,Show,Read)
 
 data F = F { name ∷ String,
              role ∷ Role,
              formula ∷ Formula,
              annotations ∷ Annotations
            }
+       deriving (Eq,Ord,Show,Read)
 
 -- * General decorated formulae and terms
 
@@ -54,3 +57,5 @@ data Term = Var V                             -- ^ Variable
                                               -- (constants are encoded as
                                               -- nullary functions)
           deriving (Eq,Ord,Show,Read)
+
+type Fmap = Map String F

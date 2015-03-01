@@ -18,7 +18,8 @@ import qualified Codec.TPTP.Base as Λ (Formula0(..),Term0(..))
 import Codec.TPTP.Base ( F(..),T(..),AtomicWord(..), TPTP_Input_(..),Role(..))
 import Data.Functor.Identity (Identity(..))
 import Data.TSTP (Formula(..), Term(..),Role(..))
-import qualified Data.TSTP as Ω (F(..))
+import qualified Data.TSTP as Ω (F(..),Fmap)
+import Data.Map (fromList)
 
 
 
@@ -37,8 +38,8 @@ tΔ (T (Identity t)) = tΓ t where
   tΓ (Λ.DistinctObjectTerm s    ) = DistinctObjectTerm s
   tΓ (Λ.FunApp             s  t₀) = FunApp             s  (map tΔ t₀)
 
-pΛ ∷ TPTP_Input_ Identity → Ω.F
-pΛ (AFormula n r f a) = Ω.F n' r' f' a where
+pΔ ∷ TPTP_Input_ Identity → Ω.F
+pΔ (AFormula n r f a) = Ω.F n' r' f' a where
   AtomicWord n' = n
   f' = fΔ f
   r' = case r of
@@ -55,3 +56,6 @@ pΛ (AFormula n r f a) = Ω.F n' r' f' a where
         (Role "fi_predicates" )      → FiPredicates
         (Role "type" )               → Type
         _                            → Unknown
+
+mΔ ∷ [Ω.F] → Ω.Fmap
+mΔ lst = fromList $ map (\x → (Ω.name x, x)) lst
