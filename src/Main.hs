@@ -12,7 +12,7 @@ module Main where
 
 import System.Environment (getArgs)
 import Args (compileOpts,helpmsg,Flag(..))
-import TSTP.Parser (pΔ)
+import TSTP.Parser (pΔ,noComment)
 import System.Exit (exitFailure)
 import Codec.TPTP (parseFile)
 
@@ -29,7 +29,7 @@ main = do
 fileMain ∷ FilePath → IO ()
 fileMain path = do
   rules  ← parseFile path
+           >>= return . (filter noComment)
+           >>= mapM (return . pΔ)
   _      ← mapM print rules
-  rules_ ← mapM (return . pΔ) rules
-  _      ← mapM print rules_
   return ()
