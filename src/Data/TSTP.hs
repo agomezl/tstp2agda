@@ -76,7 +76,7 @@ data Status = Suc | Unp | Sap | Esa | Sat
               deriving (Eq,Ord,Show,Read)
 
 
-data Parent = Parent GTerm [GTerm]
+data Parent = Parent String [GTerm]
               deriving (Eq,Ord,Show,Read)
 
 -- * General decorated formulae and terms

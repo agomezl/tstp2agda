@@ -331,7 +331,7 @@ parent_list  : parent_info {[$1]}
              | parent_info comma parent_list { $1 : $3 }
 
 parent_info :: {Parent}
-parent_info  : general_source parent_details { Parent $1 $2 }
+parent_info  : atomic_word parent_details { Parent (readWord $1) $2 }
 
 parent_details :: { [GTerm] }
 parent_details  : colon general_list  { $2 }

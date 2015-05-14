@@ -17,10 +17,17 @@ agda-bin : ${BIN_DIR}/${BIN_NAME_AGDA}
 ${BIN_DIR}/${BIN_NAME_GHC} : ${BIN_DIR} \
 			     ${SRC_DIR}/*.hs \
 			     ${SRC_DIR}/TSTP/*.hs \
-			     ${SRC_DIR}/Data/*.hs
+			     ${SRC_DIR}/Data/*.hs \
+			     ${SRC_DIR}/TSTP/Lexer.hs \
+			     ${SRC_DIR}/TSTP/Parser.hs
 	ghc ${SRC_DIR}/Main.hs -o ${BIN_DIR}/${BIN_NAME_GHC} ${GHC_FLAGS}
 
 
+${SRC_DIR}/TSTP/Lexer.hs : ${SRC_DIR}/TSTP/Lexer.x
+	alex -g -o $@ $<
+
+${SRC_DIR}/TSTP/Parser.hs : ${SRC_DIR}/TSTP/Parser.y
+	happy -agc -o $@ $<
 
 ${BIN_DIR}/${BIN_NAME_AGDA} : ${BIN_DIR} \
 			      ${SRC_DIR}/*.agda \
@@ -35,4 +42,6 @@ ${BIN_DIR} :
 
 clean :
 	rm -fr ${BIN_DIR}
+	rm ${SRC_DIR}/TSTP/Lexer.hs
+	rm ${SRC_DIR}/TSTP/Parser.hs
 	find ${SRC_DIR} -regex ".*\(\.hi\|\.o\|\.agdai\)$$" -exec rm -f {} \;
