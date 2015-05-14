@@ -64,6 +64,8 @@ import Control.Monad.Identity
  tok_status             { LowerWord "status" }
  tok_iquote             { LowerWord "iquote" }
  tok_status             { LowerWord "status" }
+ tok_assumptions        { LowerWord "assumptions" }
+ tok_refutation         { LowerWord "refutation" }
 
  tok_fd_fof             { DollarWord "$fof" }
  tok_fd_cnf             { DollarWord "$cnf" }
@@ -395,10 +397,10 @@ formula_item : description_item {$1}
              | iquote_item      {$1}
 
 description_item :: {Info}
-description_item : description lp atomic_word  rp { getWord $3 }
+description_item : description lp atomic_word  rp { Description $ readWord $3 }
 
 iquote_item  :: {Info}
-iquote_item  : iquote lp atomic_word  rp { getWord $3 }
+iquote_item  : iquote lp atomic_word  rp { IQuote $ readWord $3 }
 
 inference_item :: {Info}
 inference_item : inference_status    {$1}
@@ -408,7 +410,7 @@ inference_item : inference_status    {$1}
 
 inference_status :: {Info}
 inference_status : status lp status_value  rp { Status $3 }
-                 | inference_info
+                 | inference_info { $1 }
 
 
 status_value :: {Status}
@@ -417,22 +419,26 @@ status_value  : lower_word_ { readStatus $1 }
 
 inference_info :: {Info}
 inference_info  : inference_rule  lp atomic_word  comma general_list  rp
+                  { InferenceInfo $1 ( readWord $3) $5 }
 
 
--- assumptions_record  :== assumptions lp [name_list ] rp
--- refutation  :== refutation lp file_source  rp
+assumptions_record  :: {Info}
+assumptions_record  : assumptions lp lbra name_list rbra rp {AssumptionR (map readWord $4)
 
-include :: {TPTP_Input}
-include  : include_ lp file_name formula_selection  rp dot { Include $3 $4 }
 
-formula_selection  :: {[AtomicWord]}
-formula_selection  :  comma lbra name_list  rbra { $3 }
+refutation  :: {Info}
+refutation  : refutation lp file_source  rp { Refutation $3 }
+
+-- include :: {TPTP_Input}
+-- include  : include_ lp file_name formula_selection  rp dot { Include $3 $4 }
+
+-- formula_selection  :: {[AtomicWord]}
+-- formula_selection  :  comma lbra name_list  rbra { $3 }
                     |   { [] }
 
 name_list  :: {[AtomicWord]}
 name_list  : name  {[$1]}
             | name  comma name_list  { $1 : $3 }
-
 
 general_term  :: {GTerm}
 general_term  :  general_data  {GTerm $1}
@@ -578,7 +584,7 @@ introduced         : tok_introduced          comment_list {$1}
 ac                 :: {Token}
 ac                 : tok_ac                  comment_list {$1}
 equality           :: {Token}
-equality           : etok_equality           comment_list {$1}
+equality           : tok_equality           comment_list {$1}
 creator            :: {Token}
 creator            : tok_creator             comment_list {$1}
 status             :: {Token}
@@ -587,6 +593,10 @@ iquote             :: {Token}
 iquote             : tok_iquote              comment_list {$1}
 status             :: {Token}
 status             : tok_status              comment_list {$1}
+assumptions        :: {Token}
+assumptions        : tok_assumptions         comment_list {$1}
+refutation         :: {Token}
+refutation         : tok_refutation          comment_list {$1}
 
 
 comment_list :: {[String]}

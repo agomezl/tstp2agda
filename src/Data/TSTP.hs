@@ -60,8 +60,9 @@ data Rule   = NewRule String
 data Info   = Descrioption String
             | IQuote String
             | Status Status
-            | IStatus Rule String [GTerm]
+            | InferenceInfo Rule String [GTerm]
             | AssumptionR [String]
+            | Refutation Info
               deriving (Eq,Ord,Show,Read)
 
 data Status = Suc | Unp | Sap | Esa | Sat
