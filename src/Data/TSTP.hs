@@ -37,7 +37,7 @@ data F = F { name    ∷ String,
 
 data Source = Source String
             | Inference Rule [Info] [Parent]
-            | Inroduced IntroType [GTerm]
+            | Introduced IntroType [Info]
             | File String (Maybe String)
             | Theory Theory [Info]
             | Creator String [Info]
@@ -57,12 +57,13 @@ data Theory = Equality | AC
 data Rule   = NewRule String
               deriving (Eq,Ord,Show,Read)
 
-data Info   = Descrioption String
+data Info   = Description String
             | IQuote String
             | Status Status
+            | Function String [GTerm]
             | InferenceInfo Rule String [GTerm]
             | AssumptionR [String]
-            | Refutation Info
+            | Refutation Source
               deriving (Eq,Ord,Show,Read)
 
 data Status = Suc | Unp | Sap | Esa | Sat
@@ -75,7 +76,7 @@ data Status = Suc | Unp | Sap | Esa | Sat
               deriving (Eq,Ord,Show,Read)
 
 
-data Parent = Parent GData [GTerm]
+data Parent = Parent GTerm [GTerm]
               deriving (Eq,Ord,Show,Read)
 
 -- * General decorated formulae and terms

@@ -12,15 +12,23 @@ module Main where
 
 import System.Environment (getArgs)
 import Args (compileOpts,helpmsg,Flag(..))
-import TSTP.Parser (pΔ,noComment)
+import TSTP.Parser
+import TSTP.Lexer
+import Data.TSTP
+
 import System.Exit (exitFailure)
-import Codec.TPTP (parseFile)
+
+parse :: String -> [F]
+parse = parseTSTP . map snd . alexScanTokens
+
+parseFile :: FilePath -> IO [F]
+parseFile x = parse `fmap` readFile x
 
 main :: IO ()
 main = do
   args <- getArgs
   case compileOpts args of
-   Left [File f] → fileMain f
+   Left [Args.File f] → fileMain f
    Left [Help]   → helpmsg
    Left _        → putStrLn "Bad parameters" >> helpmsg >> exitFailure
    Right e       → putStrLn e >> exitFailure
@@ -29,7 +37,5 @@ main = do
 fileMain ∷ FilePath → IO ()
 fileMain path = do
   rules  ← parseFile path
-           >>= return . (filter noComment)
-           >>= mapM (return . pΔ)
   _      ← mapM print rules
   return ()

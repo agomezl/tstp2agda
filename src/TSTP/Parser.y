@@ -1,5 +1,5 @@
 {
-module Parser where
+module TSTP.Parser where
 
 import Data.Char
 import Data.Data
@@ -61,11 +61,11 @@ import Control.Monad.Identity
  tok_ac                 { LowerWord "ac" }
  tok_equality           { LowerWord "equality" }
  tok_creator            { LowerWord "creator" }
- tok_status             { LowerWord "status" }
  tok_iquote             { LowerWord "iquote" }
  tok_status             { LowerWord "status" }
  tok_assumptions        { LowerWord "assumptions" }
  tok_refutation         { LowerWord "refutation" }
+ tok_description        { LowerWord "description" }
 
  tok_fd_fof             { DollarWord "$fof" }
  tok_fd_cnf             { DollarWord "$cnf" }
@@ -101,15 +101,15 @@ annotated_formula  :  fof_annotated  {$1}
 
 fof_annotated  :: {F}
 fof_annotated  : fof lp name  comma formula_role  comma fof_formula  annotations  rp dot
-               { F        $3               $5                $7           $8 }
+               { F  (readWord $3)         $5                $7           $8 }
 
 cnf_annotated  :: {F}
 cnf_annotated  : cnf lp name  comma formula_role  comma cnf_formula  annotations  rp dot
-               { F          $3              $5  (univquant_free_vars $7) $8 }
+               { F   (readWord $3)     $5  (univquant_free_vars $7) $8 }
 
 
-annotations  :: { Annotations }
-annotations  :  comma source optional_info  { Source $2 }
+annotations  :: { Source }
+annotations  :  comma source optional_info  { $2 }
     | { NoSource }
 
 formula_role  :: {Role}
@@ -247,7 +247,7 @@ infix_equality  : equals { (:=:) }
 infix_inequality  :: {InfixPred}
 infix_inequality  : nequals {(:!=:)}
 
-system_atomic_formula  :: {Function}
+system_atomic_formula  :: {Formula}
 system_atomic_formula  : system_term  {fApp2pApp $1}
 
 term  :: {Term}
@@ -307,7 +307,7 @@ arguments  :: {[Term]}
 arguments  : term  {[$1]}
            | term  comma arguments  { $1 : $3 }
 
-general_source  :: {GData}
+general_source  :: {GTerm}
 general_source  : general_term  {$1}
 
 source  :: {Source}
@@ -321,10 +321,10 @@ dag_source : name  {Name (readWord $1)}
 
 inference_record :: {Source}
 inference_record : inference lp inference_rule  comma useful_info  comma lbra parent_list rbra rp
-                 { Inference $3 $5 $7 }
+                 { Inference $3 $5 $8 }
 
 inference_rule :: {Rule}
-inference_rule  : atomic_word { readRule $1 }
+inference_rule  : atomic_word { readRule $ readWord $1 }
 
 parent_list :: {[Parent]}
 parent_list  : parent_info {[$1]}
@@ -333,7 +333,7 @@ parent_list  : parent_info {[$1]}
 parent_info :: {Parent}
 parent_info  : general_source parent_details { Parent $1 $2 }
 
-parent_details :: [GTerm]
+parent_details :: { [GTerm] }
 parent_details  : colon general_list  { $2 }
                 | {[]}
 
@@ -346,7 +346,7 @@ intro_type : lower_word_ {readType $1}
 
 external_source :: {Source}
 external_source : file_source    {$1}
-                | theory         {$1}
+                | theory_         {$1}
                 | creator_source {$1}
 
 file_source :: {Source}
@@ -354,12 +354,12 @@ file_source  : file lp file_name file_info  rp
              { File    $3        $4 }
 
 file_info :: {Maybe String}
-file_info  : comma name {Just (readWord $1)}
+file_info  : comma name {Just (readWord $2)}
            | {Nothing}
 
-theory :: {Source}
-theory  : theory lp theory_name optional_info  rp
-        { Theory    $3          $4 }
+theory_  :: {Source}
+theory_  : theory lp theory_name optional_info  rp
+         { Theory    $3          $4 }
 
 theory_name :: {Theory}
 theory_name : equality { Equality }
@@ -370,7 +370,7 @@ creator_source  : creator lp creator_name optional_info  rp
                 { Creator $3 $4 }
 
 creator_name :: {String}
-creator_name : atomic_word {getWord $1}
+creator_name : atomic_word {readWord $1}
 
 optional_info  :: {[Info]}
 optional_info  :  comma useful_info  {$2} |  {[]}
@@ -392,6 +392,10 @@ info_item  : formula_item     {$1}
            | general_function {$1}
 
 
+general_function :: {Info}
+general_function :  atomic_word lp general_terms rp { Function (readWord $1) $3}
+
+
 formula_item :: {Info}
 formula_item : description_item {$1}
              | iquote_item      {$1}
@@ -405,7 +409,7 @@ iquote_item  : iquote lp atomic_word  rp { IQuote $ readWord $3 }
 inference_item :: {Info}
 inference_item : inference_status    {$1}
                | assumptions_record  {$1}
-               | refutation          {$1}
+               | refutation_         {$1}
 
 
 inference_status :: {Info}
@@ -423,18 +427,18 @@ inference_info  : inference_rule  lp atomic_word  comma general_list  rp
 
 
 assumptions_record  :: {Info}
-assumptions_record  : assumptions lp lbra name_list rbra rp {AssumptionR (map readWord $4)
+assumptions_record  : assumptions lp lbra name_list rbra rp {AssumptionR (L.map readWord $4)}
 
 
-refutation  :: {Info}
-refutation  : refutation lp file_source  rp { Refutation $3 }
+refutation_  :: {Info}
+refutation_  : refutation lp file_source  rp { Refutation $3 }
 
 -- include :: {TPTP_Input}
 -- include  : include_ lp file_name formula_selection  rp dot { Include $3 $4 }
 
 -- formula_selection  :: {[AtomicWord]}
 -- formula_selection  :  comma lbra name_list  rbra { $3 }
-                    |   { [] }
+--                    |   { [] }
 
 name_list  :: {[AtomicWord]}
 name_list  : name  {[$1]}
@@ -573,8 +577,6 @@ real               : tok_real                comment_list { $1 }
 
 inference          :: {Token}
 inference          : tok_inference           comment_list {$1}
-introduced         :: {Token}
-introduced         : tok_introduced          comment_list {$1}
 file               :: {Token}
 file               : tok_file                comment_list {$1}
 theory             :: {Token}
@@ -587,8 +589,6 @@ equality           :: {Token}
 equality           : tok_equality           comment_list {$1}
 creator            :: {Token}
 creator            : tok_creator             comment_list {$1}
-status             :: {Token}
-status             :  tok_status             comment_list {$1}
 iquote             :: {Token}
 iquote             : tok_iquote              comment_list {$1}
 status             :: {Token}
@@ -597,7 +597,8 @@ assumptions        :: {Token}
 assumptions        : tok_assumptions         comment_list {$1}
 refutation         :: {Token}
 refutation         : tok_refutation          comment_list {$1}
-
+description        :: {Token}
+description        : tok_description         comment_list {$1}
 
 comment_list :: {[String]}
 comment_list : {[]} | comment comment_list { $1 : $2 }
