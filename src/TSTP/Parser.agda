@@ -1,7 +1,7 @@
 module TSTP.Parser where
 
 {-# IMPORT TSTP.Parser #-}
-open import Data.String.Core using (String)
+open import Data.String.Base using (String)
 open import IO.Primitive using (IO)
 
 data Unit : Set where unit : Unit
