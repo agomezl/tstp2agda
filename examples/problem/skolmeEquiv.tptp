@@ -1,1 +1,0 @@
-fof(skolemEquiv,conjecture, ((~ (! [Y] : (  (? [X] : p(Y,X))))) <~> (~ ! [Y] : ( p(Y,f(Y)))))).
