@@ -1,0 +1,74 @@
+---------------------------------------------------------------------------
+SZS status Theorem for Basic-3.tptp
+
+SZS output start CNFRefutation for Basic-3.tptp
+fof(a1, axiom, (a)).
+
+fof(a2, axiom, (b)).
+
+fof(a3, axiom, (~ a | ~ b | c)).
+
+fof(a4, axiom, (~ c | d)).
+
+fof(a5, conjecture, (d & a)).
+
+fof(subgoal_0, plain, (d), inference(strip, [], [a5])).
+
+fof(subgoal_1, plain, (d => a), inference(strip, [], [a5])).
+
+fof(negate_0_0, plain, (~ d), inference(negate, [], [subgoal_0])).
+
+fof(normalize_0_0, plain, (~ d),
+    inference(canonicalize, [], [negate_0_0])).
+
+fof(normalize_0_1, plain, (~ c | d), inference(canonicalize, [], [a4])).
+
+fof(normalize_0_2, plain, (~ a | ~ b | c),
+    inference(canonicalize, [], [a3])).
+
+fof(normalize_0_3, plain, (a), inference(canonicalize, [], [a1])).
+
+fof(normalize_0_4, plain, (b), inference(canonicalize, [], [a2])).
+
+fof(normalize_0_5, plain, (c),
+    inference(simplify, [],
+              [normalize_0_2, normalize_0_3, normalize_0_4])).
+
+fof(normalize_0_6, plain, (d),
+    inference(simplify, [], [normalize_0_1, normalize_0_5])).
+
+fof(normalize_0_7, plain, ($false),
+    inference(simplify, [], [normalize_0_0, normalize_0_6])).
+
+cnf(refute_0_0, plain, ($false),
+    inference(canonicalize, [], [normalize_0_7])).
+
+fof(negate_1_0, plain, (~ (d => a)), inference(negate, [], [subgoal_1])).
+
+fof(normalize_1_0, plain, (~ a & d),
+    inference(canonicalize, [], [negate_1_0])).
+
+fof(normalize_1_1, plain, (a), inference(canonicalize, [], [a1])).
+
+fof(normalize_1_2, plain, (~ c | d), inference(canonicalize, [], [a4])).
+
+fof(normalize_1_3, plain, (~ a | ~ b | c),
+    inference(canonicalize, [], [a3])).
+
+fof(normalize_1_4, plain, (b), inference(canonicalize, [], [a2])).
+
+fof(normalize_1_5, plain, (c),
+    inference(simplify, [],
+              [normalize_1_3, normalize_1_1, normalize_1_4])).
+
+fof(normalize_1_6, plain, (d),
+    inference(simplify, [], [normalize_1_2, normalize_1_5])).
+
+fof(normalize_1_7, plain, ($false),
+    inference(simplify, [],
+              [normalize_1_0, normalize_1_1, normalize_1_6])).
+
+cnf(refute_1_0, plain, ($false),
+    inference(canonicalize, [], [normalize_1_7])).
+SZS output end CNFRefutation for Basic-3.tptp
+
