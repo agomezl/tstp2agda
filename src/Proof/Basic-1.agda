@@ -1,6 +1,6 @@
 module Proof.Basic-1 where
 
-open import Data.FOL.Base
+open import Data.FOL.Shallow
 open import Function using (id)
 
 -- example/proof/Basic-1.tstp

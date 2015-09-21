@@ -1,4 +1,4 @@
-module Data.FOL.Base where
+module Data.FOL.Shallow where
 
 data ⊤ : Set where
   tt : ⊤
