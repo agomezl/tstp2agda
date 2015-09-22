@@ -8,7 +8,7 @@ data ⊥ : Set where
 ⊥-elim : { A : Set } → ⊥ → A
 ⊥-elim ()
 
-infixl 5 _∧_ _∨_
+infixr 5 _∧_ _∨_
 
 data _∧_ ( A B : Set ) : Set where
   _,_ : A → B → A ∧ B
