@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https://travis-ci.org/agomezl/tstp2agda)
+
 # tstp2agda
 
 Proof reconstruction from TSTP to Agda
