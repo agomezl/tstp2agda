@@ -26,6 +26,8 @@ $viewable_char = [$printable_char\n]
 @sq_char = [^\\\'] | [\\][\\\']
 @do_char = [^\\\"] | [\\][\\\"]
 
+@metis_sep = "--" ("-"*)
+
 @decimal_natural = [0]| $non_zero_numeric $numeric*
 @signed_decimal = $sign @decimal_natural
 @decimal = @signed_decimal | @decimal_natural
@@ -47,6 +49,8 @@ tokens :-
   "."                                          { withPos $ const Dot }
   ("%"|"#")$printable_char*                    { withPos $ CommentToken } -- comment line
   "/*" @not_star_slash "*"("*"*)"/"            { withPos $ CommentToken } -- comment block
+  "SZS"$printable_char*                        ;
+  @metis_sep                                   ;
   [\'] @sq_char* [\']                          { withPos SingleQuoted }
   [\"] @do_char* [\"]                          { withPos DoubleQuoted }
   $dollar $dollar $lower_alpha $alpha_numeric* { withPos DollarDollarWord }
@@ -94,6 +98,8 @@ data Token =
          | Real Rational
          | CommentToken String
          | Slash
+         | MetisInfo String
+         | MetisComment
         deriving (Eq,Ord,Show)
 
 -- alex defines: alexScanTokens

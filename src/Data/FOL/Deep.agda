@@ -17,5 +17,12 @@ data Fol : (n : ℕ) → Set  where
   ν   : {n : ℕ} → (m : ℕ) → {less : m ≤ n} →  Fol n
   ∼   : {n : ℕ }  → Fol n → Fol n
 
-δ : {n : ℕ } → Fol n → constrains n
-δ a = {!!}
+δ : {n : ℕ } → Fol n → ℕ → constrains n
+δ (a ▴ b)  n = {!(δ a n) ∧ (δ b n)!}
+δ (a ▾ a₁) n = {!!}
+δ (a ⇒ a₁) n = {!!}
+δ (ν m)    n = {!!}
+δ (∼ a)    n = {!!}
+
+getN : {n : ℕ} → Fol n → ℕ
+getN  {n} _ = n
