@@ -14,6 +14,7 @@ module TSTP.Base where
 import Data.TSTP
 import Data.Function (on)
 import Data.Set (Set,toList,fromList,difference,unions,singleton,empty)
+import Data.Monoid (mappend)
 
 --TODO: implement this
 univquant_free_vars :: Formula -> Formula
