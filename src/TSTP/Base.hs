@@ -33,6 +33,7 @@ freeVarsT (FunApp _ args) = unions (fmap freeVarsT args)
 freeVarsT _               = empty
 
 
+
 readRole ∷ String → Role
 readRole "axiom"               = Axiom
 readRole "hypothesis"          = Hypothesis
@@ -53,7 +54,10 @@ binOp ∷ BinOp → Formula → Formula → Formula
 binOp op f1 f2 = BinOp f1 op f2
 
 readRule ∷ String → Rule
-readRule str = NewRule str
+readRule "simplify"     = Simplify
+readRule "negate"       = Negate
+readRule "canonicalize" = Canonicalize
+readRule str            = NewRule str
 
 readType ∷ String → IntroType
 readType "definition"      = Definition_

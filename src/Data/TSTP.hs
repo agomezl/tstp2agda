@@ -54,7 +54,10 @@ data IntroType = Definition_
 data Theory = Equality | AC
             deriving (Eq,Ord,Show,Read)
 
-data Rule   = NewRule String
+data Rule   = Simplify
+            | Negate
+            | Canonicalize
+            | NewRule String
               deriving (Eq,Ord,Show,Read)
 
 data Info   = Description String
