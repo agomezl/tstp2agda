@@ -11,9 +11,9 @@
 module Main where
 
 import System.Environment (getArgs)
-import Args (compileOpts,helpmsg,Flag(..))
-import TSTP.Parser
-import TSTP.Lexer
+import Args               (compileOpts,helpmsg,Flag(..))
+import TSTP.Parser        (parseTSTP)
+import TSTP.Lexer         (alexScanTokens)
 import Data.TSTP
 
 import System.Exit (exitFailure)
@@ -37,5 +37,4 @@ main = do
 fileMain ∷ FilePath → IO ()
 fileMain path = do
   rules  ← parseFile path
-  _      ← mapM print rules
-  return ()
+  mapM_ print rules
