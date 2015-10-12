@@ -39,7 +39,7 @@ base1 = [
  F {name = "subgoal_0",
    role = Plain,
    formula = PredApp (AtomicWord "z") [],
-   source = Inference (NewRule "strip") [] [Parent "a4" []]
+   source = Inference Strip [] [Parent "a4" []]
   },
  F {name = "negate_0_0",
    role = Plain,
