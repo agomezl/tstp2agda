@@ -16,7 +16,8 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     TSTP.Parser, Data.TSTP
+  exposed-modules:     TSTP.Parser, Data.TSTP,
+                       Data.Proof, Test.Proof
   other-modules:       TSTP.Lexer
   other-extensions:    UnicodeSyntax
   build-depends:       base >=4.7, bytestring,

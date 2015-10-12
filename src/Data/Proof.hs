@@ -10,13 +10,14 @@
 --------------------------------------------------------------------------------
 module Data.Proof where
 
-import Data.Map (Map)
+import Data.Map (Map, empty, insert)
 import Data.Map as M (lookup)
 import Data.Maybe (catMaybes)
 import Data.TSTP (Formula(..),Rule(..),F(..),Parent(..),Source(..))
 import qualified Data.TSTP as R (Role(..))
 
 data ProofTree = Axiom   String
+               | Conj    String
                | Intro   String
                | Simp    String [ProofTree]
                | Neg     String [ProofTree]
@@ -28,8 +29,9 @@ data ProofTree = Axiom   String
 type ProofMap = Map String F
 
 buildProofTree ∷ ProofMap → F → ProofTree
-buildProofTree _ (F n R.Axiom _ _) = Axiom n
-buildProofTree m (F n R.Plain _ s) = caseSrc s
+buildProofTree _ (F n R.Axiom _ _)      = Axiom n
+buildProofTree _ (F n R.Conjecture _ _) = Conj n
+buildProofTree m (F n R.Plain _ s)      = caseSrc s
     where caseSrc  (Inference r _ p) = caseRule r
               where caseRule Simplify     = Simp  n parents
                     caseRule Negate       = Neg   n parents
@@ -39,6 +41,10 @@ buildProofTree m (F n R.Plain _ s) = caseSrc s
           caseSrc  _                      = unknownMsg
           unknownMsg =  unknownTree "Source" s n
 buildProofTree _ (F n r       _ _) = unknownTree "Role" r n
+
+buildProofMap ∷ [F] → ProofMap
+buildProofMap f = foldl buildMap empty f
+    where buildMap m f' = insert (name f') f' m
 
 -- Utility functions
 
