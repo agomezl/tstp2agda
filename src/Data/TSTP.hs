@@ -57,6 +57,7 @@ data Theory = Equality | AC
 data Rule   = Simplify
             | Negate
             | Canonicalize
+            | Strip
             | NewRule String
               deriving (Eq,Ord,Show,Read)
 

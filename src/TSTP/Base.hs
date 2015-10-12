@@ -58,6 +58,7 @@ readRule ∷ String → Rule
 readRule "simplify"     = Simplify
 readRule "negate"       = Negate
 readRule "canonicalize" = Canonicalize
+readRule "strip"        = Strip
 readRule str            = NewRule str
 
 readType ∷ String → IntroType

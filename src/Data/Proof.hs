@@ -13,12 +13,13 @@ module Data.Proof where
 import Data.Map (Map, empty, insert)
 import Data.Map as M (lookup)
 import Data.Maybe (catMaybes)
-import Data.TSTP (Formula(..),Rule(..),F(..),Parent(..),Source(..))
-import qualified Data.TSTP as R (Role(..))
+import Data.TSTP (Formula(..),F(..),Parent(..),Source(..))
+import qualified Data.TSTP as R (Role(..),Rule(..))
 
 data ProofTree = Axiom   String
                | Conj    String
                | Intro   String
+               | Strip   String [ProofTree]
                | Simp    String [ProofTree]
                | Neg     String [ProofTree]
                | Canno   String [ProofTree]
@@ -33,10 +34,11 @@ buildProofTree _ (F n R.Axiom _ _)      = Axiom n
 buildProofTree _ (F n R.Conjecture _ _) = Conj n
 buildProofTree m (F n R.Plain _ s)      = caseSrc s
     where caseSrc  (Inference r _ p) = caseRule r
-              where caseRule Simplify     = Simp  n parents
-                    caseRule Negate       = Neg   n parents
-                    caseRule Canonicalize = Canno n parents
-                    caseRule (NewRule s)  = New   n parents
+              where caseRule R.Simplify     = Simp  n parents
+                    caseRule R.Negate       = Neg   n parents
+                    caseRule R.Canonicalize = Canno n parents
+                    caseRule R.Strip        = Strip n parents
+                    caseRule (R.NewRule s)  = New   n parents
                     parents               = getParents m p
           caseSrc  _                      = unknownMsg
           unknownMsg =  unknownTree "Source" s n
