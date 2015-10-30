@@ -14,14 +14,13 @@ module T2A.Core where
 import Data.TSTP (F(..),Formula(..),Source(..),Role(..))
 
 
-type AgdaVariable = String
-data AgdaType     = Set  |   -- regular set Set₁
-                    Setℕ |   -- Setₙ
-                    Γ String -- Any other type
-                  deriving (Show, Ord, Eq)
 
 data AgdaSignature = Signature {
       fname ∷ String,
-      fconstraints ∷ [([AgdaVariable],AgdaType)],
-      ftype ∷ [Formula]
+      fcore ∷ Formula
     }
+
+printAgda ∷ AgdaSignature → IO ()
+printAgda (Signature α ρ) = do
+  putStr α >> putStr " : "
+  putStrLn $ show ρ

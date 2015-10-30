@@ -15,6 +15,7 @@ import Args               (compileOpts,helpmsg,Flag(..))
 import TSTP.Parser        (parseTSTP)
 import TSTP.Lexer         (alexScanTokens)
 import Data.TSTP
+import Data.Proof         (buildProofMap,buildProofTree)
 
 import System.Exit (exitFailure)
 
@@ -37,4 +38,7 @@ main = do
 fileMain ∷ FilePath → IO ()
 fileMain path = do
   rules  ← parseFile path
+  let rulesMap  = buildProofMap rules
+  let rulesTree = buildProofTree rulesMap $ last rules
+  print rulesTree
   mapM_ print rules

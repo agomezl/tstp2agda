@@ -1,4 +1,5 @@
 {-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE FlexibleInstances #-}
 --------------------------------------------------------------------------------
 -- File   : TSTP
 -- Author : Alejandro Gómez Londoño
@@ -11,6 +12,7 @@
 
 module Data.TSTP where
 
+import Util ((▪),βshow)
 
 data Role = Axiom
           | Hypothesis
@@ -95,7 +97,7 @@ data Formula = BinOp Formula BinOp Formula    -- ^ Binary connective application
              | PredApp AtomicWord [Term]      -- ^ Predicate application
              | Quant Quant [V] Formula        -- ^ Quantified Formula
              | (:~:) Formula                  -- ^ Negation
-             deriving (Eq,Ord,Show,Read)
+             deriving (Eq,Ord,Read)
 
 data Term = Var V                             -- ^ Variable
           | NumberLitTerm Rational            -- ^ Number literal
@@ -103,7 +105,35 @@ data Term = Var V                             -- ^ Variable
           | FunApp AtomicWord [Term]          -- ^ Function symbol application
                                               -- (constants are encoded as
                                               -- nullary functions)
-          deriving (Eq,Ord,Show,Read)
+          deriving (Eq,Ord,Read)
+
+
+-- Pretty print instance of Show for Formula and Term
+instance Show Formula where
+    -- To avoid confusion every α → β is printed as (α → β)
+    show (BinOp     f₁  (:=>:) f₂) = '(' ▪ f₁   ▪ '→' ▪ f₂  ▪ ')'
+    show (BinOp     f₁  op     f₂) = f₁  ▪ op   ▪ f₂
+    show (InfixPred t₁  pred   t₂) = t₁  ▪ pred ▪ t₂
+    -- Predicates are just functions that return ⊤ with some parameter
+    show (PredApp   ρ          []) = show ρ
+    show (PredApp   ρ          φ ) = '(' ▪ ρ    ▪ ':' ▪ φ   ▪ "→ ⊤" ▪ ')'
+    show (Quant     All []     f ) = βshow f
+    show (Quant     All υ      f ) = '(' ▪ foldl (▪) "{" υ  ▪ ": Set }" ▪ '→' ▪ f ▪ ')'
+    show ((:~:)                f ) = '¬' ▪ f
+
+instance {-# OVERLAPPING #-} Show [Formula] where
+    show []     = []
+    show (x:xs) = foldr ((▪) . (▪ '→')) (βshow x) xs
+
+instance Show Term where
+    show (Var             (V v))     =      v
+    show (NumberLitTerm      r )     = show r
+    show (DistinctObjectTerm t )     =      t
+    show (FunApp (AtomicWord w ) []) =      w
+    -- TODO: what functions are in Shallow.agda or in agda itself?
+    show (FunApp (AtomicWord w ) [a]) = error "Don't really know what this is"
+
+
 
 -- The following code is from:
 -- https://github.com/DanielSchuessler/logic-TPTP
@@ -122,7 +152,19 @@ data BinOp =   (:<=>:)  -- ^ Equivalence
             |  (:~&:)   -- ^ NAND
             |  (:~|:)   -- ^ NOR
             |  (:<~>:)  -- ^ XOR
-               deriving (Eq,Ord,Show,Read)
+               deriving (Eq,Ord,Read)
+
+instance Show BinOp where
+    show (:<=>:) = "↔"
+    show (:=>:)  = "→"
+    show (:<=:)  = "←"
+    show (:&:)   = "∧"
+    show (:|:)   = "∨"
+    show (:~&:)  = "⊼"
+    show (:~|:)  = "⊽"
+    show (:<~>:) = "⊕"
+
+
 
 -- | /Term -> Term -> Formula/ infix connectives
 data InfixPred =  (:=:) | (:!=:)
@@ -133,7 +175,10 @@ data Quant = All | Exists
              deriving (Eq,Ord,Show,Read)
 
 newtype AtomicWord = AtomicWord String
-    deriving (Eq,Ord,Show,Read)
+    deriving (Eq,Ord,Read)
+
+instance Show AtomicWord where
+    show (AtomicWord a) = a
 
 -- | Metadata (the /general_data/ rule in TPTP's grammar)
 data GData = GWord AtomicWord

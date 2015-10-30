@@ -18,7 +18,7 @@ cabal-version:       >=1.10
 library
   exposed-modules:     TSTP.Parser, Data.TSTP,
                        Data.Proof, Test.Proof
-  other-modules:       TSTP.Lexer
+  other-modules:       TSTP.Lexer, T2A.Core
   other-extensions:    UnicodeSyntax
   build-depends:       base >=4.7, bytestring,
                        containers,mtl,array
