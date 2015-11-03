@@ -123,7 +123,7 @@ instance Show Formula where
 
 instance {-# OVERLAPPING #-} Show [Formula] where
     show []     = []
-    show (x:xs) = foldr ((▪) . (▪ '→')) (βshow x) xs
+    show (x:xs) = foldl ((▪) . (▪ '→')) (βshow x) xs
 
 instance Show Term where
     show (Var             (V v))     =      v

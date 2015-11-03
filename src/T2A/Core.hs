@@ -12,15 +12,30 @@
 module T2A.Core where
 
 import Data.TSTP (F(..),Formula(..),Source(..),Role(..))
+import Data.Map as M (lookup)
+import Data.Proof (ProofMap,getParents)
+import Util ((▪))
 
-
-
+-- Single function signature
 data AgdaSignature = Signature {
       fname ∷ String,
-      fcore ∷ Formula
+      fcore ∷ [Formula]
     }
 
+-- Given a proof map (ω) and some formula name (φ), construct
+-- the appropriated `AgdaSignature`
+buildSignature ∷ ProofMap → String → Maybe AgdaSignature
+buildSignature ω φ = do
+  φ' ← M.lookup φ ω
+  let ζ = formula φ'
+  let ρ = case source φ' of
+            Inference _ _ ρ' → map formula $ getParents ω ρ'
+            _                → []
+  return $ Signature φ (ρ ++ [ζ])
+
+
+-- Pretty prints an `AgdaSignature`
 printAgda ∷ AgdaSignature → IO ()
 printAgda (Signature α ρ) = do
-  putStr α >> putStr " : "
+  putStr $ α ▪ " : "
   putStrLn $ show ρ

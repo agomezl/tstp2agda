@@ -40,7 +40,7 @@ buildProofTree ∷ ProofMap → F → ProofTree
 buildProofTree _ (F n R.Axiom _ _)      = Leaf R.Axiom n
 buildProofTree _ (F n R.Conjecture _ _) = Leaf R.Conjecture n
 buildProofTree m (F n R.Plain _ s)      = caseSrc s
-    where caseSrc  (Inference r _ p) = let parents = getParents m p
+    where caseSrc  (Inference r _ p) = let parents = getParentsTree m p
                                        in Root r n parents
           caseSrc  _                 = unknownMsg
           unknownMsg                 = unknownTree "Source" s n
@@ -52,10 +52,12 @@ buildProofMap f = foldl buildMap empty f
 
 -- Utility functions
 
-getParents ∷ ProofMap → [Parent] → [ProofTree]
-getParents m p = map (buildProofTree m) parentsF
-    where parentsF = catMaybes $ map (flip M.lookup $ m) parents
-          parents  = map (\(Parent s _) → s) p
+getParentsTree ∷ ProofMap → [Parent] → [ProofTree]
+getParentsTree m p = map (buildProofTree m) $ getParents m p
+
+getParents ∷ ProofMap → [Parent] → [F]
+getParents ω ρ = catMaybes $ map (flip M.lookup $ ω) parents
+    where parents  = map (\(Parent s _) → s) ρ
 
 unknownTree ∷ (Show a) ⇒ String → a → String → ProofTree
 unknownTree m r n = Leaf R.Unknown $ m ++  ' ':show r  ++ " in " ++ n
