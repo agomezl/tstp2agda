@@ -1,5 +1,6 @@
 {-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE CPP #-}
 --------------------------------------------------------------------------------
 -- File   : TSTP
 -- Author : Alejandro Gómez Londoño
@@ -9,7 +10,9 @@
 -- Change log :
 
 --------------------------------------------------------------------------------
-
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(a,b,c) 1
+#endif
 module Data.TSTP where
 
 import Util ((▪),βshow)
@@ -120,10 +123,13 @@ instance Show Formula where
     show (Quant     All []     f ) = βshow f
     show (Quant     All υ      f ) = '(' ▪ foldl (▪) "{" υ  ▪ ": Set }" ▪ '→' ▪ f ▪ ')'
     show ((:~:)                f ) = '¬' ▪ f
-
+#if MIN_VERSION_base(4,8,0)
 instance {-# OVERLAPPING #-} Show [Formula] where
-    show []     = []
-    show (x:xs) = foldl ((▪) . (▪ '→')) (βshow x) xs
+#else
+instance Show [Formula] where
+#endif
+  show []     = []
+  show (x:xs) = foldl ((▪) . (▪ '→')) (βshow x) xs
 
 instance Show Term where
     show (Var             (V v))     =      v

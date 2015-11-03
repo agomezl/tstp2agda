@@ -2,6 +2,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE CPP #-}
 --------------------------------------------------------------------------------
 -- File   : Util
 -- Author : Alejandro Gomez
@@ -11,7 +12,10 @@
 -- Change log :
 
 --------------------------------------------------------------------------------
-
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(a,b,c) 1
+#endif
+-- Assume we are using the newest versions when using ghci without cabal
 module Util where
 
 infixr 4 ▪
@@ -28,5 +32,9 @@ instance BShow String where
 instance BShow Char where
     βshow a = [a]
 
+#if MIN_VERSION_base(4,8,0)
 instance {-# OVERLAPPABLE #-} Show a ⇒ BShow a where
-    βshow = show
+#else
+instance Show a ⇒ BShow a where
+#endif
+  βshow = show

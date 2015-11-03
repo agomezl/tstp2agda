@@ -1,4 +1,5 @@
 {-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE CPP #-}
 --------------------------------------------------------------------------------
 -- File   : ProofTree
 -- Author : Alejandro Gómez-Londoño
@@ -8,6 +9,10 @@
 -- Change log :
 
 --------------------------------------------------------------------------------
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(a,b,c) 1
+#endif
+-- Assume we are using the newest versions when using ghci without cabal
 module Data.Proof where
 
 import Data.Map (Map, empty, insert)
@@ -15,6 +20,12 @@ import Data.Map as M (lookup)
 import Data.Maybe (catMaybes)
 import Data.TSTP (Formula(..),F(..),Parent(..),Source(..))
 import qualified Data.TSTP as R (Role(..),Rule(..))
+#if MIN_VERSION_base(4,7,0)
+import Prelude hiding (foldr,foldl)
+import Control.Applicative ((<$>),(<*>))
+import Data.Foldable (Foldable(..))
+import Data.Traversable (Traversable(..))
+#endif
 
 data ProofTreeGen a = Leaf R.Role a
                     | Root R.Rule a [ProofTreeGen a]
