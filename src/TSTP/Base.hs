@@ -16,24 +16,9 @@ import Data.Function (on)
 import Data.Set (Set,toList,fromList,difference,unions,singleton,empty)
 import Data.Monoid (mappend)
 
---TODO: implement this
 univquant_free_vars :: Formula -> Formula
 univquant_free_vars cnf = Quant All free_vars cnf
     where free_vars = toList $ freeVarsF cnf
-
-freeVarsF ∷ Formula → Set V
-freeVarsF ((:~:) x)         = freeVarsF x
-freeVarsF (Quant _ vars x)  = difference (freeVarsF x) (fromList vars)
-freeVarsF (BinOp x _ y)     = (mappend `on` freeVarsF) x y
-freeVarsF (InfixPred x _ y) = (mappend `on` freeVarsT) x y
-freeVarsF (PredApp _ args)  = unions (fmap freeVarsT args)
-
-freeVarsT ∷ Term → Set V
-freeVarsT (Var x)         = singleton x
-freeVarsT (FunApp _ args) = unions (fmap freeVarsT args)
-freeVarsT _               = empty
-
-
 
 readRole ∷ String → Role
 readRole "axiom"               = Axiom

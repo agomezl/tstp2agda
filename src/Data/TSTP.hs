@@ -16,6 +16,9 @@
 module Data.TSTP where
 
 import Util ((▪),βshow)
+import Data.Function (on)
+import Data.Set (Set,toList,fromList,difference,unions,singleton,empty)
+import Data.Monoid (mappend)
 
 data Role = Axiom
           | Hypothesis
@@ -129,7 +132,11 @@ instance {-# OVERLAPPING #-} Show [Formula] where
 instance Show [Formula] where
 #endif
   show []     = []
-  show (x:xs) = foldl ((▪) . (▪ '→')) (βshow x) xs
+  show φ@(x:xs) = fvars ▪ foldl ((▪) . (▪ '→')) (βshow x) xs
+      where
+        fvars = case toList . unions . map freeVarsF $ φ of
+                      [] → []
+                      (y:ys) → '{' ▪ foldr (▪) (βshow y) ys ▪ ": Set} →"
 
 instance Show Term where
     show (Var             (V v))     =      v
@@ -147,7 +154,10 @@ instance Show Term where
 -- alex/happy parser in a more simple way
 
 newtype V = V String
-    deriving (Eq,Ord,Show,Read)
+    deriving (Eq,Ord,Read)
+
+instance Show V where
+    show (V a) = a
 
 -- | Binary formula connectives
 data BinOp =   (:<=>:)  -- ^ Equivalence
@@ -201,3 +211,16 @@ data GTerm = ColonSep GData GTerm
            | GTerm GData
            | GList [GTerm]
              deriving (Eq,Ord,Show,Read)
+
+freeVarsF ∷ Formula → Set V
+freeVarsF ((:~:) x)         = freeVarsF x
+freeVarsF (Quant _ vars x)  = difference (freeVarsF x) (fromList vars)
+freeVarsF (BinOp x _ y)     = (mappend `on` freeVarsF) x y
+freeVarsF (InfixPred x _ y) = (mappend `on` freeVarsT) x y
+freeVarsF (PredApp (AtomicWord v) [])  = singleton $ V v
+freeVarsF (PredApp _ args)  = unions (fmap freeVarsT args)
+
+freeVarsT ∷ Term → Set V
+freeVarsT (Var x)         = singleton x
+freeVarsT (FunApp _ args) = unions (fmap freeVarsT args)
+freeVarsT _               = empty
