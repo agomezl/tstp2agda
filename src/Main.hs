@@ -12,18 +12,9 @@ module Main where
 
 import System.Environment (getArgs)
 import Args               (compileOpts,helpmsg,Flag(..))
-import TSTP.Parser        (parseTSTP)
-import TSTP.Lexer         (alexScanTokens)
-import Data.TSTP
+import TSTP               (parseFile)
 import Data.Proof         (buildProofMap,buildProofTree)
-
 import System.Exit (exitFailure)
-
-parse :: String -> [F]
-parse = parseTSTP . map snd . alexScanTokens
-
-parseFile :: FilePath -> IO [F]
-parseFile x = parse `fmap` readFile x
 
 main :: IO ()
 main = do
