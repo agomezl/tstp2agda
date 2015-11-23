@@ -8,14 +8,13 @@
 -- Change log :
 
 --------------------------------------------------------------------------------
-
 module TSTP (parse, parseFile) where
 
 import TSTP.Parser        (parseTSTP)
 import TSTP.Lexer         (alexScanTokens)
 import Data.TSTP          (F)
 
--- | Parse a TSTP file and return a list with each formula in no
+-- | Parse a TSTP file and return a list of `F` formulas in no
 -- particular order, for example:
 -- @
 --   cat examples/proof/Basic-1.tstp

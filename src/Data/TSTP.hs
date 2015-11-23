@@ -194,7 +194,12 @@ newtype AtomicWord = AtomicWord String
     deriving (Eq,Ord,Read)
 
 instance Show AtomicWord where
+    show (AtomicWord "$false") = "⊥"
     show (AtomicWord a) = a
+
+isBotton ∷ F → Bool
+isBotton = (==) (PredApp (AtomicWord "$false") []) . formula
+
 
 -- | Metadata (the /general_data/ rule in TPTP's grammar)
 data GData = GWord AtomicWord
@@ -217,8 +222,9 @@ freeVarsF ((:~:) x)         = freeVarsF x
 freeVarsF (Quant _ vars x)  = difference (freeVarsF x) (fromList vars)
 freeVarsF (BinOp x _ y)     = (mappend `on` freeVarsF) x y
 freeVarsF (InfixPred x _ y) = (mappend `on` freeVarsT) x y
-freeVarsF (PredApp (AtomicWord v) [])  = singleton $ V v
-freeVarsF (PredApp _ args)  = unions (fmap freeVarsT args)
+freeVarsF (PredApp (AtomicWord "$false") [])  = empty
+freeVarsF (PredApp (AtomicWord v) [])         = singleton $ V v
+freeVarsF (PredApp _ args)                    = unions (fmap freeVarsT args)
 
 freeVarsT ∷ Term → Set V
 freeVarsT (Var x)         = singleton x

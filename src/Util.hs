@@ -18,6 +18,10 @@
 -- Assume we are using the newest versions when using ghci without cabal
 module Util where
 
+import Data.Foldable      (toList)
+import Data.Set           (fromList)
+
+
 infixr 4 ▪
 
 (▪) ∷ forall a b. (BShow a, BShow b) ⇒ a → b → String
@@ -38,3 +42,6 @@ instance {-# OVERLAPPABLE #-} Show a ⇒ BShow a where
 instance Show a ⇒ BShow a where
 #endif
   βshow = show
+
+unique ∷ (Ord a) ⇒ [a] → [a]
+unique a = toList . fromList $ a
