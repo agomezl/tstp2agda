@@ -12,6 +12,7 @@
 module TSTP.Base where
 
 import Data.TSTP
+import Util          (agdafy)
 import Data.Function (on)
 import Data.Set (Set,toList,fromList,difference,unions,singleton,empty)
 import Data.Monoid (mappend)
@@ -54,7 +55,7 @@ readType "assumption"      = Assumption_
 readType _                 = UnknownType
 
 readWord ∷ AtomicWord → String
-readWord (AtomicWord a) = a
+readWord (AtomicWord a) = agdafy a
 
 readStatus ∷ String → Status
 readStatus "suc" = Suc

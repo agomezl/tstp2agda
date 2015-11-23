@@ -134,9 +134,12 @@ instance Show [Formula] where
   show []     = []
   show φ@(x:xs) = fvars ▪ foldl ((▪) . (▪ '→')) (βshow x) xs
       where
-        fvars = case toList . unions . map freeVarsF $ φ of
+        fvars = case getFreeVars φ of
                       [] → []
-                      (y:ys) → '{' ▪ foldr (▪) (βshow y) ys ▪ ": Set} →"
+                      (y:ys) → '{' ▪ foldl (▪) (βshow y) ys ▪ ": Set} →"
+
+getFreeVars ∷ [Formula] → [V]
+getFreeVars = toList . unions . map freeVarsF
 
 instance Show Term where
     show (Var             (V v))     =      v
@@ -197,9 +200,11 @@ instance Show AtomicWord where
     show (AtomicWord "$false") = "⊥"
     show (AtomicWord a) = a
 
-isBotton ∷ F → Bool
-isBotton = (==) (PredApp (AtomicWord "$false") []) . formula
+isBottom ∷ F → Bool
+isBottom = (==) (PredApp (AtomicWord "$false") []) . formula
 
+bottom ∷ Formula
+bottom = PredApp (AtomicWord "$false") []
 
 -- | Metadata (the /general_data/ rule in TPTP's grammar)
 data GData = GWord AtomicWord

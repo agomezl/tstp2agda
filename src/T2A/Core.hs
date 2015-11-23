@@ -11,17 +11,17 @@
 
 module T2A.Core where
 
-import Data.TSTP     (F(..),Formula(..),Source(..),Role(..),isBotton)
+import Data.TSTP     (F(..),Formula(..),Source(..),Role(..),isBottom)
 import Data.Map as M (lookup)
 import Data.Proof    (ProofMap,getParents)
 import Data.List     (isPrefixOf)
-import Util          ((▪))
+import Util          ((▪),βshow)
 
 -- Single function signature
-data AgdaSignature = Signature {
-      fname ∷ String,
-      fcore ∷ [Formula]
-    } deriving (Eq)
+data AgdaSignature = Signature String [Formula]
+                   | ScopedSignature String [Formula]
+
+                  deriving (Eq)
 
 -- Given a proof map (ω) and some formula name (φ), construct
 -- the appropriated `AgdaSignature`
@@ -37,9 +37,15 @@ buildSignature ω φ | "subgoal" `isPrefixOf` φ = Nothing
   then Nothing
   else return $ Signature ("fun-" ++ φ) (ρ ++ [ζ])
 
+fname ∷ AgdaSignature → String
+fname (Signature       a _) = a
+fname (ScopedSignature a _) = a
+
 -- Pretty prints an `AgdaSignature`
 instance Show AgdaSignature where
-    show (Signature α ρ) = α ▪ " : " ▪ ρ
+    show (Signature α ρ)       = α ▪ ":" ▪ ρ
+    show (ScopedSignature α (x:xs)) = α ▪ ":" ▪ ρ
+        where ρ = foldl ((▪) . (▪ '→')) (βshow x) xs
 
 instance Ord AgdaSignature where
     a <= b = fname a <= fname b

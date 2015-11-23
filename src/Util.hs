@@ -20,7 +20,7 @@ module Util where
 
 import Data.Foldable      (toList)
 import Data.Set           (fromList)
-
+import Data.List          (isPrefixOf)
 
 infixr 4 ▪
 
@@ -30,10 +30,10 @@ infixr 4 ▪
 class BShow a where
     βshow ∷ a -> String
 
-instance BShow String where
+instance {-# OVERLAPPING #-} BShow String where
     βshow a = a
 
-instance BShow Char where
+instance {-# OVERLAPPING #-} BShow Char where
     βshow a = [a]
 
 #if MIN_VERSION_base(4,8,0)
@@ -45,3 +45,22 @@ instance Show a ⇒ BShow a where
 
 unique ∷ (Ord a) ⇒ [a] → [a]
 unique a = toList . fromList $ a
+
+printInd ∷ (Show a) ⇒ Int → a → IO ()
+printInd ind a = putStr spaces >> print a
+    where spaces = replicate ind ' '
+
+putStrLnInd ∷ Int → String → IO ()
+putStrLnInd ind a = putStr spaces >> putStrLn a
+    where spaces = replicate ind ' '
+
+
+swapPrefix ∷ String → String → String → String
+swapPrefix a b str
+    | a `isPrefixOf`str = b ++ drop (length a) str
+    | otherwise         = str
+
+agdafy ∷ String → String
+agdafy = map repl
+    where repl '_' = '-'
+          repl  a  = a
