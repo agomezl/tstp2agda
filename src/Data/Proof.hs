@@ -13,24 +13,46 @@
 #define MIN_VERSION_base(a,b,c) 1
 #endif
 -- Assume we are using the newest versions when using ghci without cabal
-module Data.Proof where
+{-# OPTIONS_HADDOCK prune #-}
+module Data.Proof (
+                  -- * Types
+                   ProofTreeGen(..)
+                  , ProofTree
+                  , ProofMap
+                  -- * Constructors
+                  , buildProofTree
+                  , buildProofMap
+                  -- * Internals
+                  , getParents
+                  , getParentsTree
+                  , unknownTree
+                  ) where
 
-import Data.Map (Map, empty, insert)
-import Data.Map as M (lookup)
-import Data.Maybe (catMaybes)
-import Data.TSTP (Formula(..),F(..),Parent(..),Source(..))
+import Data.Map                 (Map, empty, insert)
+import Data.Map as M            (lookup)
+import Data.Maybe               (catMaybes)
+import Data.TSTP                (Formula(..),F(..),Parent(..),Source(..))
 import qualified Data.TSTP as R (Role(..),Rule(..))
 #if MIN_VERSION_base(4,7,0)
-import Prelude hiding (foldr,foldl)
-import Control.Applicative ((<$>),(<*>))
-import Data.Foldable (Foldable(..))
-import Data.Traversable (Traversable(..))
+import Prelude hiding           (foldr,foldl)
+import Control.Applicative      ((<$>),(<*>))
+import Data.Foldable            (Foldable(..))
+import Data.Traversable         (Traversable(..))
 #endif
 
-data ProofTreeGen a = Leaf R.Role a
-                    | Root R.Rule a [ProofTreeGen a]
-                      deriving (Eq,Ord,Show)
+-- | Generic tree structure for representing the structure of a proof.
+data ProofTreeGen a =
+    -- | 'Leaf' 'r' 'a' is a node with 'R.Role' 'r' and content 'a' (usually
+    -- 'String', 'F' or 'Formula') and with no dependencies in other nodes.
+    Leaf R.Role a |
+    -- | 'Root' 'r' 'a' 'd' is a node with deduction 'R.Rule' 'r', content 'a'
+    -- (usually 'String', 'F' or 'Formula'),  and dependencies 'd'.
+    Root R.Rule a [ProofTreeGen a]
+         deriving (Eq,Ord,Show)
 
+-- | Concrete instance of 'ProofTreeGen' with 'String' as
+-- contents. Each node contains the name of a corresponding formula,
+-- along with its dependencies.
 type ProofTree = ProofTreeGen String
 
 instance Functor ProofTreeGen where
@@ -45,9 +67,16 @@ instance Traversable ProofTreeGen where
     traverse f (Leaf r a)    = Leaf r <$> f a
     traverse f (Root r a t)  = Root r <$> f a <*> traverse (traverse f) t
 
+-- | 'Map' from formula names to an 'F' formula type, useful to get more
+-- information from a node in a 'ProofTree'.
 type ProofMap = Map String F
 
-buildProofTree ∷ ProofMap → F → ProofTree
+-- | 'buildProofTree' 'm' 'f', build a 'ProofTree' with 'f' as root,
+-- and using 'm' for dependencies resolution. Depending on the root,
+-- not all values in 'm' are used.
+buildProofTree ∷ ProofMap     -- ^ 'Map' for resolving dependencies
+               → F            -- ^ Root formula
+               → ProofTree    -- ^ Tree of formulas with 'f' as root
 buildProofTree _ (F n R.Axiom _ _)      = Leaf R.Axiom n
 buildProofTree _ (F n R.Conjecture _ _) = Leaf R.Conjecture n
 buildProofTree m (F n R.Plain _ s)      = caseSrc s
@@ -57,18 +86,33 @@ buildProofTree m (F n R.Plain _ s)      = caseSrc s
           unknownMsg                 = unknownTree "Source" s n
 buildProofTree _ (F n r       _ _)      = unknownTree "Role" r n
 
-buildProofMap ∷ [F] → ProofMap
+-- | 'buildProofTree' 'lf', given a list of functions 'lf' builds a 'ProofMap'
+buildProofMap ∷ [F]      -- ^ List of functions
+              → ProofMap -- ^ Map of the given functions indexed by its names
 buildProofMap f = foldl buildMap empty f
     where buildMap m f' = insert (name f') f' m
 
--- Utility functions
-
-getParentsTree ∷ ProofMap → [Parent] → [ProofTree]
+-- | 'getParentsTree' 'm' 'p', from a 'Map' 'm' and a list of parents 'p'
+-- return a list of corresponding parent subtrees.
+getParentsTree ∷ ProofMap    -- ^ 'Map'
+               → [Parent]    -- ^ List of parents
+               → [ProofTree] -- ^ List of parents subtrees
 getParentsTree m p = map (buildProofTree m) $ getParents m p
 
-getParents ∷ ProofMap → [Parent] → [F]
+-- | 'getParents' 'm' 'p', from a 'Map' 'm' and a list of parents 'p'
+-- return a list of corresponding parent formulas.
+getParents ∷ ProofMap -- ^ 'Map'
+           → [Parent] -- ^ List of 'Parents
+           → [F]      -- ^ List of parent formulas
 getParents ω ρ = catMaybes $ map (flip M.lookup $ ω) parents
     where parents  = map (\(Parent s _) → s) ρ
 
-unknownTree ∷ (Show a) ⇒ String → a → String → ProofTree
+-- | When an unknown 'R.Rule','Source', or other unexpected data type
+-- is found a 'Leaf' With an R.Unknown' 'Role' and error message is
+-- created.
+unknownTree ∷ (Show a) ⇒
+              String     -- ^ Description of the unexpected data type
+            → a          -- ^ Unexpected data
+            → String     -- ^ Formula name
+            → ProofTree  -- ^ 'R.Unknown' node
 unknownTree m r n = Leaf R.Unknown $ m ++  ' ':show r  ++ " in " ++ n

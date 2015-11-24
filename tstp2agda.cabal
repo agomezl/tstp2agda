@@ -16,9 +16,8 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     TSTP.Parser, Data.TSTP,
-                       Data.Proof, Test.Proof
-  other-modules:       TSTP.Lexer, T2A.Core
+  exposed-modules:     Data.TSTP, Data.Proof
+  other-modules:       TSTP.Lexer, T2A.Core, TSTP.Parser
   if impl(ghc < 7.10)
     default-extensions:OverlappingInstances
   other-extensions:  UnicodeSyntax
