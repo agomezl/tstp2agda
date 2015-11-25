@@ -18,13 +18,17 @@ import Data.List     (isPrefixOf)
 import Util          ((▪),βshow)
 
 -- Single function signature
+-- | An Agda type signature @α : τ@
 data AgdaSignature = Signature String [Formula]
+                   -- ^ Regular top level signature
                    | ScopedSignature String [Formula]
+                   -- ^ Fully scoped signature with no newly
+                   -- introduced type variables
 
                   deriving (Eq)
 
--- Given a proof map (ω) and some formula name (φ), construct
--- the appropriated `AgdaSignature`
+-- | Given a proof map ω and some formula name φ, construct
+-- the appropriated 'AgdaSignature' based on the parents of φ
 buildSignature ∷ ProofMap → String → Maybe AgdaSignature
 buildSignature ω φ | "subgoal" `isPrefixOf` φ = Nothing
                    | "negate"  `isPrefixOf` φ = Nothing
@@ -37,6 +41,7 @@ buildSignature ω φ | "subgoal" `isPrefixOf` φ = Nothing
   then Nothing
   else return $ Signature ("fun-" ++ φ) (ρ ++ [ζ])
 
+-- | Retrieve signature name
 fname ∷ AgdaSignature → String
 fname (Signature       a _) = a
 fname (ScopedSignature a _) = a
