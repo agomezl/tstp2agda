@@ -13,7 +13,7 @@
 #define MIN_VERSION_base(a,b,c) 1
 #endif
 -- Assume we are using the newest versions when using ghci without cabal
-{-# OPTIONS_HADDOCK prune #-}
+
 module Data.Proof (
                   -- * Types
                     ProofTreeGen(..)

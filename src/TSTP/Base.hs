@@ -8,7 +8,7 @@
 -- Change log :
 
 --------------------------------------------------------------------------------
-
+{-# OPTIONS_HADDOCK hide #-}
 module TSTP.Base where
 
 import Data.TSTP

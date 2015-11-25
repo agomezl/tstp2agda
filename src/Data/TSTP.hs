@@ -33,6 +33,7 @@ module Data.TSTP (
                  , bottom
                  , freeVarsF
                  , freeVarsT
+                 , getFreeVars
                  -- * Unused types
                  -- | The following types are required to have full
                  -- support of the TSTP syntax but haven't been used yet
@@ -43,7 +44,6 @@ module Data.TSTP (
                  , Status(..)
                  , GData(..)
                  , GTerm(..)
-
                  ) where
 
 import Util ((▪),βshow)
