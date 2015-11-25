@@ -16,7 +16,7 @@
 {-# OPTIONS_HADDOCK prune #-}
 module Data.Proof (
                   -- * Types
-                   ProofTreeGen(..)
+                    ProofTreeGen(..)
                   , ProofTree
                   , ProofMap
                   -- * Constructors

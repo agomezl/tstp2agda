@@ -49,12 +49,11 @@ mainCore path = do
   -- Reads all the rules, perhaps more error handling is requiered in
   -- TSTP.hs especially on the alex/happy part of `parseFile` and `parse`
   rules  ← parseFile path
+  -- PREAMBLE : module definitions and imports
   let moduleName = "BaseProof"
   putStrLn $ "module" ▪ moduleName ▪ "where"
   putStrLn $ "open import Data.FOL.Shallow"
   putStrLn []
-  -- PREAMBLE : module definitions and imports
-
   -- STEP 0 : axioms,conjetures and subgoals
   let subgoals = filter (isPrefixOf "subgoal" . name) rules
   let refutes  = filter (isPrefixOf "refute"  . name) rules
