@@ -33,7 +33,7 @@ source-repository head
   location: git://github.com/agomezl/tstp2agda.git
 
 library
-  exposed-modules:     Data.TSTP, Data.Proof, T2A.Core
+  exposed-modules:     Data.TSTP, Data.Proof, T2A.Core, T2A
   other-modules:       TSTP.Lexer, TSTP.Parser
   if impl(ghc < 7.10)
     default-extensions:OverlappingInstances

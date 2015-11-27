@@ -86,7 +86,7 @@ buildProofTree m (F n R.Plain _ s)      = caseSrc s
           unknownMsg                 = unknownTree "Source" s n
 buildProofTree _ (F n r       _ _)      = unknownTree "Role" r n
 
--- | 'buildProofTree' 'lf', given a list of functions 'lf' builds a 'ProofMap'
+-- | 'buildProofMap' 'lf', given a list of functions 'lf' builds a 'ProofMap'
 buildProofMap ∷ [F]      -- ^ List of functions
               → ProofMap -- ^ Map of the given functions indexed by its names
 buildProofMap f = foldl buildMap empty f
