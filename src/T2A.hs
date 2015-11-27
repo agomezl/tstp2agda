@@ -11,7 +11,7 @@
 
 module T2A (
            -- * How to use tstp2agda
-           -- | Let use an example, given this proof
+           -- | Let use an example, given this problem
            --
            -- @
            --   $ cat problem.tstp
@@ -45,29 +45,31 @@ module T2A (
            -- main ∷ IO ()
            -- main = do
            --   -- read the file
-           --   formulas ← parseFile "proof.tstp"
+           --   formulas ← 'parseFile' "proof.tstp"
            --   -- create a map
-           --   proofmap ← buildProofMap formulas
+           --   proofmap ← 'buildProofMap' formulas
            --   -- get subgoals,refutes,axioms, and the conjecture
-           --   let subgoals    = getSubGoals formulas
-           --   let refutes     = getRefutes formulas
-           --   let axioms      = getAxioms formulas
-           --   let (Just conj) = getConjeture formulas
-           --   build a 'proofTree' for each subgoal (using his associated refute)
-           --   let prooftree = map (buildProofTree proofmap) refutes
+           --   let subgoals    = 'getSubGoals' formulas
+           --   let refutes     = 'getRefutes' formulas
+           --   let axioms      = 'getAxioms' formulas
+           --   let (Just conj) = 'getConjeture' formulas
+           --   -- build a 'proofTree' for each subgoal (using his associated refute)
+           --   let prooftree = 'map' ('buildProofTree' proofmap) refutes
            -- @
            --
            -- And the call the varios printing functions en the desired order
            --
            -- @
+           --   -- PREAMBLE : module definitions and imports
+           --   'printPreamble' "BaseProof"
            --   -- STEP 1 : Print auxiliary functions
-           --   printAuxSignatures proofmap prooftree
+           --   'printAuxSignatures' proofmap prooftree
            --   -- STEP 2 : Subgoal handling
-           --   printSubGoals subgoals conj "goals"
+           --   'printSubGoals' subgoals conj "goals"
            --   -- STEP 3 : Print main function signature
-           --   printProofBody axioms conj "proof" subgoals "goals"
+           --   'printProofBody' axioms conj "proof" subgoals "goals"
            --   -- STEP 4 : Print all the step of the proof as local definitions
-           --   mapM_ (printProofWhere proofmap  prooftree
+           --   'mapM_' ('printProofWhere' proofmap  prooftree
            -- @
            --
            -- and then get
@@ -93,7 +95,6 @@ module T2A (
            --       subgoal-0 = proofByContradiction fun-negate-0-0
            -- @
            --
-
 
            -- * Getters
              getSubGoals
