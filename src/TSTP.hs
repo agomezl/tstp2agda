@@ -16,14 +16,17 @@ import Data.TSTP          (F)
 
 -- | Parse a TSTP file and return a list of `F` formulas in no
 -- particular order, for example:
+--
 -- @
---   cat examples/proof/Basic-1.tstp
+--   $ cat examples\/proof\/Basic-1.tstp
 --   fof(a1, axiom, (a)).
 --   fof(a2, axiom, (b)).
 --   fof(a3, axiom, ((a & b) => z)).
 --   ...
 -- @
+--
 -- would be:
+--
 -- @
 --   [
 --     F {name = "a1", role = Axiom, formula = a, source = NoSource},

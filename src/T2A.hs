@@ -161,6 +161,10 @@ printPreamble moduleName = do
 -- function which has its parents as arguments and the current
 -- function as return value. Since a proof is split in various
 -- sub-goals, this function receives a list of sub-'ProofTree's
+--
+-- @
+--    fun-stepₘ_ₙ : { ν₀ ... νᵢ : Set } → stepₘ_ₙ₁ → ... → stepₘ_ₙⱼ → stepₘ_ₙ
+-- @
 printAuxSignatures ∷ ProofMap    -- ^ map of formulas
                    → [ProofTree] -- ^ list of subgoals
                    → IO ()
@@ -218,17 +222,17 @@ printProofBody axioms conj proofName subgoals goalsName = do
 --       negation₀ : ¬ τ₀ → ⊥
 --       negation₀ negate₀ = refute₀
 --         where
---           step₀_ₙ = fun-step₀_ₙ step₀_ₙ₁ .. step₀_ₙₘ
+--           step₀_ᵢ = fun-step₀_ᵢ step₀_ᵢ₁ .. step₀_ᵢⱼ
 --           ...
---           step₀_₀ = fun-step₀_₀ step₀_₀₁ .. step₀_₀ₘ
+--           step₀_₀ = fun-step₀_₀ step₀_₀₁ .. step₀_₀ₖ
 --       subgoal₀ = proofByContradiction negation₀
 --       ...
 --       negationₙ : ¬ τₙ → ⊥
 --       negationₙ negateₙ = refuteₙ
 --         where
---           stepₙ_ₙ = fun-stepₙ_ₙ stepₙ_ₙ₁ .. stepₙ_ₙₘ
+--           stepₙ_ₜ = fun-stepₙ_ₜ stepₙ__ₜ₁ .. stepₙ_ₜₒ
 --           ...
---           stepₙ_₀ = fun-stepₙ_₀ stepₙ_₀₁ .. stepₙ_₀ₘ
+--           stepₙ_₀ = fun-stepₙ_₀ stepₙ_₀₁ .. stepₙ_₀ᵤ
 --       subgoal₀ = proofByContradiction negationₙ
 -- @
 --
