@@ -61,7 +61,7 @@ module T2A (
            --
            -- @
            --   -- PREAMBLE : module definitions and imports
-           --   'printPreamble' "BaseProof"
+           --   'printPreamble' \"BaseProof\"
            --   -- STEP 1 : Print auxiliary functions
            --   'printAuxSignatures' proofmap prooftree
            --   -- STEP 2 : Subgoal handling
