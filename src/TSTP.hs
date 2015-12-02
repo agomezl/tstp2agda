@@ -1,4 +1,5 @@
 {-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE CPP #-}
 --------------------------------------------------------------------------------
 -- File   : TSTP
 -- Author : Alejandro Gómez-Londoño
@@ -8,11 +9,21 @@
 -- Change log :
 
 --------------------------------------------------------------------------------
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(a,b,c) 1
+#endif
+-- Assume we are using the newest versions when using ghci without cabal
+
+
 module TSTP (parse, parseFile) where
 
 import TSTP.Parser        (parseTSTP)
 import TSTP.Lexer         (alexScanTokens)
+import System.IO          (getContents)
 import Data.TSTP          (F)
+#if MIN_VERSION_base(4,7,0)
+import Control.Applicative ((<$>))
+#endif
 
 -- | Parse a TSTP file and return a list of `F` formulas in no
 -- particular order, for example:
@@ -38,6 +49,7 @@ import Data.TSTP          (F)
 parse :: String -> [F]
 parse = parseTSTP . map snd . alexScanTokens
 
--- | Similar to `parse` but reading directly from a file.
-parseFile :: FilePath -> IO [F]
-parseFile x = parse `fmap` readFile x
+-- | Similar to `parse` but reading directly from a file or stdin.
+parseFile :: Maybe FilePath -> IO [F]
+parseFile x = parse <$> case x of Just x  → readFile x
+                                  Nothing → getContents

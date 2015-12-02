@@ -11,9 +11,12 @@
 module Main (main) where
 
 import System.Environment (getArgs)
-import Args               (compileOpts,helpmsg,Flag(..))
+import Args               (compileOpts,helpmsg,Flag(..),Conf(..))
+import Data.Maybe         (isNothing)
 
-import System.Exit        (exitFailure)
+import System.Exit        (exitFailure,exitSuccess)
+import System.IO          (getContents,IOMode(WriteMode),openFile,stdout)
+import GHC.IO.Handle      (hDuplicateTo)
 import Util               ((▪),unique,printInd,putStrLnInd,swapPrefix)
 
 import T2A (buildProofMap,buildProofTree,parseFile)
@@ -28,15 +31,19 @@ main :: IO ()
 main = do
   args <- getArgs
   -- TODO: improve error handling
-  case compileOpts args of
-   Left [Args.File f] → mainCore f
-   Left [Help]   → helpmsg
-   Left _        → putStrLn "Bad parameters" >> helpmsg >> exitFailure
-   Right e       → putStrLn e >> exitFailure
-  return ()
-
+  -- TODO: make prettier
+  mainCore =<< case compileOpts args of
+                 -- Something went wrong whit the flags
+                 Right e                → putStrLn e >> exitFailure
+                 -- Help message display
+                 Left (Conf _  _ True)  → helpmsg    >> exitSuccess
+                 -- Input and Output file selection
+                 Left (Conf f (Nothing) _) → return f
+                 Left (Conf f (Just o ) _) → do hnd ← openFile o WriteMode
+                                                hDuplicateTo hnd stdout
+                                                return f
 -- High level procedure
-mainCore ∷ FilePath → IO ()
+mainCore ∷ Maybe FilePath → IO ()
 mainCore path = do
   -- Reads all the rules, perhaps more error handling is requiered in
   -- TSTP.hs especially on the alex/happy part of `parseFile` and `parse`
