@@ -3,8 +3,14 @@
 TSTP_EXAMPLES=examples/proof
 TEST_DIR=$$.test
 SUCCESS=0
+TEST_N=1
 
 function do_test {
+    echo "####################"
+    echo "# Test $((TEST_N++)) "
+    echo "####################"
+    echo
+
     MOD=$(basename $1 | cut -d. -f 1)
     FILE=${MOD}.agda
     cabal run -- -f $1 -o ${TEST_DIR}/${FILE} -m ${MOD}
