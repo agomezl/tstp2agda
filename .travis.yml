@@ -4,3 +4,8 @@ before_install :
   - cabal update
   - cabal install alex
   - cabal install happy
+script :
+  - cabal configure --enable-tests
+  - cabal build
+  - cabal test
+  - ./run-tests.sh
