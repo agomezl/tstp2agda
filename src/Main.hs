@@ -15,9 +15,9 @@ import Args               (compileOpts,helpmsg,Flag(..),Conf(..))
 import Data.Maybe         (isNothing)
 
 import System.Exit        (exitFailure,exitSuccess)
-import System.IO          (getContents,IOMode(WriteMode),openFile,stdout)
-import GHC.IO.Handle      (hDuplicateTo)
+import System.IO          (getContents)
 import Util               ((▪),unique,printInd,putStrLnInd,swapPrefix)
+import Util               (stdout2file)
 
 import T2A (buildProofMap,buildProofTree,parseFile)
 import T2A (getSubGoals,getAxioms,getRefutes,getConjeture,printPreamble)
@@ -34,22 +34,21 @@ main = do
   -- TODO: make prettier
   mainCore =<< case compileOpts args of
                  -- Something went wrong whit the flags
-                 Right e                → putStrLn e >> exitFailure
+                 Right e                    → putStrLn e >> exitFailure
                  -- Help message display
-                 Left (Conf _  _ True)  → helpmsg    >> exitSuccess
-                 -- Input and Output file selection
-                 Left (Conf f (Nothing) _) → return f
-                 Left (Conf f (Just o ) _) → do hnd ← openFile o WriteMode
-                                                hDuplicateTo hnd stdout
-                                                return f
+                 Left (Conf _  _ True _ _)  → helpmsg    >> exitSuccess
+                 -- Return configuration data type
+                 Left conf                  → return conf
+
 -- High level procedure
-mainCore ∷ Maybe FilePath → IO ()
-mainCore path = do
+mainCore ∷ Conf → IO ()
+mainCore (Conf path opath _ moduleN proofN) = do
   -- Reads all the rules, perhaps more error handling is requiered in
   -- TSTP.hs especially on the alex/happy part of `parseFile` and `parse`
-  rules  ← parseFile path
+  rules ← parseFile path
+  stdout2file opath
   -- PREAMBLE : module definitions and imports
-  printPreamble "BaseProof"
+  printPreamble moduleN
   -- STEP 0 : axioms,conjetures and subgoals
   let subgoals = getSubGoals rules
   let refutes  = getRefutes rules
@@ -66,6 +65,6 @@ mainCore path = do
   -- STEP 2 : Subgoal handling
   printSubGoals subgoals conj "goals"
   -- STEP 3 : Print main function signature
-  printProofBody axioms conj "proof" subgoals "goals"
+  printProofBody axioms conj proofN subgoals "goals"
   -- STEP 4 :
   mapM_ (printProofWhere rulesMap) rulesTrees

@@ -28,11 +28,14 @@ module Util (
             , swapPrefix
             -- * Others
             , agdafy
+            , stdout2file
             ) where
 
 import Data.Foldable      (toList)
 import Data.Set           (fromList)
 import Data.List          (isPrefixOf)
+import System.IO          (IOMode(WriteMode),openFile,stdout)
+import GHC.IO.Handle      (hDuplicateTo)
 
 infixr 4 ▪
 
@@ -105,3 +108,7 @@ agdafy ∷ String → String
 agdafy = map repl
     where repl '_' = '-'
           repl  a  = a
+
+stdout2file ∷ Maybe FilePath → IO ()
+stdout2file Nothing  = return ()
+stdout2file (Just o) = openFile o WriteMode >>= flip hDuplicateTo stdout

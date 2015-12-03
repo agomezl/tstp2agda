@@ -16,15 +16,19 @@ import System.Console.GetOpt (OptDescr(..),
                               getOpt,
                               usageInfo)
 
-data Flag = InFile String  |
-            OutFile String |
+data Flag = InFile     String |
+            OutFile    String |
+            ProofName  String |
+            ModuleName String |
             Help
           deriving(Eq,Ord,Show)
 
 data Conf = Conf {
       inputFile  ∷ Maybe String,
       outputFile ∷ Maybe String,
-      printhelp  ∷ Bool
+      printhelp  ∷ Bool,
+      moduleName ∷ String,
+      proofName  ∷ String
     }
 
 options ∷ [OptDescr Flag]
@@ -33,12 +37,16 @@ options =
    "TSTP input file",
    Option ['o'] ["output"] (ReqArg OutFile "File")
    "output to file",
+   Option ['p'] ["proof-name"] (ReqArg ProofName "Name")
+   "main proof name",
+   Option ['m'] ["module-name"] (ReqArg ModuleName "Name")
+   "module name",
    Option ['h','?'] ["help"] (NoArg Help)
    "prints help message"
   ]
 
 defaultConf ∷ Conf
-defaultConf = Conf Nothing Nothing False
+defaultConf = Conf Nothing Nothing False "Main" "Proof"
 
 compileOpts ∷ [String] → Either Conf String
 compileOpts argv =
@@ -53,9 +61,11 @@ compileOpts argv =
 parseOpts ∷ [Flag] → Conf → Conf
 parseOpts [] conf     = conf
 parseOpts (x:xs) conf = parseOpts xs $ update x
-    where update (InFile  f) = conf { inputFile  = Just f }
-          update (OutFile f) = conf { outputFile = Just f }
-          update (Help     ) = conf { printhelp  = True }
+    where update (InFile  f)    = conf { inputFile  = Just f }
+          update (OutFile f)    = conf { outputFile = Just f }
+          update (Help     )    = conf { printhelp  = True }
+          update (ModuleName f) = conf { moduleName = f }
+          update (ProofName  f) = conf { proofName  = f }
 
 helpmsg ∷ IO ()
 helpmsg = putStrLn $ usageInfo msg options
