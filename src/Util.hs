@@ -39,7 +39,7 @@ import GHC.IO.Handle      (hDuplicateTo)
 
 infixr 4 ▪
 
--- | '"foo" ▪ "bar"' = '"foo bar"'. its main use is to simplify the
+-- | '"foo" ▪ "bar"' = '"foo bar"'. Its main use is to simplify the
 -- concatenation of printable types separated by spaces.
 (▪) ∷ forall a b. (BShow a, BShow b) ⇒ a → b → String
 (▪) α₁ α₂ = βshow α₁ ++ " " ++ βshow α₂
@@ -100,15 +100,20 @@ swapPrefix a b str
     | a `isPrefixOf`str = b ++ drop (length a) str
     | otherwise         = str
 
--- | Metis identifiers usually contain '_' characters which are invalid
--- in Agda, 'agdafy' replaces @normalize_0_0@ with
--- @normalize-0-0@. This is mostly used inside the Happy parser every
--- time an 'AtomicWord' is created.
+-- | <http://www.gilith.com/software/metis/ Metis>
+-- identifiers usually contain @_@ characters which are invalid in
+-- <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda>
+-- ,'agdafy' replaces @normalize_0_0@ with @normalize-0-0@.  This is
+-- mostly used inside the
+-- <https://www.haskell.org/happy/ Happy>
+-- parser every time an 'Data.TSTP.AtomicWord' is created.
 agdafy ∷ String → String
 agdafy = map repl
     where repl '_' = '-'
           repl  a  = a
 
+-- | Redirect all stdout output into a file or do nothing (in case of
+-- 'Nothing')
 stdout2file ∷ Maybe FilePath → IO ()
 stdout2file Nothing  = return ()
 stdout2file (Just o) = openFile o WriteMode >>= flip hDuplicateTo stdout

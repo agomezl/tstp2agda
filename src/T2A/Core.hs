@@ -18,7 +18,9 @@ import Data.List     (isPrefixOf)
 import Util          ((▪),βshow)
 
 -- Single function signature
--- | An Agda type signature @α : τ@
+-- | An
+-- <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda>
+-- type signature @α : τ@
 data AgdaSignature = Signature String [Formula]
                    -- ^ Regular top level signature
                    | ScopedSignature String [Formula]

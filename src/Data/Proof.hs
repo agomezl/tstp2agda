@@ -76,7 +76,8 @@ type ProofMap = Map String F
 -- not all values in 'm' are used.
 buildProofTree ∷ ProofMap     -- ^ 'Map' for resolving dependencies
                → F            -- ^ Root formula
-               → ProofTree    -- ^ Tree of formulas with 'f' as root
+               → ProofTree    -- ^ Tree of formulas with the given
+                              -- formula as root
 buildProofTree _ (F n R.Axiom _ _)      = Leaf R.Axiom n
 buildProofTree _ (F n R.Conjecture _ _) = Leaf R.Conjecture n
 buildProofTree m (F n R.Plain _ s)      = caseSrc s
@@ -100,15 +101,15 @@ getParentsTree ∷ ProofMap    -- ^ 'Map'
 getParentsTree m p = map (buildProofTree m) $ getParents m p
 
 -- | 'getParents' 'm' 'p', from a 'Map' 'm' and a list of parents 'p'
--- return a list of corresponding parent formulas.
+-- returns a list of corresponding parent formulas.
 getParents ∷ ProofMap -- ^ 'Map'
            → [Parent] -- ^ List of 'Parents
            → [F]      -- ^ List of parent formulas
 getParents ω ρ = catMaybes $ map (flip M.lookup $ ω) parents
     where parents  = map (\(Parent s _) → s) ρ
 
--- | When an unknown 'R.Rule','Source', or other unexpected data type
--- is found a 'Leaf' With an R.Unknown' 'Role' and error message is
+-- | When an unknown 'R.Rule', 'Source', or other unexpected data type
+-- is found a 'Leaf' With an 'R.Unknown' 'R.Role' and error message is
 -- created.
 unknownTree ∷ (Show a) ⇒
               String     -- ^ Description of the unexpected data type

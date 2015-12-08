@@ -19,7 +19,9 @@ module T2A (
            --   fof(a2,conjecture,a).
            -- @
            --
-           -- And the corresponding proof
+           -- and the corresponding
+           -- <http://www.gilith.com/software/metis/  Metis>
+           -- proof
            --
            -- @
            --   $ cat proof.tstp
@@ -57,18 +59,17 @@ module T2A (
            --   let prooftree = 'map' ('buildProofTree' proofmap) refutes
            -- @
            --
-           -- And the call the varios printing functions en the desired order
-           --
+           -- and then print the actual Agda code
            -- @
-           --   -- PREAMBLE : module definitions and imports
+           --   -- PREAMBLE: module definitions and imports
            --   'printPreamble' \"BaseProof\"
-           --   -- STEP 1 : Print auxiliary functions
+           --   -- STEP 1: Print auxiliary functions
            --   'printAuxSignatures' proofmap prooftree
-           --   -- STEP 2 : Subgoal handling
+           --   -- STEP 2: Subgoal handling
            --   'printSubGoals' subgoals conj "goals"
-           --   -- STEP 3 : Print main function signature
+           --   -- STEP 3: Print main function signature
            --   'printProofBody' axioms conj "proof" subgoals "goals"
-           --   -- STEP 4 : Print all the step of the proof as local definitions
+           --   -- STEP 4: Print all the step of the proof as local definitions
            --   'mapM_' ('printProofWhere' proofmap  prooftree
            -- @
            --
@@ -101,7 +102,7 @@ module T2A (
            , getRefutes
            , getAxioms
            , getConjeture
-           -- * Agda translation
+           -- * <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda> translation
            , printPreamble
            , printAuxSignatures
            , printSubGoals
@@ -130,7 +131,7 @@ import Util               ((▪),unique,printInd,putStrLnInd,swapPrefix)
 import qualified Data.Foldable as F (find)
 
 
--- | Extract sub-goals from a list of formulae.
+-- | Extract subgoals from a list of formulae.
 getSubGoals ∷ [F] → [F]
 getSubGoals rules = filter (isPrefixOf "subgoal" . name) rules
 
@@ -156,11 +157,11 @@ printPreamble moduleName = do
   putStrLn $ "open import Data.FOL.Shallow"
   putStrLn []
 
--- | Print a series of auxiliary functions requiered to perform most
--- of the steps of the proof. Every 'Formula' has a corresponding
+-- | Print a series of auxiliary functions required to perform most
+-- of the steps of the proof. Every 'Data.TSTP.Formula' has a corresponding
 -- function which has its parents as arguments and the current
 -- function as return value. Since a proof is split in various
--- sub-goals, this function receives a list of sub-'ProofTree's
+-- subgoals, this function receives a list of sub-'ProofTree's
 --
 -- @
 --    fun-stepₘ_ₙ : { ν₀ ... νᵢ : Set } → stepₘ_ₙ₁ → ... → stepₘ_ₙⱼ → stepₘ_ₙ

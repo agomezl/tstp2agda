@@ -20,7 +20,7 @@ module Data.TSTP (
                  , Formula(..)
                  , Term(..)
                  -- ** 'Show' instances
-                 -- | 'Formula','Term', and other data types in this section
+                 -- | 'Formula', 'Term' and other data types in this section
                  -- have 'Show' instances that allow pretty-printing
                  -- of 'Formulas' and 'Show' @['Formula']@ is an
                  -- especial instance that print its contents as
@@ -95,7 +95,7 @@ data Role = Axiom
 -- | Main formula type, it contains all the elements and information
 -- of a TSTP formula definition. While 'name', 'role', and 'formula'
 -- are self-explanatory, 'source' is a messy meta-language in itself,
--- different ATP may embed different amounts of information in it.
+-- different ATPs may embed different amounts of information in it.
 data F = F { name    ∷ String,
              role    ∷ Role,
              formula ∷ Formula,
@@ -105,8 +105,9 @@ data F = F { name    ∷ String,
 
 -- | 'Source' main purpose is to provide all the information regarding
 -- the deductive process that lead to a given formula. Information
--- about the rules applied along with parent formulas and SZS status
--- are among the information you might expect from this field.
+-- about the rules applied along with parent formulas and
+-- <http://www.cs.miami.edu/~tptp/TPTP/TPTPTParty/2007/PositionStatements/GeoffSutcliffe_SZS.html SZS>
+-- status are among the information you might expect from this field.
 data Source = Source String
             | Inference Rule [Info] [Parent]
             | Introduced IntroType [Info]
@@ -167,7 +168,7 @@ data Status = Suc | Unp | Sap | Esa | Sat
 -- and is just a simplified version of the the datatypes
 -- (without the Indirect composite)
 
--- | FOL formula.
+-- | first-order logic formula.
 data Formula = BinOp Formula BinOp Formula    -- ^ Binary connective application
              | InfixPred Term InfixPred Term  -- ^ Infix predicate application
              | PredApp AtomicWord [Term]      -- ^ Predicate application
@@ -202,7 +203,7 @@ instance Show [Formula] where
                       [] → []
                       (y:ys) → '{' ▪ foldl (▪) (βshow y) ys ▪ ": Set} →"
 
--- | FOL terms.
+-- | First-order logic terms.
 data Term = Var V                             -- ^ Variable
           | NumberLitTerm Rational            -- ^ Number literal
           | DistinctObjectTerm String         -- ^ Double-quoted item
@@ -252,7 +253,7 @@ instance Show BinOp where
     show (:~|:)  = "⊽"
     show (:<~>:) = "⊕"
 
--- | /Term -> Term -> Formula/ infix connectives.
+-- | Infix connectives of the form /Term -> Term -> Formula/.
 data InfixPred =  (:=:)  -- ^ =
                |  (:!=:) -- ^ ≠
                   deriving (Eq,Ord,Read)
@@ -302,7 +303,8 @@ freeVarsT (Var x)         = singleton x
 freeVarsT (FunApp _ args) = unions (fmap freeVarsT args)
 freeVarsT _               = empty
 
--- | Metadata (the /general_data/ rule in TPTP's grammar)
+-- | Metadata (the /general_data/ rule in
+--   <http://www.cs.miami.edu/~tptp/ TPTP>'s grammar)
 data GData = GWord AtomicWord
                  | GApp AtomicWord [GTerm]
                  | GVar V
@@ -312,7 +314,8 @@ data GData = GWord AtomicWord
                  | GFormulaTerm String Term
                    deriving (Eq,Ord,Show,Read)
 
--- | Metadata (the /general_term/ rule in TPTP's grammar)
+-- | Metadata (the /general_term/ rule in
+--   <http://www.cs.miami.edu/~tptp/ TPTP>'s grammar)
 data GTerm = ColonSep GData GTerm
            | GTerm GData
            | GList [GTerm]
