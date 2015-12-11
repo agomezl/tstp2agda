@@ -102,8 +102,8 @@ swapPrefix a b str
 
 -- | <http://www.gilith.com/software/metis/ Metis>
 -- identifiers usually contain @_@ characters which are invalid in
--- <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda>
--- ,'agdafy' replaces @normalize_0_0@ with @normalize-0-0@.  This is
+-- <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda>, 'agdafy'
+-- replaces @normalize_0_0@ with @normalize-0-0@.  This is
 -- mostly used inside the
 -- <https://www.haskell.org/happy/ Happy>
 -- parser every time an 'Data.TSTP.AtomicWord' is created.

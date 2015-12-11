@@ -60,6 +60,7 @@ module T2A (
            -- @
            --
            -- and then print the actual Agda code
+           --
            -- @
            --   -- PREAMBLE: module definitions and imports
            --   'printPreamble' \"BaseProof\"
