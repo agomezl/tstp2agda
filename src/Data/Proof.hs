@@ -19,6 +19,7 @@ module Data.Proof (
                     ProofTreeGen(..)
                   , ProofTree
                   , ProofMap
+                  , IdSet
                   -- * Constructors
                   , buildProofTree
                   , buildProofMap
@@ -33,6 +34,7 @@ import Data.Map as M            (lookup)
 import Data.Maybe               (catMaybes)
 import Data.TSTP                (Formula(..),F(..),Parent(..),Source(..))
 import qualified Data.TSTP as R (Role(..),Rule(..))
+import Data.Set                 (Set)
 #if MIN_VERSION_base(4,7,0)
 import Prelude hiding           (foldr,foldl)
 import Control.Applicative      ((<$>),(<*>))
@@ -49,6 +51,9 @@ data ProofTreeGen a =
     -- (usually 'String', 'F' or 'Formula'),  and dependencies 'd'.
     Root R.Rule a [ProofTreeGen a]
          deriving (Eq,Ord,Show)
+
+-- | Simple type for sets of identifiers whit associated scopes
+type IdSet = Set (Int,String)
 
 -- | Concrete instance of 'ProofTreeGen' with 'String' as
 -- contents. Each node contains the name of a corresponding formula,

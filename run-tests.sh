@@ -2,7 +2,7 @@
 
 TSTP_EXAMPLES=examples/proof
 TEST_DIR=$$.test
-SUCCESS=0
+FAIL=0
 TEST_N=1
 
 function do_test {
@@ -15,7 +15,7 @@ function do_test {
     FILE=${MOD}.agda
     cabal run -- -f $1 -o ${TEST_DIR}/${FILE} -m ${MOD}
     agda -i src/ -i ${TEST_DIR}/ ${TEST_DIR}/${FILE} \
-        && ((++SUCCESS)) || echo "FAILURE with ${MOD}"
+        || ( echo "FAILURE with ${MOD}" ; ((++FAIL)) )
     echo
 }
 
@@ -32,4 +32,4 @@ do
     do_test ${TEST}
 done
 
-[ ${SUCCESS} -lt 2 ] && exit 1 || exit 0
+[ ${FAIL} -eq 0 ] && exit 0 || exit 1

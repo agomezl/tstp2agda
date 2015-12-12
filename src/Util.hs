@@ -29,13 +29,18 @@ module Util (
             -- * Others
             , agdafy
             , stdout2file
+            , checkIdScope
             ) where
 
 import Data.Foldable      (toList)
-import Data.Set           (fromList)
+import Data.Set           (fromList,Set)
 import Data.List          (isPrefixOf)
 import System.IO          (IOMode(WriteMode),openFile,stdout)
 import GHC.IO.Handle      (hDuplicateTo)
+#if MIN_VERSION_base(4,7,0)
+import Prelude hiding     (any)
+import Data.Foldable      (any)
+#endif
 
 infixr 4 ▪
 
@@ -117,3 +122,8 @@ agdafy = map repl
 stdout2file ∷ Maybe FilePath → IO ()
 stdout2file Nothing  = return ()
 stdout2file (Just o) = openFile o WriteMode >>= flip hDuplicateTo stdout
+
+-- | 'checkIdScope' @i t s@ check if any name in @s@ has a more
+-- general scope than @t@ with level @i@
+checkIdScope ∷ Int → String → Set (Int,String) → Bool
+checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) s

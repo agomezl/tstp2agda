@@ -119,15 +119,17 @@ import Data.TSTP          (Role(Axiom,Conjecture),F,role,name,formula,bottom)
 import Data.TSTP          (Rule(Negate,Strip),getFreeVars)
 import Data.List          (find,isPrefixOf)
 import Data.Map as M      (lookup)
+import Data.Set as S      (Set,empty,union,singleton,insert)
 import TSTP               (parseFile)
 import Data.Proof         (buildProofMap,buildProofTree,ProofMap,ProofTree)
 import Data.Maybe         (catMaybes, fromMaybe)
-import Data.Proof         (ProofTreeGen(..))
+import Data.Proof         (ProofTreeGen(..),IdSet)
 import Data.Foldable      (toList)
 import Control.Monad      (foldM)
 import T2A.Core           (buildSignature)
 import T2A.Core           (AgdaSignature(Signature,ScopedSignature))
-import Util               ((▪),unique,printInd,putStrLnInd,swapPrefix)
+import Util               ((▪),unique,printInd,putStrLnInd)
+import Util               (swapPrefix,checkIdScope)
 
 import qualified Data.Foldable as F (find)
 
@@ -248,26 +250,29 @@ printProofWhere ∷ ProofMap → ProofTree → IO ()
 printProofWhere m t = do
   let subgoal = fromMaybe (error "No subgoal") $ F.find (isPrefixOf "subgoal") t
   let negate  = fromMaybe (error "No negate")  $ F.find (isPrefixOf "negate")  t
-  (i,a) ← printProofWhereBody 4 m t
+  (i,a,s) ← printProofWhereBody 4 m t empty
   putStrLnInd 4 $  subgoal ▪ "=" ▪ "proofByContradiction" ▪ ("fun-" ++ negate)
   return ()
 
-printProofWhereBody ∷ Int → ProofMap → ProofTree → IO (Int,String)
-printProofWhereBody _ _ (Leaf _ a)         = return (4,a)
-printProofWhereBody ind _ (Root Strip a _) = return (4,a)
-printProofWhereBody ind m (Root r a p) = do
-  let scopeFold (i,a) b = do
-        (i₀,a₀) ← printProofWhereBody i m b
-        return (max i i₀, a ▪ a₀)
-  (ξ,ρ) ← foldM scopeFold (ind,"fun-" ++ a) p
-  case r of
-    Negate → do
-           let f = fromMaybe (error "Error formula not found") (M.lookup a m)
-           printInd ξ $ ScopedSignature ("fun-" ++ a) [formula f,bottom]
-           let negLHS = swapPrefix "negate" "refute" a
-           putStrLnInd ξ $ ("fun-" ++ a) ▪ a ▪ "=" ▪ negLHS
-           putStrLnInd (ξ + 2) "where"
-           return (ξ + 4, a)
-    _      → do
-           putStrLnInd ξ $ a ▪ "=" ▪ ρ
-           return (ξ,a)
+printProofWhereBody ∷ Int → ProofMap → ProofTree → IdSet → IO (Int,String,IdSet)
+printProofWhereBody _ _ (Leaf _ a)         _ = return (4,a,empty)
+printProofWhereBody ind _ (Root Strip a _) _ = return (4,a,empty)
+printProofWhereBody ind m (Root r a p) ω =
+    if checkIdScope ind a ω
+    then return (4,a,empty)
+    else do
+      let scopeFold (i,a,s) b = do
+            (i₀,a₀,s₀) ← printProofWhereBody i m b s
+            return (max i i₀, a ▪ a₀, s `union` s₀)
+      (ξ,ρ,s) ← foldM scopeFold (ind,"fun-" ++ a,insert (ind,a) ω ) p
+      case r of
+        Negate → do
+               let f = fromMaybe (error "Error formula not found") (M.lookup a m)
+               printInd ξ $ ScopedSignature ("fun-" ++ a) [formula f,bottom]
+               let negLHS = swapPrefix "negate" "refute" a
+               putStrLnInd ξ $ ("fun-" ++ a) ▪ a ▪ "=" ▪ negLHS
+               putStrLnInd (ξ + 2) "where"
+               return (ξ + 4, a,s)
+        _      → do
+               putStrLnInd ξ $ a ▪ "=" ▪ ρ
+               return (ξ,a,s)
