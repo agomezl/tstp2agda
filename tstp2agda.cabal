@@ -2,7 +2,12 @@ name:                tstp2agda
 version:             0.1.0.0
 synopsis:            Proof-term reconstruction from TSTP to Agda
 description:
-            A library for translating <http://www.cs.miami.edu/~tptp/TSTP/ TSTP>
+            [Author]   Alejandro Gómez-Londoño
+            [Email]    agomezl@eafit.edu.co
+            [homepage] https://github.com/agomezl/tstp2agda
+            [Issues]   https://github.com/agomezl/tstp2agda/issues
+            [Description] A library for translating <http://www.cs.miami.edu/~tptp/TSTP/ TSTP>
+
             proofs into <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda> code
             .
             To get started see the documentation for 'T2A' module below
@@ -18,11 +23,12 @@ description:
             * Duplication errors with some proofs
             .
 
+
 license:             MIT
 license-file:        LICENSE
 author:              Alejandro Gómez-Londoño <agomezl@eafit.edu.co>
 maintainer:          Alejandro Gómez-Londoño <agomezl@eafit.edu.co>
--- copyright:
+copyright:
 category:            Language
 build-type:          Simple
 -- extra-source-files:
