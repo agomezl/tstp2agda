@@ -128,6 +128,7 @@ import Data.Foldable      (toList)
 import Control.Monad      (foldM)
 import T2A.Core           (buildSignature)
 import T2A.Core           (AgdaSignature(Signature,ScopedSignature))
+import T2A.Tactics        (resolveTacticGen)
 import Util               ((▪),unique,printInd,putStrLnInd)
 import Util               (swapPrefix,checkIdScope)
 
@@ -158,6 +159,7 @@ printPreamble ∷ String -- ^ Module name
 printPreamble moduleName = do
   putStrLn $ "module" ▪ moduleName ▪ "where"
   putStrLn $ "open import Data.FOL.Shallow"
+  putStrLn $ "open import Function using (id)"
   putStrLn []
 
 -- | Print a series of auxiliary functions required to perform most
@@ -172,13 +174,13 @@ printPreamble moduleName = do
 printAuxSignatures ∷ ProofMap    -- ^ map of formulas
                    → [ProofTree] -- ^ list of subgoals
                    → IO ()
-printAuxSignatures ω γ = mapM_ lineP signatures
+printAuxSignatures ω γ = mapM_ resolveTacticGen signatures
     where signatures = unique . concat . map signature $ γ
           signature t = catMaybes -- Remove Nothings
                         . toList  -- Flatten the tree
                                   -- Build (only) the requiered functions
                         . fmap (buildSignature ω) $ t
-          lineP s = (putStrLn $ "postulate" ▪ s) >> putStrLn []
+
 
 
 -- | Print the main subgoal implication function
