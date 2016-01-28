@@ -42,6 +42,6 @@ ${BIN_DIR} :
 
 clean :
 	rm -fr ${BIN_DIR}
-	rm ${SRC_DIR}/TSTP/Lexer.hs
-	rm ${SRC_DIR}/TSTP/Parser.hs
+	rm -f ${SRC_DIR}/TSTP/Lexer.hs
+	rm -f ${SRC_DIR}/TSTP/Parser.hs
 	find ${SRC_DIR} -regex ".*\(\.hi\|\.o\|\.agdai\)$$" -exec rm -f {} \;
