@@ -30,7 +30,7 @@ trap cleanup EXIT SIGINT SIGTERM
 
 mkdir -p ${TEST_DIR}
 
-if ! [ -d ${STDLIB} ] || git clone -b 2.4.2.3 ${STDLIB_GIT}
+if ! ([ -d ${STDLIB} ] || git clone -b 2.4.2.3 ${STDLIB_GIT})
 then echo "Failure downloading Agda library"
      exit 1
 fi
