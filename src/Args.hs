@@ -34,19 +34,19 @@ data Conf = Conf {
 options ∷ [OptDescr Flag]
 options =
   [Option ['f'] ["file","File"] (ReqArg InFile "File")
-   "TSTP input file",
+   "TSTP input file     (def: STDIN)",
    Option ['o'] ["output"] (ReqArg OutFile "File")
-   "output to file",
+   "output to file      (def: STDOUT)",
    Option ['p'] ["proof-name"] (ReqArg ProofName "Name")
-   "main proof name",
+   "main proof name     (def: proof)",
    Option ['m'] ["module-name"] (ReqArg ModuleName "Name")
-   "module name",
+   "module name         (def: Main)",
    Option ['h','?'] ["help"] (NoArg Help)
    "prints help message"
   ]
 
 defaultConf ∷ Conf
-defaultConf = Conf Nothing Nothing False "Main" "Proof"
+defaultConf = Conf Nothing Nothing False "Main" "proof"
 
 compileOpts ∷ [String] → Either Conf String
 compileOpts argv =
@@ -56,7 +56,7 @@ compileOpts argv =
     ([],[f],[]) → Left  $ defaultConf { inputFile = Just f }
     (_ ,_  ,[]) → Right $ "bad parameters\n" ++ usageInfo header options
     (_ ,_  ,e ) → Right $ concat e ++ usageInfo header options
-  where header = "Usage: tstp2agda [-f] file"
+  where header = "Usage: tstp2agda [OPTIONS]"
 
 parseOpts ∷ [Flag] → Conf → Conf
 parseOpts [] conf     = conf
@@ -70,4 +70,4 @@ parseOpts (x:xs) conf = parseOpts xs $ update x
 helpmsg ∷ IO ()
 helpmsg = putStrLn $ usageInfo msg options
   where
-    msg = "Usage: tstp2agda [-f] file"
+    msg = "Usage: tstp2agda [OPTIONS]"
