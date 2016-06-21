@@ -1,0 +1,87 @@
+
+# Auto-Ordering is analysing problem.
+# Problem is type HUNFGFFSF00SS
+# Auto-mode selected ordering type LPO4
+# Auto-mode selected ordering precedence scheme <invfreq>
+# Auto-mode selected weight ordering scheme <invfreqrank>
+#
+# Auto-Heuristic is analysing problem.
+# Problem is type HUNFGFFSF00SS
+# Auto-Mode selected heuristic G_E___208_C18_F1_SE_CS_SP_PS_S0Y
+# and selection function SelectMaxLComplexAvoidPosPred.
+#
+# No equality, disabling AC handling.
+#
+# Initializing proof state
+#
+#cnf(i_0_4, negated_conjecture, (~z)).
+#
+#cnf(i_0_1, plain, (a)).
+#
+#cnf(i_0_2, plain, (b)).
+## Presaturation interreduction done
+
+# Proof found!
+# SZS status Theorem
+digraph proof{
+  rankdir=TB
+  subgraph ax{
+  rank="same";
+  0 [shape=box,fillcolor=ivory1,style=filled,label="fof(c_0_0, axiom, (((a&b)=>z)),\nfile('Basic-1.tptp', a3))."]
+  1 [shape=box,fillcolor=lightpink1,style=filled,label="fof(c_0_1, conjecture, (z),\nfile('Basic-1.tptp', a4))."]
+  2 [shape=box,fillcolor=ivory1,style=filled,label="fof(c_0_2, axiom, (a),\nfile('Basic-1.tptp', a1))."]
+  3 [shape=box,fillcolor=ivory1,style=filled,label="fof(c_0_3, axiom, (b),\nfile('Basic-1.tptp', a2))."]
+   }
+  4 [shape=box,fillcolor=ivory1,style=filled,label="fof(c_0_4, plain, (((~a|~b)|z)),\ninference(fof_nnf,[status(thm)],[c_0_0]))."]
+    0 -> 4
+  5 [shape=box,fillcolor=lightskyblue1,style=filled,label="fof(c_0_5, negated_conjecture, (~z),\ninference(fof_simplification,[status(thm)],[inference(assume_negation,[status(cth)],[c_0_1])]))."]
+    1 -> 5
+  6 [shape=box,fillcolor=ivory1,style=filled,label="cnf(c_0_6, plain, (z|~b|~a),\ninference(split_conjunct,[status(thm)],[c_0_4]))."]
+    4 -> 6
+  7 [shape=box,fillcolor=ivory1,style=filled,label="cnf(c_0_7, plain, (a),\ninference(split_conjunct,[status(thm)],[c_0_2]))."]
+    2 -> 7
+  8 [shape=box,fillcolor=ivory1,style=filled,label="cnf(c_0_8, plain, (b),\ninference(split_conjunct,[status(thm)],[c_0_3]))."]
+    3 -> 8
+  9 [shape=box,fillcolor=lightskyblue1,style=filled,label="cnf(c_0_9, negated_conjecture, (~z),\ninference(split_conjunct,[status(thm)],[c_0_5]))."]
+    5 -> 9
+  10 [shape=box,fillcolor=ivory1,style=filled,label="cnf(c_0_10, plain, ($false),\ninference(sr,[status(thm)],[inference(cn,[status(thm)],[inference(rw,[status(thm)],[inference(rw,[status(thm)],[c_0_6, c_0_7]), c_0_8])]), c_0_9]))."]
+    9 -> 10
+    8 -> 10
+    7 -> 10
+    6 -> 10
+}
+# Parsed axioms                        : 4
+# Removed by relevancy pruning/SinE    : 0
+# Initial clauses                      : 4
+# Removed in clause preprocessing      : 0
+# Initial clauses in saturation        : 4
+# Processed clauses                    : 4
+# ...of these trivial                  : 0
+# ...subsumed                          : 0
+# ...remaining for further processing  : 3
+# Other redundant clauses eliminated   : 0
+# Clauses deleted for lack of memory   : 0
+# Backward-subsumed                    : 0
+# Backward-rewritten                   : 0
+# Generated clauses                    : 0
+# ...of the previous two non-trivial   : 0
+# Contextual simplify-reflections      : 0
+# Paramodulations                      : 0
+# Factorizations                       : 0
+# Equation resolutions                 : 0
+# Current number of processed clauses  : 3
+#    Positive orientable unit clauses  : 2
+#    Positive unorientable unit clauses: 0
+#    Negative unit clauses             : 1
+#    Non-unit-clauses                  : 0
+# Current number of unprocessed clauses: 0
+# ...number of literals in the above   : 0
+# Clause-clause subsumption calls (NU) : 0
+# Rec. Clause-clause subsumption calls : 0
+# Non-unit clause-clause subsumptions  : 0
+# Unit Clause-clause subsumption calls : 0
+# Rewrite failures with RHS unbound    : 0
+# BW rewrite match attempts            : 0
+# BW rewrite match successes           : 0
+# Condensation attempts                : 0
+# Condensation successes               : 0
