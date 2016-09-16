@@ -1,17 +1,12 @@
-[![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https://travis-ci.org/agomezl/tstp2agda)
+# tstp2agda [![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https://travis-ci.org/agomezl/tstp2agda)
 
-# tstp2agda
-
-Proof reconstruction from TSTP to Agda
-
+A proof reconstruction tool for Agda
 
 ## Installation
 
 ```bash
 $ git clone https://github.com/agomezl/tstp2agda.git
 $ cd tstp2agda
-# For the civilized man
-$ cabal sandbox init
 $ cabal install
 ```
 
