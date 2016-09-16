@@ -1,6 +1,6 @@
 # tstp2agda [![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https://travis-ci.org/agomezl/tstp2agda)
 
-A proof tool that translate TSTP proofs to Agda code.
+A proof tool for translating TSTP proofs to Agda code. Only [Metis](http://www.gilith.com/software/metis/) proofs for now.
 
 ## Installation
 
@@ -31,7 +31,7 @@ Given a problem in TPTP format like this one
   fof(a1,axiom,a).
   fof(a2,conjecture,a).
 ```
-We can get a proof  in TSTP format using the ATP [Metis](http://www.gilith.com/software/metis/)
+We can get a proof  in TSTP format using the ATP Metis
 
 ```Bash
    $ cat proof.tstp
