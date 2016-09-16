@@ -38,7 +38,6 @@ before_install:
  - export ALEXVER=3.1.7
  - export T2A_HOME=`pwd`
  - export PATH=~/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:/opt/happy/$HAPPYVER/bin:/opt/alex/$ALEXVER/bin:$PATH
- - cabal install agda
 
 install:
  - cabal --version
@@ -75,6 +74,8 @@ install:
       cp -a $HOME/.ghc $HOME/.cabsnap/ghc;
       cp -a $HOME/.cabal/lib $HOME/.cabal/share $HOME/.cabal/bin installplan.txt $HOME/.cabsnap/;
    fi
+ - cabal install cabal-install
+ - cabal install agda
 
 # Here starts the actual work to be performed for the package under test;
 # any command which exits with a non-zero exit code causes the build to fail.
