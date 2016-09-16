@@ -12,8 +12,9 @@ bug-reports:   https://github.com/agomezl/tstp2agda/issues/
 synopsis:      Proof-term reconstruction from TSTP to Agda
 tested-with:   GHC == 8.0.1
 description:
-  A library for translating <http://www.cs.miami.edu/~tptp/TSTP/ TSTP>
+  A haskell program for translating <http://www.cs.miami.edu/~tptp/TSTP/ TSTP>
   proofs into <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda> code.
+  A library is available as well.
 extra-source-files:
   README.md
 
