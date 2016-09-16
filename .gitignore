@@ -1,5 +1,7 @@
 *.agdai
 *.hi
-dist/
-bin/
 *.o
+.cabal-sandbox/
+bin/
+cabal.sandbox.config
+dist/
