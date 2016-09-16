@@ -1,136 +1,44 @@
-{-# LANGUAGE UnicodeSyntax #-}
---------------------------------------------------------------------------------
--- File   : T2A
--- Author : Alejandro Gómez-Londoño
--- Date   : Fri Nov 27 14:01:12 2015
--- Description :
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
+-- | T2A module
+
+{-# LANGUAGE UnicodeSyntax #-}
 
 module T2A (
-           -- * How to use tstp2agda
-           -- | Let use an example, given this problem
-           --
-           -- @
-           --   $ cat problem.tstp
-           --   fof(a1,axiom,a).
-           --   fof(a2,conjecture,a).
-           -- @
-           --
-           -- and the corresponding
-           -- <http://www.gilith.com/software/metis/  Metis>
-           -- proof
-           --
-           -- @
-           --   $ cat proof.tstp
-           --   ---------------------------------------------------------------------------
-           --   SZS status Theorem for examples/problem/Test-1.tstp
-           --   SZS output start CNFRefutation for examples/problem/Test-1.tstp
-           --   fof(a1, axiom, (a)).
-           --   fof(a2, conjecture, (a)).
-           --   fof(subgoal_0, plain, (a), inference(strip, [], [a2])).
-           --   fof(negate_0_0, plain, (~ a), inference(negate, [], [subgoal_0])).
-           --   fof(normalize_0_0, plain, (~ a),
-           --       inference(canonicalize, [], [negate_0_0])).
-           --   fof(normalize_0_1, plain, (a), inference(canonicalize, [], [a1])).
-           --   fof(normalize_0_2, plain, ($false),
-           --       inference(simplify, [], [normalize_0_0, normalize_0_1])).
-           --   cnf(refute_0_0, plain, ($false),
-           --       inference(canonicalize, [], [normalize_0_2])).
-           --   SZS output end CNFRefutation for examples/problem/Test-1.tstp
-           -- @
-           -- we create some requiered data structures
-           --
-           -- @
-           -- main ∷ IO ()
-           -- main = do
-           --   -- read the file
-           --   formulas ← 'parseFile' "proof.tstp"
-           --   -- create a map
-           --   proofmap ← 'buildProofMap' formulas
-           --   -- get subgoals,refutes,axioms, and the conjecture
-           --   let subgoals    = 'getSubGoals' formulas
-           --   let refutes     = 'getRefutes' formulas
-           --   let axioms      = 'getAxioms' formulas
-           --   let (Just conj) = 'getConjeture' formulas
-           --   -- build a 'proofTree' for each subgoal (using his associated refute)
-           --   let prooftree = 'map' ('buildProofTree' proofmap) refutes
-           -- @
-           --
-           -- and then print the actual Agda code
-           --
-           -- @
-           --   -- PREAMBLE: module definitions and imports
-           --   'printPreamble' \"BaseProof\"
-           --   -- STEP 1: Print auxiliary functions
-           --   'printAuxSignatures' proofmap prooftree
-           --   -- STEP 2: Subgoal handling
-           --   'printSubGoals' subgoals conj "goals"
-           --   -- STEP 3: Print main function signature
-           --   'printProofBody' axioms conj "proof" subgoals "goals"
-           --   -- STEP 4: Print all the step of the proof as local definitions
-           --   'mapM_' ('printProofWhere' proofmap  prooftree
-           -- @
-           --
-           -- and then get
-           --
-           -- @
-           --   module BaseProof where
-           --   open import Data.FOL.Shallow
-           --   postulate fun-normalize-0-0 : { a : Set} → ¬ a → ¬ a
-           --   postulate fun-normalize-0-1 : { a : Set} → a → a
-           --   postulate fun-normalize-0-2 : { a : Set} → ¬ a → a → ⊥
-           --   postulate fun-refute-0-0 :  ⊥ → ⊥
-           --   postulate goals : { a : Set} → a → a
-           --   proof : { a : Set} → a → a
-           --   proof {a} a1 = goals subgoal-0
-           --     where
-           --       fun-negate-0-0 : ¬ a → ⊥
-           --       fun-negate-0-0 negate-0-0 = refute-0-0
-           --         where
-           --           normalize-0-0 = fun-normalize-0-0 negate-0-0
-           --           normalize-0-1 = fun-normalize-0-1 a1
-           --           normalize-0-2 = fun-normalize-0-2 normalize-0-0 normalize-0-1
-           --           refute-0-0 = fun-refute-0-0 normalize-0-2
-           --       subgoal-0 = proofByContradiction fun-negate-0-0
-           -- @
-           --
+   -- * Getters
+     getSubGoals
+   , getRefutes
+   , getAxioms
+   , getConjeture
+   -- * <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda> translation
+   , printPreamble
+   , printAuxSignatures
+   , printSubGoals
+   , printProofBody
+   , printProofWhere
+   , buildProofMap
+   , buildProofTree
+   -- * TSTP parsing
+   , parseFile
+   ) where
 
-           -- * Getters
-             getSubGoals
-           , getRefutes
-           , getAxioms
-           , getConjeture
-           -- * <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda> translation
-           , printPreamble
-           , printAuxSignatures
-           , printSubGoals
-           , printProofBody
-           , printProofWhere
-           , buildProofMap
-           , buildProofTree
-           -- * TSTP parsing
-           , parseFile
-           ) where
-
-import Data.TSTP          (Role(Axiom,Conjecture),F,role,name,formula,bottom)
-import Data.TSTP          (Rule(Negate,Strip),getFreeVars)
-import Data.List          (find,isPrefixOf)
-import Data.Map as M      (lookup)
-import Data.Set as S      (Set,empty,union,singleton,insert)
-import TSTP               (parseFile)
-import Data.Proof         (buildProofMap,buildProofTree,ProofMap,ProofTree)
-import Data.Maybe         (catMaybes, fromMaybe)
-import Data.Proof         (ProofTreeGen(..),IdSet)
-import Data.Foldable      (toList)
-import Control.Monad      (foldM)
-import T2A.Core           (buildSignature)
-import T2A.Core           (AgdaSignature(Signature,ScopedSignature))
-import T2A.Tactics        (resolveTacticGen)
-import Util               ((▪),unique,printInd,putStrLnInd)
-import Util               (swapPrefix,checkIdScope)
+import           Control.Monad (foldM)
+import           Data.Foldable (toList)
+import           Data.List     (find, isPrefixOf)
+import           Data.Map      as M (lookup)
+import           Data.Maybe    (catMaybes, fromMaybe)
+import           Data.Proof    (ProofMap, ProofTree, buildProofMap,
+                                buildProofTree)
+import           Data.Proof    (IdSet, ProofTreeGen (..))
+import           Data.Set      as S (Set, empty, insert, singleton, union)
+import           Data.TSTP     (F, Role (Axiom, Conjecture), bottom, formula,
+                                name, role)
+import           Data.TSTP     (Rule (Negate, Strip), getFreeVars)
+import           T2A.Core      (buildSignature)
+import           T2A.Core      (AgdaSignature (ScopedSignature, Signature))
+import           T2A.Tactics   (resolveTacticGen)
+import           TSTP          (parseFile)
+import           Util          (printInd, putStrLnInd, unique, (▪))
+import           Util          (checkIdScope, swapPrefix)
 
 import qualified Data.Foldable as F (find)
 
