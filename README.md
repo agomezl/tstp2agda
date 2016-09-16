@@ -71,7 +71,7 @@ Then, we create some data structures to store all information from the proof.
 ```
 And the reconstruction process takes place:
 
-``
+```
  -- PREAMBLE: module definitions and imports
  'printPreamble' \"BaseProof\"
  -- STEP 1: Print auxiliary functions
