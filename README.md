@@ -22,16 +22,16 @@ Usage: tstp2agda [OPTIONS]
 ```
 ## Inside the code
 
-### How it works
+### How it works `Main.hs`
 
-Given a problem in TPTP format like this one:
+Given a problem in TPTP format like this one
 
 ```Bash
   $ cat problem.tstp
   fof(a1,axiom,a).
   fof(a2,conjecture,a).
 ```
-we can get a proof using the ATP [Metis](http://www.gilith.com/software/metis/) in TSTP format:
+We can get a proof  in TSTP format using the ATP [Metis](http://www.gilith.com/software/metis/)
 
 ```Bash
    $ cat proof.tstp
@@ -69,9 +69,9 @@ Then, we create some data structures to store all information from the proof.
    -- build a 'proofTree' for each subgoal (using his associated refute)
    let prooftree = 'map' ('buildProofTree' proofmap) refutes
 ```
-Then, the reconstruction takes place:
+And the reconstruction process takes place:
 
-```Haskell
+``
  -- PREAMBLE: module definitions and imports
  'printPreamble' \"BaseProof\"
  -- STEP 1: Print auxiliary functions
@@ -84,7 +84,7 @@ Then, the reconstruction takes place:
  'mapM_' ('printProofWhere' proofmap  prooftree
 ```
 
-and `tstp2agda` ouputs a Agda code based on the original proof.
+And `tstp2agda` outputs a Agda code based on the original proof.
 
 ```Agda
 $ cat BaseProof.agda
@@ -107,7 +107,6 @@ proof {a} a1 = goals subgoal-0
        refute-0-0 = fun-refute-0-0 normalize-0-2
      subgoal-0 = proofByContradiction fun-negate-0-0
 ```
-
 
 ## Links
 
