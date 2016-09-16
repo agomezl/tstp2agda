@@ -3,7 +3,7 @@
 
 {-# LANGUAGE UnicodeSyntax #-}
 
-module Test.Main where
+module Main where
 
 main ∷ IO ()
 main = do

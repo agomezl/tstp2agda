@@ -2,6 +2,7 @@
 *.hi
 *.o
 .cabal-sandbox/
+agda-stdlib/
 bin/
 cabal.sandbox.config
 dist/
