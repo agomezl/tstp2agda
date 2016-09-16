@@ -1,78 +1,75 @@
-{-# LANGUAGE UnicodeSyntax #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE CPP #-}
---------------------------------------------------------------------------------
--- File   : TSTP
--- Author : Alejandro Gómez Londoño
--- Date   : Wed Feb 11 00:29:30 2015
--- Description : TSPT Data Types
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
+-- | Data.TSTP module
+
+{-# LANGUAGE CPP               #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UnicodeSyntax     #-}
+
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
-module Data.TSTP (
-                   F(..)
-                 , Role(..)
-                 -- * Formulas and terms
-                 , Formula(..)
-                 , Term(..)
-                 -- ** 'Show' instances
-                 -- | 'Formula', 'Term' and other data types in this section
-                 -- have 'Show' instances that allow pretty-printing
-                 -- of 'Formulas' and 'Show' @['Formula']@ is an
-                 -- especial instance that print its contents as
-                 -- sequence of implications
-                 --
-                 -- >>> let f1 = PredApp (AtomicWord "a") []
-                 -- >>> let f2 = PredApp (AtomicWord "b") []
-                 -- >>> let f3 = (BinOp (PredApp (AtomicWord "a") []) (:&:) (PredApp (AtomicWord "b") []))
-                 -- >>> f1
-                 -- a
-                 -- >>> f2
-                 -- b
-                 -- >>> f3
-                 -- a ∧ b
-                 -- >>> [f1,f2,f3]
-                 -- { a b : Set} → a → b → a ∧ b
-                 --
-                 -- Some syntax sugar is also present
-                 --
-                 -- >>> PredApp (AtomicWord "$false") []
-                 -- ⊥
-                 , V(..)
-                 , BinOp(..)
-                 , InfixPred(..)
-                 , Quant(..)
-                 , AtomicWord(..)
-                 -- * Source information
-                 , Source(..)
-                 , Rule(..)
-                 , Parent(..)
-                 -- * Functions
-                 , isBottom
-                 , bottom
-                 , freeVarsF
-                 , freeVarsT
-                 , getFreeVars
-                 -- * Unused types
-                 -- | The following types are required to have full
-                 -- support of the TSTP syntax but haven't been used yet
-                 -- in 'tstp2agda' aside from the parser.
-                 , IntroType(..)
-                 , Theory(..)
-                 , Info(..)
-                 , Status(..)
-                 , GData(..)
-                 , GTerm(..)
-                 ) where
+module Data.TSTP
+  ( F(..)
+  , Role(..)
+  -- * Formulas and terms
+  , Formula(..)
+  , Term(..)
+  -- ** 'Show' instances
+  -- | 'Formula', 'Term' and other data types in this section
+  -- have 'Show' instances that allow pretty-printing
+  -- of 'Formulas' and 'Show' @['Formula']@ is an
+  -- especial instance that print its contents as
+  -- sequence of implications
+  --
+  -- >>> let f1 = PredApp (AtomicWord "a") []
+  -- >>> let f2 = PredApp (AtomicWord "b") []
+  -- >>> let f3 = (BinOp (PredApp (AtomicWord "a") []) (:&:) (PredApp (AtomicWord "b") []))
+  -- >>> f1
+  -- a
+  -- >>> f2
+  -- b
+  -- >>> f3
+  -- a ∧ b
+  -- >>> [f1,f2,f3]
+  -- { a b : Set} → a → b → a ∧ b
+  --
+  -- Some syntax sugar is also present
+  --
+  -- >>> PredApp (AtomicWord "$false") []
+  -- ⊥
+  , V(..)
+  , BinOp(..)
+  , InfixPred(..)
+  , Quant(..)
+  , AtomicWord(..)
+  -- * Source information
+  , Source(..)
+  , Rule(..)
+  , Parent(..)
+  -- * Functions
+  , isBottom
+  , bottom
+  , freeVarsF
+  , freeVarsT
+  , getFreeVars
+  -- * Unused types
+  -- | The following types are required to have full
+  -- support of the TSTP syntax but haven't been used yet
+  -- in 'tstp2agda' aside from the parser.
+  , IntroType(..)
+  , Theory(..)
+  , Info(..)
+  , Status(..)
+  , GData(..)
+  , GTerm(..)
+  ) where
 
-import Util ((▪),βshow)
-import Data.Function (on)
-import Data.Set (Set,toList,fromList,difference,unions,singleton,empty)
-import Data.Monoid (mappend)
+import           Data.Function (on)
+import           Data.Monoid   (mappend)
+import           Data.Set      (Set, difference, empty, fromList, singleton,
+                                toList, unions)
+import           Util          (βshow, (▪))
+
 
 
 -- | Formula roles.
@@ -90,18 +87,19 @@ data Role = Axiom
           | FiPredicates
           | Type
           | Unknown
-          deriving (Eq,Ord,Show,Read)
+          deriving (Eq, Ord, Show, Read)
 
 -- | Main formula type, it contains all the elements and information
 -- of a TSTP formula definition. While 'name', 'role', and 'formula'
 -- are self-explanatory, 'source' is a messy meta-language in itself,
 -- different ATPs may embed different amounts of information in it.
-data F = F { name    ∷ String,
-             role    ∷ Role,
-             formula ∷ Formula,
-             source  ∷ Source
-           }
-       deriving (Eq,Ord,Show,Read)
+data F = F
+  { name    ∷ String
+  , role    ∷ Role
+  , formula ∷ Formula
+  , source  ∷ Source
+  }
+  deriving (Eq, Ord, Show, Read)
 
 -- | 'Source' main purpose is to provide all the information regarding
 -- the deductive process that lead to a given formula. Information
@@ -116,11 +114,11 @@ data Source = Source String
             | Creator String [Info]
             | Name String
             | NoSource
-            deriving (Eq,Ord,Show,Read)
+            deriving (Eq, Ord, Show, Read)
 
 -- | Parent formula information.
 data Parent = Parent String [GTerm]
-              deriving (Eq,Ord,Show,Read)
+              deriving (Eq, Ord, Show, Read)
 
 
 -- | Deduction rule applied.
@@ -129,7 +127,7 @@ data Rule   = Simplify
             | Canonicalize
             | Strip
             | NewRule String
-              deriving (Eq,Ord,Show,Read)
+            deriving (Eq, Ord, Show, Read)
 
 -- NOT BEING USED YET
 data IntroType = Definition_
@@ -137,11 +135,11 @@ data IntroType = Definition_
                | Tautology
                | Assumption_
                | UnknownType
-                 deriving (Eq,Ord,Show,Read)
+               deriving (Eq, Ord, Show, Read)
 
 -- NOT BEING USED YET
 data Theory = Equality | AC
-            deriving (Eq,Ord,Show,Read)
+            deriving (Eq, Ord, Show, Read)
 
 -- NOT BEING USED YET
 data Info   = Description String
@@ -151,7 +149,7 @@ data Info   = Description String
             | InferenceInfo Rule String [GTerm]
             | AssumptionR [String]
             | Refutation Source
-              deriving (Eq,Ord,Show,Read)
+            deriving (Eq, Ord, Show, Read)
 
 -- NOT BEING USED YET
 data Status = Suc | Unp | Sap | Esa | Sat
@@ -161,7 +159,7 @@ data Status = Suc | Unp | Sap | Esa | Sat
             | Ecs | Csa | Cth | Ceq | Unc
             | Wcc | Ect | Fun | Uns | Wuc
             | Wct | Scc | Uca | Noc | Unk
-              deriving (Eq,Ord,Show,Read)
+            deriving (Eq, Ord, Show, Read)
 
 -- The following code is based on:
 -- https://github.com/DanielSchuessler/logic-TPTP
@@ -265,7 +263,7 @@ instance Show InfixPred where
 -- | Quantifier specification.
 data Quant = All    -- ^ ∀
            | Exists -- ^ ∃
-             deriving (Eq,Ord,Show,Read)
+             deriving (Eq, Ord, Show, Read)
 
 newtype AtomicWord = AtomicWord String
     deriving (Eq,Ord,Read)
@@ -312,11 +310,11 @@ data GData = GWord AtomicWord
                  | GDistinctObject String
                  | GFormulaData String Formula
                  | GFormulaTerm String Term
-                   deriving (Eq,Ord,Show,Read)
+                 deriving (Eq, Ord, Show, Read)
 
 -- | Metadata (the /general_term/ rule in
 --   <http://www.cs.miami.edu/~tptp/ TPTP>'s grammar)
 data GTerm = ColonSep GData GTerm
            | GTerm GData
            | GList [GTerm]
-             deriving (Eq,Ord,Show,Read)
+           deriving (Eq, Ord, Show, Read)

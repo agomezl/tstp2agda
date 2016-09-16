@@ -1,27 +1,22 @@
+
+-- | Tactics
+
 {-# LANGUAGE UnicodeSyntax #-}
---------------------------------------------------------------------------------
--- File   : Tactics
--- Author : Alejandro Gómez-Londoño
--- Date   : Wed Jan 27 23:29:12 2016
--- Description :
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
-module T2A.Tactics (
-                   -- * Types
-                     Tactic
-                   -- * Solvers
-                   , resolveTactic
-                   , resolveTacticGen
-                   -- * Tactics
-                   , identity
-                   ) where
+module T2A.Tactics
+  ( -- * Types
+    Tactic
+    -- * Solvers
+  , resolveTactic
+  , resolveTacticGen
+  -- * Tactics
+  , identity
+  ) where
 
-import Data.TSTP  (Formula(..))
-import Data.Maybe (mapMaybe)
-import T2A.Core   (AgdaSignature(Signature))
-import Util               ((▪))
+import           Data.Maybe (mapMaybe)
+import           Data.TSTP  (Formula (..))
+import           T2A.Core   (AgdaSignature (Signature))
+import           Util       ((▪))
 
 -- | A 'Tactic' is a function that tries to give a corresponding
 -- implementation to a Metis-generated proof step:

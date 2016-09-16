@@ -1,45 +1,41 @@
-{-# LANGUAGE UnicodeSyntax #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE CPP #-}
---------------------------------------------------------------------------------
--- File   : Util
--- Author : Alejandro Gomez
--- Date   : Tue Oct 27 13:18:40 2015
--- Description :
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
+-- | Util module
+
+{-# LANGUAGE CPP                       #-}
+{-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE FlexibleInstances         #-}
+{-# LANGUAGE UndecidableInstances      #-}
+{-# LANGUAGE UnicodeSyntax             #-}
+
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
+
 -- Assume we are using the newest versions when using ghci without cabal
 module Util (
-            -- * Spaced concatenation
-              (▪)
-            , BShow(..)
-            -- * Printing with indentation
-            , printInd
-            , putStrLnInd
-            -- * List manipulation
-            , unique
-            , swapPrefix
-            -- * Others
-            , agdafy
-            , stdout2file
-            , checkIdScope
-            ) where
+  -- * Spaced concatenation
+    (▪)
+  , BShow(..)
+  -- * Printing with indentation
+  , printInd
+  , putStrLnInd
+  -- * List manipulation
+  , unique
+  , swapPrefix
+  -- * Others
+  , agdafy
+  , stdout2file
+  , checkIdScope
+  ) where
 
-import Data.Foldable      (toList)
-import Data.Set           (fromList,Set)
-import Data.List          (isPrefixOf)
-import System.IO          (IOMode(WriteMode),openFile,stdout)
-import GHC.IO.Handle      (hDuplicateTo)
+import           Data.Foldable (toList)
+import           Data.List     (isPrefixOf)
+import           Data.Set      (Set, fromList)
+import           GHC.IO.Handle (hDuplicateTo)
+import           System.IO     (IOMode (WriteMode), openFile, stdout)
 #if MIN_VERSION_base(4,7,0)
-import Prelude hiding     (any)
-import Data.Foldable      (any)
+import           Data.Foldable (any)
+import           Prelude       hiding (any)
 #endif
 
 infixr 4 ▪

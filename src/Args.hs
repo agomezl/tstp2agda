@@ -1,35 +1,28 @@
-{-# LANGUAGE UnicodeSyntax #-}
---------------------------------------------------------------------------------
--- File   : Args
--- Author : Alejandro Gómez Londoño
--- Date   : Wed Mar 11 23:32:30 2015
--- Description : Argument management
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
+-- | Args module
+
+{-# LANGUAGE UnicodeSyntax #-}
+
 module Args where
 
-import System.Console.GetOpt (OptDescr(..),
-                              ArgDescr(..),
-                              ArgOrder(..),
-                              getOpt,
-                              usageInfo)
+import           System.Console.GetOpt (ArgDescr (..), ArgOrder (..),
+                                        OptDescr (..), getOpt, usageInfo)
 
-data Flag = InFile     String |
-            OutFile    String |
-            ProofName  String |
-            ModuleName String |
-            Help
-          deriving(Eq,Ord,Show)
+data Flag = InFile     String
+          | OutFile    String
+          | ProofName  String
+          | ModuleName String
+          | Help
+          deriving(Eq, Ord, Show)
 
-data Conf = Conf {
-      inputFile  ∷ Maybe String,
-      outputFile ∷ Maybe String,
-      printhelp  ∷ Bool,
-      moduleName ∷ String,
-      proofName  ∷ String
-    }
+
+data Conf = Conf
+  { inputFile  ∷ Maybe String
+  , outputFile ∷ Maybe String
+  , printhelp  ∷ Bool
+  , moduleName ∷ String
+  , proofName  ∷ String
+  }
 
 options ∷ [OptDescr Flag]
 options =

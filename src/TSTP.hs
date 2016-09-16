@@ -1,29 +1,25 @@
-{-# LANGUAGE UnicodeSyntax #-}
-{-# LANGUAGE CPP #-}
---------------------------------------------------------------------------------
--- File   : TSTP
--- Author : Alejandro Gómez-Londoño
--- Date   : Sun Nov 22 16:18:58 2015
--- Description : Main library functions
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
+-- | TSTP module
+
+{-# LANGUAGE CPP           #-}
+{-# LANGUAGE UnicodeSyntax #-}
+
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
--- Assume we are using the newest versions when using ghci without cabal
 
+-- Assume we are using the newest versions when using ghci without cabal
 
 module TSTP (parse, parseFile) where
 
-import TSTP.Parser        (parseTSTP)
-import TSTP.Lexer         (alexScanTokens)
-import System.IO          (getContents)
-import Data.TSTP          (F)
+import           Data.TSTP           (F)
+import           System.IO           (getContents)
+import           TSTP.Lexer          (alexScanTokens)
+import           TSTP.Parser         (parseTSTP)
 #if MIN_VERSION_base(4,7,0)
-import Control.Applicative ((<$>))
+import           Control.Applicative ((<$>))
 #endif
+
 
 -- | Parse a TSTP file and return a list of `F` formulas in no
 -- particular order, for example:
@@ -46,10 +42,12 @@ import Control.Applicative ((<$>))
 --     ...
 --   ]
 -- @
-parse :: String -> [F]
+
+parse ∷ String → [F]
 parse = parseTSTP . map snd . alexScanTokens
 
 -- | Similar to `parse` but reading directly from a file or stdin.
-parseFile :: Maybe FilePath -> IO [F]
+
+parseFile ∷ Maybe FilePath → IO [F]
 parseFile x = parse <$> case x of Just x  → readFile x
-                                  Nothing → getContents
+                                  _       → getContents

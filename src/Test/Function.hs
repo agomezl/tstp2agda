@@ -1,22 +1,15 @@
-{-# LANGUAGE UnicodeSyntax #-}
---------------------------------------------------------------------------------
--- File   : Function
--- Author : Alejandro Gomez
--- Date   : Wed Oct 28 11:11:25 2015
--- Description :
---------------------------------------------------------------------------------
--- Change log :
+-- | Function module
 
---------------------------------------------------------------------------------
+{-# LANGUAGE UnicodeSyntax #-}
+
 module Test.Function where
 
-import Data.TSTP
-import Test.Proof
-import T2A.Core
-import Data.Proof
-import Data.Maybe (catMaybes)
-import Data.Foldable (toList)
-
+import           Data.Foldable (toList)
+import           Data.Maybe    (catMaybes)
+import           Data.Proof
+import           Data.TSTP
+import           T2A.Core
+import           Test.Proof
 
 func1 ∷ [Formula]
 func1 = do

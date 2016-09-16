@@ -26,13 +26,15 @@ main = do
   args ← getArgs
   -- TODO: improve error handling
   -- TODO: make prettier
-  mainCore =<<  case compileOpts args of
-                 -- Something went wrong whit the flags
-                 Right e                   → putStrLn e >> exitFailure
-                 -- Help message display
-                 Left (Conf _  _ True _ _) → helpmsg    >> exitSuccess
-                 -- Return configuration data type
-                 Left conf                 → return conf
+  opts ← case compileOpts args of
+     -- Something went wrong whit the flags
+     Right e                   → putStrLn e >> exitFailure
+     -- Help message display
+     Left (Conf _  _ True _ _) → helpmsg    >> exitSuccess
+     -- Return configuration data type
+     Left conf                 → return conf
+
+  mainCore opts
 
 -- High level procedure
 mainCore ∷ Conf → IO ()

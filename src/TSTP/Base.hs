@@ -1,41 +1,38 @@
-{-# LANGUAGE UnicodeSyntax #-}
---------------------------------------------------------------------------------
--- File   : Base
--- Author : Alejandro Gómez Londoño
--- Date   : Sat Apr 18 14:11:27 2015
--- Description : Basic functions for parsing
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
-{-# OPTIONS_HADDOCK hide #-}
+-- | Base module
+
+{-# LANGUAGE UnicodeSyntax #-}
+{-# OPTIONS_HADDOCK hide   #-}
+
 module TSTP.Base where
 
-import Data.TSTP
-import Util          (agdafy)
-import Data.Function (on)
-import Data.Set (Set,toList,fromList,difference,unions,singleton,empty)
-import Data.Monoid (mappend)
+import           Data.Function (on)
+import           Data.Monoid   (mappend)
+import           Data.Set      (Set, difference, empty, fromList, singleton,
+                                toList, unions)
+import           Data.TSTP
+import           Util          (agdafy)
 
-univquant_free_vars :: Formula -> Formula
+
+univquant_free_vars ∷ Formula → Formula
 univquant_free_vars cnf = Quant All free_vars cnf
     where free_vars = toList $ freeVarsF cnf
 
 readRole ∷ String → Role
-readRole "axiom"               = Axiom
-readRole "hypothesis"          = Hypothesis
-readRole "definition"          = Definition
-readRole "assumption"          = Assumption
-readRole "lemma"               = Lemma
-readRole "theorem"             = Theorem
-readRole "conjecture"          = Conjecture
-readRole "negated_conjecture"  = NegatedConjecture
-readRole "plain"               = Plain
-readRole "fi_domain"           = FiDomain
-readRole "fi_functors"         = FiFunctors
-readRole "fi_predicates"       = FiPredicates
-readRole "type"                = Type
-readRole _                     = Unknown
+readRole "axiom"              = Axiom
+readRole "hypothesis"         = Hypothesis
+readRole "definition"         = Definition
+readRole "assumption"         = Assumption
+readRole "lemma"              = Lemma
+readRole "theorem"            = Theorem
+readRole "conjecture"         = Conjecture
+readRole "negated_conjecture" = NegatedConjecture
+readRole "plain"              = Plain
+readRole "fi_domain"          = FiDomain
+readRole "fi_functors"        = FiFunctors
+readRole "fi_predicates"      = FiPredicates
+readRole "type"               = Type
+readRole _                    = Unknown
 
 binOp ∷ BinOp → Formula → Formula → Formula
 binOp op f1 f2 = BinOp f1 op f2

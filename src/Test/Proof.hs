@@ -1,18 +1,12 @@
-{-# LANGUAGE UnicodeSyntax #-}
---------------------------------------------------------------------------------
--- File   : Proof
--- Author : Alejandro Gómez-Londoño
--- Date   : Mon Oct 12 17:18:37 2015
--- Description : proofs for testing
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
+-- | Test.Proof module
+
+{-# LANGUAGE UnicodeSyntax #-}
+
 
 module Test.Proof where
 
-import Data.TSTP
-
+import           Data.TSTP
 
 base1 ∷ [F]
 base1 = [

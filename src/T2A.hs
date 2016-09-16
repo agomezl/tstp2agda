@@ -9,7 +9,7 @@ module T2A (
    , getRefutes
    , getAxioms
    , getConjeture
-   -- * <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda> translation
+   -- * Agda translation
    , printPreamble
    , printAuxSignatures
    , printSubGoals

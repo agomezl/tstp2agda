@@ -1,21 +1,18 @@
-{-# LANGUAGE UnicodeSyntax #-}
---------------------------------------------------------------------------------
--- File   : Core
--- Author : Alejandro Gómez-Londoño
--- Date   : Wed Oct  7 23:30:16 2015
--- Description : Core module of tstp2agda
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
+-- | Core module
+
+{-# LANGUAGE UnicodeSyntax #-}
+
 
 module T2A.Core where
 
-import Data.TSTP     (F(..),Formula(..),Source(..),Role(..),isBottom)
-import Data.Map as M (lookup)
-import Data.Proof    (ProofMap,getParents)
-import Data.List     (isPrefixOf)
-import Util          ((▪),βshow)
+import           Data.List  (isPrefixOf)
+import           Data.Map   as M (lookup)
+import           Data.Proof (ProofMap, getParents)
+import           Data.TSTP  (F (..), Formula (..), Role (..), Source (..),
+                             isBottom)
+import           Util       (βshow, (▪))
+
 
 -- Single function signature
 -- | An

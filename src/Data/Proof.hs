@@ -1,33 +1,29 @@
+
+-- | Data.Proof module
+
 {-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE CPP #-}
---------------------------------------------------------------------------------
--- File   : ProofTree
--- Author : Alejandro Gómez-Londoño
--- Date   : Mon Oct 12 14:10:57 2015
--- Description : Proof tree data structure
---------------------------------------------------------------------------------
--- Change log :
 
---------------------------------------------------------------------------------
+
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
 -- Assume we are using the newest versions when using ghci without cabal
 
-module Data.Proof (
-                  -- * Types
-                    ProofTreeGen(..)
-                  , ProofTree
-                  , ProofMap
-                  , IdSet
-                  -- * Constructors
-                  , buildProofTree
-                  , buildProofMap
-                  -- * Internals
-                  , getParents
-                  , getParentsTree
-                  , unknownTree
-                  ) where
+module Data.Proof
+  ( -- * Types
+    ProofTreeGen(..)
+  , ProofTree
+  , ProofMap
+  , IdSet
+  -- * Constructors
+  , buildProofTree
+  , buildProofMap
+  -- * Internals
+  , getParents
+  , getParentsTree
+  , unknownTree
+  ) where
 
 import Data.Map                 (Map, empty, insert)
 import Data.Map as M            (lookup)
