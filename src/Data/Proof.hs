@@ -33,7 +33,9 @@ import           Data.Set            (Set)
 import           Data.TSTP           (F (..), Formula (..), Parent (..),
                                       Source (..))
 import qualified Data.TSTP           as R (Role (..), Rule (..))
-#if MIN_VERSION_base(4,7,0)
+
+
+#if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative ((<$>), (<*>))
 import           Data.Foldable       (Foldable (..))
 import           Data.Traversable    (Traversable (..))

@@ -16,8 +16,9 @@ import           Data.TSTP           (F)
 import           System.IO           (getContents)
 import           TSTP.Lexer          (alexScanTokens)
 import           TSTP.Parser         (parseTSTP)
-#if MIN_VERSION_base(4,7,0)
-import           Control.Applicative ((<$>))
+
+#if __GLASGOW_HASKELL__ <= 708
+import           Control.Applicative      ((<$>))
 #endif
 
 
