@@ -9,6 +9,7 @@
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
+
 module Data.TSTP
   ( F(..)
   , Role(..)
@@ -38,31 +39,31 @@ module Data.TSTP
   --
   -- >>> PredApp (AtomicWord "$false") []
   -- ⊥
-  , V(..)
+  , AtomicWord(..)
   , BinOp(..)
   , InfixPred(..)
   , Quant(..)
-  , AtomicWord(..)
+  , V(..)
   -- * Source information
-  , Source(..)
-  , Rule(..)
   , Parent(..)
+  , Rule(..)
+  , Source(..)
   -- * Functions
-  , isBottom
   , bottom
   , freeVarsF
   , freeVarsT
   , getFreeVars
+  , isBottom
   -- * Unused types
   -- | The following types are required to have full
   -- support of the TSTP syntax but haven't been used yet
   -- in 'tstp2agda' aside from the parser.
-  , IntroType(..)
-  , Theory(..)
-  , Info(..)
-  , Status(..)
   , GData(..)
   , GTerm(..)
+  , Info(..)
+  , IntroType(..)
+  , Status(..)
+  , Theory(..)
   ) where
 
 import           Data.Function (on)
@@ -74,18 +75,18 @@ import           Util          (βshow, (▪))
 
 
 -- | Formula roles.
-data Role = Axiom
-          | Hypothesis
-          | Definition
-          | Assumption
-          | Lemma
-          | Theorem
+data Role = Assumption
+          | Axiom
           | Conjecture
-          | NegatedConjecture
-          | Plain
+          | Definition
           | FiDomain
           | FiFunctors
           | FiPredicates
+          | Hypothesis
+          | Lemma
+          | NegatedConjecture
+          | Plain
+          | Theorem
           | Type
           | Unknown
           deriving (Eq, Ord, Show, Read)
@@ -95,9 +96,9 @@ data Role = Axiom
 -- are self-explanatory, 'source' is a messy meta-language in itself,
 -- different ATPs may embed different amounts of information in it.
 data F = F
-  { name    ∷ String
+  { formula ∷ Formula
+  , name    ∷ String
   , role    ∷ Role
-  , formula ∷ Formula
   , source  ∷ Source
   }
   deriving (Eq, Ord, Show, Read)
@@ -107,14 +108,14 @@ data F = F
 -- about the rules applied along with parent formulas and
 -- <http://www.cs.miami.edu/~tptp/TPTP/TPTPTParty/2007/PositionStatements/GeoffSutcliffe_SZS.html SZS>
 -- status are among the information you might expect from this field.
-data Source = Source String
+data Source = Creator String [Info]
+            | File String (Maybe String)
             | Inference Rule [Info] [Parent]
             | Introduced IntroType [Info]
-            | File String (Maybe String)
-            | Theory Theory [Info]
-            | Creator String [Info]
             | Name String
             | NoSource
+            | Source String
+            | Theory Theory [Info]
             deriving (Eq, Ord, Show, Read)
 
 -- | Parent formula information.
@@ -123,18 +124,18 @@ data Parent = Parent String [GTerm]
 
 
 -- | Deduction rule applied.
-data Rule   = Simplify
+data Rule   = Canonicalize
             | Negate
-            | Canonicalize
-            | Strip
             | NewRule String
+            | Simplify
+            | Strip
             deriving (Eq, Ord, Show, Read)
 
 -- NOT BEING USED YET
-data IntroType = Definition_
+data IntroType = Assumption_
                | AxiomOfChoice
+               | Definition_
                | Tautology
-               | Assumption_
                | UnknownType
                deriving (Eq, Ord, Show, Read)
 
@@ -143,23 +144,51 @@ data Theory = Equality | AC
             deriving (Eq, Ord, Show, Read)
 
 -- NOT BEING USED YET
-data Info   = Description String
-            | IQuote String
-            | Status Status
+data Info   = AssumptionR [String]
+            | Description String
             | Function String [GTerm]
             | InferenceInfo Rule String [GTerm]
-            | AssumptionR [String]
+            | IQuote String
             | Refutation Source
+            | Status Status
             deriving (Eq, Ord, Show, Read)
 
 -- NOT BEING USED YET
-data Status = Suc | Unp | Sap | Esa | Sat
-            | Fsa | Thm | Eqv | Tac | Wec
-            | Eth | Tau | Wtc | Wth | Cax
-            | Sca | Tca | Wca | Cup | Csp
-            | Ecs | Csa | Cth | Ceq | Unc
-            | Wcc | Ect | Fun | Uns | Wuc
-            | Wct | Scc | Uca | Noc | Unk
+data Status = Cax
+            | Ceq
+            | Csa
+            | Csp
+            | Cth
+            | Cup
+            | Ecs
+            | Ect
+            | Eqv
+            | Esa
+            | Eth
+            | Fsa
+            | Fun
+            | Noc
+            | Sap
+            | Sat
+            | Sca
+            | Scc
+            | Suc
+            | Tac
+            | Tau
+            | Tca
+            | Thm
+            | Uca
+            | Unc
+            | Unk
+            | Unp
+            | Uns
+            | Wca
+            | Wcc
+            | Wct
+            | Wec
+            | Wtc
+            | Wth
+            | Wuc
             deriving (Eq, Ord, Show, Read)
 
 -- The following code is based on:

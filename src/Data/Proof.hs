@@ -14,12 +14,12 @@
 module Data.Proof
   ( -- * Types
     ProofTreeGen(..)
-  , ProofTree
   , ProofMap
+  , ProofTree
   , IdSet
   -- * Constructors
-  , buildProofTree
   , buildProofMap
+  , buildProofTree
   -- * Internals
   , getParents
   , getParentsTree
@@ -30,6 +30,7 @@ import           Data.Map            (Map, empty, insert)
 import           Data.Map            as M (lookup)
 import           Data.Maybe          (catMaybes)
 import           Data.Set            (Set)
+
 import           Data.TSTP           (F (..), Formula (..), Parent (..),
                                       Source (..))
 import qualified Data.TSTP           as R (Role (..), Rule (..))

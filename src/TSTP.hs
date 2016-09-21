@@ -10,7 +10,10 @@
 
 -- Assume we are using the newest versions when using ghci without cabal
 
-module TSTP (parse, parseFile) where
+module TSTP
+  ( parse
+  , parseFile
+  ) where
 
 import           Data.TSTP           (F)
 import           System.IO           (getContents)

@@ -4,9 +4,10 @@
 {-# LANGUAGE CPP                       #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleInstances         #-}
+{-# LANGUAGE OverlappingInstances      #-}
 {-# LANGUAGE UndecidableInstances      #-}
 {-# LANGUAGE UnicodeSyntax             #-}
-{-# LANGUAGE OverlappingInstances #-}
+
 
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
@@ -21,12 +22,12 @@ module Util (
   , printInd
   , putStrLnInd
   -- * List manipulation
-  , unique
   , swapPrefix
+  , unique
   -- * Others
   , agdafy
-  , stdout2file
   , checkIdScope
+  , stdout2file
   ) where
 
 import           Data.Foldable (toList)

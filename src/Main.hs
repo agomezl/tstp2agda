@@ -5,12 +5,19 @@
 
 module Main (main) where
 
-import           Args               (Conf (..), Flag (..), compileOpts, helpmsg)
+import Args
+  ( Conf (..)
+  , compileOpts
+  , Flag (..)
+  , helpmsg
+  )
+
 import qualified Data.Foldable      as F (find)
 import           Data.Maybe         (isNothing)
 import           System.Environment (getArgs)
 import           System.Exit        (exitFailure, exitSuccess)
 import           System.IO          (getContents)
+
 import T2A
   ( buildProofMap
   , buildProofTree
@@ -32,7 +39,7 @@ import Util
   , stdout2file
   , swapPrefix
   , unique
-  ,(▪)
+  , (▪)
   )
 
 

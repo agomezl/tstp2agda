@@ -23,8 +23,7 @@ data AgdaSignature = Signature String [Formula]
                    | ScopedSignature String [Formula]
                    -- ^ Fully scoped signature with no newly
                    -- introduced type variables
-
-                  deriving (Eq)
+                   deriving (Eq)
 
 -- | Given a proof map ω and some formula name φ, construct
 -- the appropriated 'AgdaSignature' based on the parents of φ
