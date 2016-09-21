@@ -1,9 +1,10 @@
 
 -- | Data.TSTP module
 
-{-# LANGUAGE CPP               #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE UnicodeSyntax     #-}
+{-# LANGUAGE CPP                  #-}
+{-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE OverlappingInstances #-}
+{-# LANGUAGE UnicodeSyntax        #-}
 
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
