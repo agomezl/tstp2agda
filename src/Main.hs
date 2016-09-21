@@ -11,14 +11,29 @@ import           Data.Maybe         (isNothing)
 import           System.Environment (getArgs)
 import           System.Exit        (exitFailure, exitSuccess)
 import           System.IO          (getContents)
-import           T2A                (buildProofMap, buildProofTree, parseFile)
-import           T2A                (getAxioms, getConjeture, getRefutes,
-                                     getSubGoals, printPreamble)
-import           T2A                (printAuxSignatures, printProofBody,
-                                     printProofWhere, printSubGoals)
-import           Util               (printInd, putStrLnInd, swapPrefix, unique,
-                                     (▪))
-import           Util               (stdout2file)
+import T2A
+  ( buildProofMap
+  , buildProofTree
+  , getAxioms
+  , getConjeture
+  , getRefutes
+  , getSubGoals
+  , parseFile
+  , printAuxSignatures
+  , printPreamble
+  , printProofBody
+  , printProofWhere
+  , printSubGoals
+  )
+
+import Util
+  ( printInd
+  , putStrLnInd
+  , stdout2file
+  , swapPrefix
+  , unique
+  ,(▪)
+  )
 
 
 main ∷ IO ()

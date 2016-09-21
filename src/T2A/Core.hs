@@ -37,8 +37,8 @@ buildSignature ω φ | "subgoal" `isPrefixOf` φ = Nothing
             Inference _ _ ρ₁ → map formula $ getParents ω ρ₁
             _                → []
   if elem γ [Axiom,Conjecture]
-  then Nothing
-  else return $ Signature ("fun-" ++ φ) (ρ ++ [ζ])
+    then Nothing
+    else return $ Signature ("fun-" ++ φ) (ρ ++ [ζ])
 
 -- | Retrieve signature name
 fname ∷ AgdaSignature → String

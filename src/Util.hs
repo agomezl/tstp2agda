@@ -6,6 +6,7 @@
 {-# LANGUAGE FlexibleInstances         #-}
 {-# LANGUAGE UndecidableInstances      #-}
 {-# LANGUAGE UnicodeSyntax             #-}
+{-# LANGUAGE OverlappingInstances #-}
 
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
@@ -31,6 +32,7 @@ module Util (
 import           Data.Foldable (toList)
 import           Data.List     (isPrefixOf)
 import           Data.Set      (Set, fromList)
+import qualified Data.Set      (toList)
 import           GHC.IO.Handle (hDuplicateTo)
 import           System.IO     (IOMode (WriteMode), openFile, stdout)
 #if MIN_VERSION_base(4,7,0)
@@ -121,5 +123,5 @@ stdout2file (Just o) = openFile o WriteMode >>= flip hDuplicateTo stdout
 
 -- | 'checkIdScope' @i t s@ check if any name in @s@ has a more
 -- general scope than @t@ with level @i@
-checkIdScope ∷ Int → String → Set (Int,String) → Bool
-checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) s
+checkIdScope ∷ Int → String → Set (Int, String) → Bool
+checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) (toList s)

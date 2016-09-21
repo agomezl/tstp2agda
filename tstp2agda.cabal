@@ -30,9 +30,8 @@ executable tstp2agda
                   src/T2A
                   src/Test
                   src/TSTP
-  extensions:     NoImplicitPrelude
 
-  build-depends:  array >= 0.5 && < 1.0
+  build-depends:  array >= 0.4 && < 1.0
                   , base >= 4.6.0.1 && < 4.10
                   , bytestring >= 0.10.0.2 && < 0.11
                   , containers >= 0.5.0.0 && < 0.6
@@ -41,25 +40,37 @@ executable tstp2agda
   build-tools: cpphs >= 1.19
 
   other-modules:
+    Args
+    Data.Proof
+    Data.TSTP
+    T2A
+    T2A.Core
+    T2A.Tactics
+    TSTP
+    TSTP.Base
     TSTP.Lexer
     TSTP.Parser
+    Util
 
 library
   hs-source-dirs: src
-  build-depends:    array >= 0.5 && < 1.0
+  build-depends:  array >= 0.4 && < 1.0
                   , base >= 4.6.0.1 && < 4.10
                   , bytestring >= 0.10.0.2 && < 0.11
                   , containers >= 0.5.0.0 && < 0.6
                   , mtl >= 2.2.1 && < 2.3
-  exposed-modules:
-    Data.TSTP
-    Data.Proof
-    T2A.Core
-    T2A
   other-modules:
+    Args
+    Data.Proof
+    Data.TSTP
+    T2A
+    T2A.Core
+    T2A.Tactics
+    TSTP
+    TSTP.Base
     TSTP.Lexer
     TSTP.Parser
-
+    Util
 
 test-suite tstp2agda-test
   type:             exitcode-stdio-1.0
