@@ -1,13 +1,14 @@
 
 -- | Data.Proof module
 
+{-# LANGUAGE CPP           #-}
 {-# LANGUAGE UnicodeSyntax #-}
-{-# LANGUAGE CPP #-}
 
 
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
+
 -- Assume we are using the newest versions when using ghci without cabal
 
 module Data.Proof
@@ -25,17 +26,18 @@ module Data.Proof
   , unknownTree
   ) where
 
-import Data.Map                 (Map, empty, insert)
-import Data.Map as M            (lookup)
-import Data.Maybe               (catMaybes)
-import Data.TSTP                (Formula(..),F(..),Parent(..),Source(..))
-import qualified Data.TSTP as R (Role(..),Rule(..))
-import Data.Set                 (Set)
+import           Data.Map            (Map, empty, insert)
+import           Data.Map            as M (lookup)
+import           Data.Maybe          (catMaybes)
+import           Data.Set            (Set)
+import           Data.TSTP           (F (..), Formula (..), Parent (..),
+                                      Source (..))
+import qualified Data.TSTP           as R (Role (..), Rule (..))
 #if MIN_VERSION_base(4,7,0)
-import Prelude hiding           (foldr,foldl)
-import Control.Applicative      ((<$>),(<*>))
-import Data.Foldable            (Foldable(..))
-import Data.Traversable         (Traversable(..))
+import           Control.Applicative ((<$>), (<*>))
+import           Data.Foldable       (Foldable (..))
+import           Data.Traversable    (Traversable (..))
+import           Prelude             hiding (foldl, foldr)
 #endif
 
 -- | Generic tree structure for representing the structure of a proof.
@@ -61,12 +63,12 @@ instance Functor ProofTreeGen where
     fmap f (Root r a t) = Root r (f a) (map (fmap f) t)
 
 instance Foldable ProofTreeGen where
-    foldr f b (Leaf r a)    = f a b
-    foldr f b (Root r a t)  = f a $ foldr (flip $ foldr f) b t
+    foldr f b (Leaf r a)   = f a b
+    foldr f b (Root r a t) = f a $ foldr (flip $ foldr f) b t
 
 instance Traversable ProofTreeGen where
-    traverse f (Leaf r a)    = Leaf r <$> f a
-    traverse f (Root r a t)  = Root r <$> f a <*> traverse (traverse f) t
+    traverse f (Leaf r a)   = Leaf r <$> f a
+    traverse f (Root r a t) = Root r <$> f a <*> traverse (traverse f) t
 
 -- | 'Map' from formula names to an 'F' formula type, useful to get more
 -- information from a node in a 'ProofTree'.
