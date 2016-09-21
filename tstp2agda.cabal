@@ -31,7 +31,7 @@ executable tstp2agda
                   src/Test
                   src/TSTP
 
-  build-depends:  array
+  build-depends:  array >= 0.4 && < 1.0
                   , base >= 4.6.0.1 && < 4.10
                   , bytestring >= 0.10.0.2 && < 0.11
                   , containers >= 0.5.0.0 && < 0.6
@@ -54,7 +54,7 @@ executable tstp2agda
 
 library
   hs-source-dirs: src
-  build-depends:  array
+  build-depends:  array >= 0.4 && < 1.0
                   , base >= 4.6.0.1 && < 4.10
                   , bytestring >= 0.10.0.2 && < 0.11
                   , containers >= 0.5.0.0 && < 0.6
