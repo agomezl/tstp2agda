@@ -20,7 +20,7 @@ import Control.Monad.Identity
 %error {
 
           ((\xs -> case xs of
-                    xs -> error ("Parse error, pos: "++show (take 25 xs))))
+                    xs -> error ("Parse error, pos: "++show (L.take 25 xs))))
        }
 
 
