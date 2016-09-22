@@ -7,9 +7,7 @@
 module Data.Proof.ProofTreeGen where
 
 
-import           Data.Map   (Map, empty, insert)
-import           Data.Map   as M (lookup)
-import           Data.Maybe (catMaybes, mapMaybe)
+import           Data.Map   (Map)
 import           Data.Set   (Set)
 import           Data.TSTP  (Role, Rule, F)
 
@@ -43,8 +41,8 @@ instance Functor ProofTreeGen where
     fmap f (Root r a t) = Root r (f a) (map (fmap f) t)
 
 instance Foldable ProofTreeGen where
-    foldr f b (Leaf r a)   = f a b
-    foldr f b (Root r a t) = f a $ foldr (flip $ foldr f) b t
+    foldr f b (Leaf _ a)   = f a b
+    foldr f b (Root _ a t) = f a $ foldr (flip $ foldr f) b t
 
 instance Traversable ProofTreeGen where
     traverse f (Leaf r a)   = Leaf r <$> f a

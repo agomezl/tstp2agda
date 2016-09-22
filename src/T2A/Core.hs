@@ -23,7 +23,6 @@ import  Data.TSTP
   , Formula (..)
   , Role (..)
   , Source (..)
-  , isBottom
   )
 
 import           Utils.Functions (βshow, (▪))
@@ -45,6 +44,7 @@ instance Show AgdaSignature where
         where
           -- p ∷ String -- FIX
           ρ = foldl ((▪) . (▪ '→')) (βshow x) xs
+    show (ScopedSignature _ [])     = error "ScopedSignature empty" --FIX
 
 instance Ord AgdaSignature where
     a <= b = fname a <= fname b

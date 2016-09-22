@@ -5,7 +5,6 @@
 {-# LANGUAGE CPP                       #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleInstances         #-}
-{-# LANGUAGE OverlappingInstances      #-}
 {-# LANGUAGE UndecidableInstances      #-}
 {-# LANGUAGE UnicodeSyntax             #-}
 
@@ -33,10 +32,11 @@ module Utils.Functions
   , stdout2file
   ) where
 
+
 import           Data.Foldable (toList)
 import           Data.List     (isPrefixOf)
 import           Data.Set      (Set, fromList)
-import qualified Data.Set      (toList)
+import qualified Data.Set      as S
 import           GHC.IO.Handle (hDuplicateTo)
 import           System.IO     (IOMode (WriteMode), openFile, stdout)
 
@@ -57,7 +57,7 @@ infixr 4 ▪
 -- instances for 'String' and 'Show' 'a'.
 
 class BShow a where
-    βshow ∷ a -> String
+    βshow ∷ a → String
 
 -- TODO: fix overlapping mess
 
@@ -135,4 +135,4 @@ stdout2file (Just o) = openFile o WriteMode >>= flip hDuplicateTo stdout
 -- | 'checkIdScope' @i t s@ check if any name in @s@ has a more
 -- general scope than @t@ with level @i@
 checkIdScope ∷ Int → String → Set (Int, String) → Bool
-checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) (toList s)
+checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) (S.toList s)

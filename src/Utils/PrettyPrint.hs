@@ -34,7 +34,7 @@ squotes = bquotes . text
 -- sspaces = spaces . text
 
 -- | Use instead of 'show' when printing to world.
-prettyShow :: Pretty a ⇒ a → String
+prettyShow ∷ Pretty a ⇒ a → String
 prettyShow = render . pretty
 
 -- ------------------------------------------------------------------------------

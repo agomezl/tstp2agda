@@ -1,17 +1,16 @@
 
 -- | Base module
 
-{-# LANGUAGE UnicodeSyntax #-}
 {-# OPTIONS_HADDOCK hide   #-}
+
+{-# LANGUAGE UnicodeSyntax #-}
 
 
 module TSTP.Base where
 
 
-import           Data.Function (on)
-import           Data.Monoid   (mappend)
-import           Data.Set      (Set, difference, empty, fromList, singleton,
-                                toList, unions)
+import           Data.Set      (toList)
+
 import Data.TSTP
   ( AtomicWord (..)
   , BinOp
@@ -49,7 +48,7 @@ import Data.TSTP
       , Strip
       )
   , Status (..)
-  , V (V)
+  , V
   )
 
 import           Utils.Functions (agdafy)
@@ -57,10 +56,10 @@ import           Utils.Functions (agdafy)
 
 
 univquantFreeVars ∷ Formula → Formula
-univquantFreeVars cnf = Quant All fVars cnf
+univquantFreeVars cnf = Quant All freeVars cnf
     where
-      fVars ∷ [V]
-      fVars = toList $ freeVarsF cnf
+      freeVars ∷ [V]
+      freeVars = toList $ freeVarsF cnf
 
 readRole ∷ String → Role
 readRole "assumption"         = Assumption

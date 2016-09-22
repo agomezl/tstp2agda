@@ -8,11 +8,11 @@
 
 module Main (main) where
 
+
 import Options
   (
     Options
-    ( Options
-    , optHelp
+    ( optHelp
     , optInputFile
     , optModuleName
     , optOutputFile
@@ -23,13 +23,12 @@ import Options
     , processOptions
     )
 
-import qualified Data.Foldable      as F (find)
-import           Data.Maybe         (isNothing, fromMaybe)
+import           Data.Maybe         (fromMaybe)
 import           Data.Proof         (ProofMap, ProofTree)
 import           Data.TSTP          (F)
 import           System.Environment (getArgs)
-import           System.Exit        (exitFailure, exitSuccess)
-import           System.IO          (getContents)
+import           System.Exit        (exitSuccess)
+import           Utils.Functions    (stdout2file)
 import           Utils.Monad        (die)
 import           Utils.Version      (progNameVersion)
 
@@ -48,15 +47,6 @@ import T2A
   , printSubGoals
   )
 
-import Utils.Functions
-  ( printInd
-  , putStrLnInd
-  , stdout2file
-  , swapPrefix
-  , unique
-  , (▪)
-  )
-
 
 main ∷ IO ()
 main = do
@@ -64,6 +54,7 @@ main = do
   opts ← case processOptions args of
     Left err → die err
     Right o  → return o
+
   if  | optHelp opts → printUsage >> exitSuccess
 
       | optVersion opts → do

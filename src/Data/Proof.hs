@@ -26,11 +26,9 @@ module Data.Proof
   , unknownTree
   ) where
 
-
-import           Data.Map   (Map, empty, insert)
-import           Data.Map   as M (lookup)
-import           Data.Maybe (catMaybes, mapMaybe)
-import           Data.Set   (Set)
+import           Data.Map   (empty, insert)
+import           Data.Map as M (lookup)
+import           Data.Maybe ( mapMaybe)
 
 
 import Data.Proof.ProofTreeGen
@@ -42,10 +40,8 @@ import Data.Proof.ProofTreeGen
 
 import  Data.TSTP
   ( F (..)
-  , Formula (..)
   , Parent (..)
   , Role (..)
-  , Rule (..)
   , Source (..)
   )
 

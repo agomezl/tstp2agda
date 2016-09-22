@@ -2,7 +2,17 @@
 
 -- | TSTP.Parser module
 
+{-# OPTIONS -fno-warn-incomplete-patterns       #-}
+{-# OPTIONS -fno-warn-incomplete-uni-patterns   #-}
+{-# OPTIONS -fno-warn-missing-local-signatures  #-}
+{-# OPTIONS -fno-warn-missing-signatures        #-}
+{-# OPTIONS -fno-warn-monomorphism-restriction  #-}
+{-# OPTIONS -fno-warn-name-shadowing            #-}
+{-# OPTIONS -fno-warn-unused-matches            #-}
+
+
 module TSTP.Parser where
+
 
 import           Control.Monad
 import           Control.Monad.Identity

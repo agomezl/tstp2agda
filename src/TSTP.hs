@@ -16,6 +16,7 @@ module TSTP
   , parseFile
   ) where
 
+
 import           Data.TSTP           (F)
 import           System.IO           (getContents)
 import           TSTP.Lexer          (alexScanTokens)
@@ -54,5 +55,6 @@ parse = parseTSTP . map snd . alexScanTokens
 -- | Similar to `parse` but reading directly from a file or stdin.
 
 parseFile ∷ Maybe FilePath → IO [F]
-parseFile x = parse <$> case x of Just x  → readFile x
-                                  _       → getContents
+parseFile path = parse <$> case path of
+  Just filepath → readFile filepath
+  _             → getContents

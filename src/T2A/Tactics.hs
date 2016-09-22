@@ -1,6 +1,9 @@
 
 -- | Tactics
 
+{-# OPTIONS -fno-warn-missing-local-signatures  #-}
+{-# OPTIONS -fno-warn-missing-signatures        #-}
+
 {-# LANGUAGE UnicodeSyntax #-}
 
 
@@ -16,7 +19,6 @@ module T2A.Tactics
 
 
 import           Data.Maybe      (mapMaybe)
-import           Data.TSTP       (Formula (..))
 import           T2A.Core        (AgdaSignature (Signature))
 import           Utils.Functions ((▪))
 
@@ -54,7 +56,7 @@ type Tactic = AgdaSignature → Maybe (IO ())
 -- implementation.
 resolveTactic ∷ AgdaSignature → [Tactic] → IO ()
 resolveTactic τ γ = case mapMaybe ($ τ) γ of
-                      [] → asPostulate τ
+                      []     → asPostulate τ
                       (x:xs) → do otherOptions xs
                                   x
     where

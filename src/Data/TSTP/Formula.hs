@@ -1,11 +1,11 @@
 
 -- | Data.TSTP.Formula module
 
+{-# OPTIONS -fno-warn-incomplete-patterns #-}
 
-{-# LANGUAGE CPP                  #-}
-{-# LANGUAGE FlexibleInstances    #-}
-{-# LANGUAGE OverlappingInstances #-}
-{-# LANGUAGE UnicodeSyntax        #-}
+{-# LANGUAGE CPP                          #-}
+{-# LANGUAGE FlexibleInstances            #-}
+{-# LANGUAGE UnicodeSyntax                #-}
 
 
 module Data.TSTP.Formula where
@@ -42,12 +42,13 @@ instance Show Formula where
   -- To avoid confusion every α → β is printed as (α → β)
   show (BinOp     f₁  (:=>:) f₂) = '(' ▪ f₁   ▪ '→' ▪ f₂  ▪ ')'
   show (BinOp     f₁  op     f₂) = f₁  ▪ op   ▪ f₂
-  show (InfixPred t₁  pred   t₂) = t₁  ▪ pred ▪ t₂
+  show (InfixPred t₁  r      t₂) = t₁  ▪ r ▪ t₂
   -- Predicates are just functions that return ⊤ with some parameter
   show (PredApp   ρ          []) = show ρ
   show (PredApp   ρ          φ ) = '(' ▪ ρ    ▪ ':' ▪ φ   ▪ "→ ⊤" ▪ ')'
   show (Quant     All []     f ) = βshow f
   show (Quant     All υ      f ) = '(' ▪ foldl (▪) "{" υ  ▪ ": Set }" ▪ '→' ▪ f ▪ ')'
+  show (Quant     Exists υ   f ) = '(' ▪ foldl (▪) "{" υ  ▪ ": Set }" ▪ '→' ▪ f ▪ ')'
   show ((:~:)                f ) = '¬' ▪ f
 
 -- Overlaped instance of Show [Formula] for "easy" representation of
