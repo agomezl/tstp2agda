@@ -6,9 +6,11 @@
 {-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE UnicodeSyntax        #-}
 
+
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
+
 
 module Data.TSTP
   ( F(..)
@@ -73,7 +75,6 @@ import           Data.Set      (Set, difference, empty, fromList, singleton,
 import           Util          (βshow, (▪))
 
 
-
 -- | Formula roles.
 data Role = Assumption
           | Axiom
@@ -124,12 +125,12 @@ data Parent = Parent String [GTerm]
 
 
 -- | Deduction rule applied.
-data Rule   = Canonicalize
-            | Negate
-            | NewRule String
-            | Simplify
-            | Strip
-            deriving (Eq, Ord, Show, Read)
+data Rule = Canonicalize
+          | Negate
+          | NewRule String
+          | Simplify
+          | Strip
+          deriving (Eq, Ord, Show, Read)
 
 -- NOT BEING USED YET
 data IntroType = Assumption_
@@ -202,20 +203,20 @@ data Formula = BinOp Formula BinOp Formula    -- ^ Binary connective application
              | PredApp AtomicWord [Term]      -- ^ Predicate application
              | Quant Quant [V] Formula        -- ^ Quantified Formula
              | (:~:) Formula                  -- ^ Negation
-             deriving (Eq,Ord,Read)
+             deriving (Eq, Ord, Read)
 
 -- Pretty print instance of Show for Formula and Term
 instance Show Formula where
-    -- To avoid confusion every α → β is printed as (α → β)
-    show (BinOp     f₁  (:=>:) f₂) = '(' ▪ f₁   ▪ '→' ▪ f₂  ▪ ')'
-    show (BinOp     f₁  op     f₂) = f₁  ▪ op   ▪ f₂
-    show (InfixPred t₁  pred   t₂) = t₁  ▪ pred ▪ t₂
-    -- Predicates are just functions that return ⊤ with some parameter
-    show (PredApp   ρ          []) = show ρ
-    show (PredApp   ρ          φ ) = '(' ▪ ρ    ▪ ':' ▪ φ   ▪ "→ ⊤" ▪ ')'
-    show (Quant     All []     f ) = βshow f
-    show (Quant     All υ      f ) = '(' ▪ foldl (▪) "{" υ  ▪ ": Set }" ▪ '→' ▪ f ▪ ')'
-    show ((:~:)                f ) = '¬' ▪ f
+  -- To avoid confusion every α → β is printed as (α → β)
+  show (BinOp     f₁  (:=>:) f₂) = '(' ▪ f₁   ▪ '→' ▪ f₂  ▪ ')'
+  show (BinOp     f₁  op     f₂) = f₁  ▪ op   ▪ f₂
+  show (InfixPred t₁  pred   t₂) = t₁  ▪ pred ▪ t₂
+  -- Predicates are just functions that return ⊤ with some parameter
+  show (PredApp   ρ          []) = show ρ
+  show (PredApp   ρ          φ ) = '(' ▪ ρ    ▪ ':' ▪ φ   ▪ "→ ⊤" ▪ ')'
+  show (Quant     All []     f ) = βshow f
+  show (Quant     All υ      f ) = '(' ▪ foldl (▪) "{" υ  ▪ ": Set }" ▪ '→' ▪ f ▪ ')'
+  show ((:~:)                f ) = '¬' ▪ f
 
 -- Overlaped instance of Show [Formula] for "easy" representation of
 -- x₁ ∧ x₂ ⊢ y₀ as x₀ → x₁ → y₀
@@ -238,15 +239,15 @@ data Term = Var V                             -- ^ Variable
           | FunApp AtomicWord [Term]          -- ^ Function symbol application
                                               -- (constants are encoded as
                                               -- nullary functions)
-          deriving (Eq,Ord,Read)
+          deriving (Eq, Ord, Read)
 
 instance Show Term where
-    show (Var             (V v))     =      v
-    show (NumberLitTerm      r )     = show r
-    show (DistinctObjectTerm t )     =      t
-    show (FunApp (AtomicWord w ) []) =      w
-    -- TODO: what functions are in Shallow.agda or in agda itself?
-    show (FunApp (AtomicWord w ) [a]) = error "Don't really know what this is"
+  show (Var             (V v))      =      v
+  show (NumberLitTerm      r )      = show r
+  show (DistinctObjectTerm t )      =      t
+  show (FunApp (AtomicWord w ) [])  =      w
+  -- TODO: what functions are in Sh allow.agda or in agda itself?
+  show (FunApp (AtomicWord w ) [a]) = error "Don't really know what this is"
 
 -- The following code is from:
 -- https://github.com/DanielSchuessler/logic-TPTP
@@ -255,40 +256,40 @@ instance Show Term where
 
 -- | Variable
 newtype V = V String
-    deriving (Eq,Ord,Read)
+    deriving (Eq, Ord, Read)
 
 instance Show V where
     show (V a) = a
 
 -- | Binary formula connectives.
-data BinOp =   (:<=>:)  -- ^ ↔ /Equivalence/
-            |  (:=>:)   -- ^ → /Implication/
-            |  (:<=:)   -- ^ ← /Reverse Implication/
-            |  (:&:)    -- ^ ∧ /AND/
-            |  (:|:)    -- ^ ∨ /OR/
-            |  (:~&:)   -- ^ ⊼ /NAND/
-            |  (:~|:)   -- ^ ⊽ /NOR/
-            |  (:<~>:)  -- ^ ⊕ /XOR/
-               deriving (Eq,Ord,Read)
+data BinOp = (:<=>:)  -- ^ ↔ /Equivalence/
+           | (:=>:)   -- ^ → /Implication/
+           | (:<=:)   -- ^ ← /Reverse Implication/
+           | (:&:)    -- ^ ∧ /AND/
+           | (:|:)    -- ^ ∨ /OR/
+           | (:~&:)   -- ^ ⊼ /NAND/
+           | (:~|:)   -- ^ ⊽ /NOR/
+           | (:<~>:)  -- ^ ⊕ /XOR/
+           deriving (Eq, Ord, Read)
 
 instance Show BinOp where
-    show (:<=>:) = "↔"
-    show (:=>:)  = "→"
-    show (:<=:)  = "←"
-    show (:&:)   = "∧"
-    show (:|:)   = "∨"
-    show (:~&:)  = "⊼"
-    show (:~|:)  = "⊽"
-    show (:<~>:) = "⊕"
+  show (:<=>:) = "↔"
+  show (:=>:)  = "→"
+  show (:<=:)  = "←"
+  show (:&:)   = "∧"
+  show (:|:)   = "∨"
+  show (:~&:)  = "⊼"
+  show (:~|:)  = "⊽"
+  show (:<~>:) = "⊕"
 
 -- | Infix connectives of the form /Term -> Term -> Formula/.
-data InfixPred =  (:=:)  -- ^ =
-               |  (:!=:) -- ^ ≠
-                  deriving (Eq,Ord,Read)
+data InfixPred = (:=:)  -- ^ =
+               | (:!=:) -- ^ ≠
+               deriving (Eq, Ord, Read)
 
 instance Show InfixPred where
-    show (:=:)  = "="
-    show (:!=:) = "≠"
+  show (:=:)  = "="
+  show (:!=:) = "≠"
 
 -- | Quantifier specification.
 data Quant = All    -- ^ ∀
@@ -296,7 +297,7 @@ data Quant = All    -- ^ ∀
              deriving (Eq, Ord, Show, Read)
 
 newtype AtomicWord = AtomicWord String
-    deriving (Eq,Ord,Read)
+    deriving (Eq, Ord, Read)
 
 instance Show AtomicWord where
     show (AtomicWord "$false") = "⊥"
@@ -317,34 +318,37 @@ bottom = PredApp (AtomicWord "$false") []
 
 -- | 'freeVarsF' 'f', returns a 'Set' of all free variables of 'f'.
 freeVarsF ∷ Formula → Set V
-freeVarsF ((:~:) x)         = freeVarsF x
-freeVarsF (Quant _ vars x)  = difference (freeVarsF x) (fromList vars)
-freeVarsF (BinOp x _ y)     = (mappend `on` freeVarsF) x y
-freeVarsF (InfixPred x _ y) = (mappend `on` freeVarsT) x y
+freeVarsF ((:~:) x)                           = freeVarsF x
+freeVarsF (BinOp x _ y)                       = (mappend `on` freeVarsF) x y
+freeVarsF (InfixPred x _ y)                   = (mappend `on` freeVarsT) x y
 freeVarsF (PredApp (AtomicWord "$false") [])  = empty
 freeVarsF (PredApp (AtomicWord v) [])         = singleton $ V v
 freeVarsF (PredApp _ args)                    = unions (fmap freeVarsT args)
+freeVarsF (Quant _ vars x)                    = difference fvarsx lvars
+  where
+    fvarsx = freeVarsF x
+    lvars  = fromList vars
 
 -- | 'freeVarsT' 't', returns a 'Set' of all free variables of 't'.
 freeVarsT ∷ Term → Set V
-freeVarsT (Var x)         = singleton x
 freeVarsT (FunApp _ args) = unions (fmap freeVarsT args)
+freeVarsT (Var x)         = singleton x
 freeVarsT _               = empty
 
 -- | Metadata (the /general_data/ rule in
 --   <http://www.cs.miami.edu/~tptp/ TPTP>'s grammar)
-data GData = GWord AtomicWord
-                 | GApp AtomicWord [GTerm]
-                 | GVar V
-                 | GNumber Rational
-                 | GDistinctObject String
-                 | GFormulaData String Formula
-                 | GFormulaTerm String Term
-                 deriving (Eq, Ord, Show, Read)
+data GData = GApp AtomicWord [GTerm]
+           | GDistinctObject String
+           | GFormulaData String Formula
+           | GFormulaTerm String Term
+           | GNumber Rational
+           | GVar V
+           | GWord AtomicWord
+           deriving (Eq, Ord, Show, Read)
 
 -- | Metadata (the /general_term/ rule in
 --   <http://www.cs.miami.edu/~tptp/ TPTP>'s grammar)
 data GTerm = ColonSep GData GTerm
-           | GTerm GData
            | GList [GTerm]
+           | GTerm GData
            deriving (Eq, Ord, Show, Read)

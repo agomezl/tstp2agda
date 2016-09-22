@@ -4,11 +4,12 @@
 {-# LANGUAGE CPP           #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
+
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
-
 -- Assume we are using the newest versions when using ghci without cabal
+
 
 module TSTP
   ( parse

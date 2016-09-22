@@ -1,6 +1,8 @@
+
 -- | Function module
 
 {-# LANGUAGE UnicodeSyntax #-}
+
 
 module Test.Function where
 

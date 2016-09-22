@@ -36,13 +36,16 @@ executable tstp2agda
                   , bytestring >= 0.10.0.2 && < 0.11
                   , containers >= 0.5.0.0 && < 0.6
                   , mtl >= 2.2.1 && < 2.3
+                  , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
+                  , text >= 0.11.3.1 && < 1.3
 
   build-tools: cpphs >= 1.19
 
   other-modules:
-    Args
     Data.Proof
     Data.TSTP
+    Options
+    Paths_tstp2agda
     T2A
     T2A.Core
     T2A.Tactics
@@ -51,6 +54,9 @@ executable tstp2agda
     TSTP.Lexer
     TSTP.Parser
     Util
+    Utils.Monad
+    Utils.PrettyPrint
+    Utils.Version
 
 library
   hs-source-dirs: src
@@ -59,10 +65,13 @@ library
                   , bytestring >= 0.10.0.2 && < 0.11
                   , containers >= 0.5.0.0 && < 0.6
                   , mtl >= 2.2.1 && < 2.3
+                  , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
+                  , text >= 0.11.3.1 && < 1.3
   other-modules:
-    Args
     Data.Proof
     Data.TSTP
+    Options
+    Paths_tstp2agda
     T2A
     T2A.Core
     T2A.Tactics
@@ -71,6 +80,9 @@ library
     TSTP.Lexer
     TSTP.Parser
     Util
+    Utils.Monad
+    Utils.PrettyPrint
+    Utils.Version
 
 test-suite tstp2agda-test
   type:             exitcode-stdio-1.0

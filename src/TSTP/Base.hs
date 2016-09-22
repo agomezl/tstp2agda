@@ -4,6 +4,7 @@
 {-# LANGUAGE UnicodeSyntax #-}
 {-# OPTIONS_HADDOCK hide   #-}
 
+
 module TSTP.Base where
 
 import           Data.Function (on)

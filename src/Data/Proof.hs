@@ -8,8 +8,8 @@
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
-
 -- Assume we are using the newest versions when using ghci without cabal
+
 
 module Data.Proof
   ( -- * Types
@@ -84,14 +84,16 @@ buildProofTree ∷ ProofMap     -- ^ 'Map' for resolving dependencies
                → F            -- ^ Root formula
                → ProofTree    -- ^ Tree of formulas with the given
                               -- formula as root
-buildProofTree _ (F n R.Axiom _ _)      = Leaf R.Axiom n
-buildProofTree _ (F n R.Conjecture _ _) = Leaf R.Conjecture n
-buildProofTree m (F n R.Plain _ s)      = caseSrc s
-    where caseSrc  (Inference r _ p) = let parents = getParentsTree m p
-                                       in Root r n parents
-          caseSrc  _                 = unknownMsg
-          unknownMsg                 = unknownTree "Source" s n
-buildProofTree _ (F n r       _ _)      = unknownTree "Role" r n
+buildProofTree m formulaF =
+  let namef ∷ String
+      namef = name formulaF
+  in case role formulaF of
+    R.Axiom       → Leaf R.Axiom namef
+    R.Conjecture  → Leaf R.Conjecture namef
+    R.Plain       → case source formulaF of
+      (Inference r _ p) → Root r namef (getParentsTree m p)
+      sname       → unknownTree "Source" sname namef
+    rname         →  unknownTree "Role" rname namef
 
 -- | 'buildProofMap' 'lf', given a list of functions 'lf' builds a 'ProofMap'
 buildProofMap ∷ [F]      -- ^ List of functions

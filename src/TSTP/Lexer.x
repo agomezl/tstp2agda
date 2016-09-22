@@ -1,11 +1,14 @@
 {
-{-# OPTIONS -fno-warn-missing-signatures #-}
-{-# OPTIONS -fno-warn-unused-matches #-}
-{-# OPTIONS -fno-warn-name-shadowing #-}
+
 {-# OPTIONS -fno-warn-incomplete-patterns #-}
+{-# OPTIONS -fno-warn-missing-signatures  #-}
+{-# OPTIONS -fno-warn-name-shadowing      #-}
+{-# OPTIONS -fno-warn-unused-matches      #-}
 
 module TSTP.Lexer where
+
 import Data.Ratio
+
 }
 
 %wrapper "posn"
@@ -66,41 +69,36 @@ tokens :-
   "/"                                          { withPos $ const Slash }
 
 
-
-
-
-
 {
 -- Each action has type :: String -> Token
 
 withPos f pos s = (pos, f s)
 
 -- The token type:
-data Token =
-           LP
-         | RP
-         | Comma
-         | Dot
-         | Lbrack
-         | Rbrack
-         | Oper String
-         | SingleQuoted String
-         | DoubleQuoted String
-         | DollarWord String
-         | DollarDollarWord String
-         | UpperWord String
-         | LowerWord String
-         | Star
-         | Plus
-         | Rangle
-         | SignedInt Integer
-         | UnsignedInt Integer
-         | Real Rational
-         | CommentToken String
-         | Slash
-         | MetisInfo String
-         | MetisComment
-        deriving (Eq,Ord,Show)
+data Token = Comma
+           | CommentToken String
+           | DollarDollarWord String
+           | DollarWord String
+           | Dot
+           | DoubleQuoted String
+           | Lbrack
+           | LowerWord String
+           | LP
+           | MetisComment
+           | MetisInfo String
+           | Oper String
+           | Plus
+           | Rangle
+           | Rbrack
+           | Real Rational
+           | RP
+           | SignedInt Integer
+           | SingleQuoted String
+           | Slash
+           | Star
+           | UnsignedInt Integer
+           | UpperWord String
+           deriving (Eq,Ord,Show)
 
 -- alex defines: alexScanTokens
 

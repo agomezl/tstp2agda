@@ -3,6 +3,7 @@
 
 {-# LANGUAGE UnicodeSyntax #-}
 
+
 module T2A (
    -- * Getters
      getSubGoals

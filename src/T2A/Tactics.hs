@@ -3,6 +3,7 @@
 
 {-# LANGUAGE UnicodeSyntax #-}
 
+
 module T2A.Tactics
   ( -- * Types
     Tactic
