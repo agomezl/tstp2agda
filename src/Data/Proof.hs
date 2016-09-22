@@ -28,7 +28,7 @@ module Data.Proof
 
 import           Data.Map            (Map, empty, insert)
 import           Data.Map            as M (lookup)
-import           Data.Maybe          (catMaybes)
+import           Data.Maybe          (catMaybes, mapMaybe)
 import           Data.Set            (Set)
 
 import  Data.TSTP
@@ -102,8 +102,9 @@ buildProofTree m formulaF =
 -- | 'buildProofMap' 'lf', given a list of functions 'lf' builds a 'ProofMap'
 buildProofMap ∷ [F]      -- ^ List of functions
               → ProofMap -- ^ Map of the given functions indexed by its names
-buildProofMap f = foldl buildMap empty f
-    where buildMap m f' = insert (name f') f' m
+buildProofMap = foldl buildMap empty
+    where
+      buildMap m f' = insert (name f') f' m
 
 -- | 'getParentsTree' 'm' 'p', from a 'Map' 'm' and a list of parents 'p'
 -- return a list of corresponding parent subtrees.
@@ -117,8 +118,9 @@ getParentsTree m p = map (buildProofTree m) $ getParents m p
 getParents ∷ ProofMap -- ^ 'Map'
            → [Parent] -- ^ List of 'Parents
            → [F]      -- ^ List of parent formulas
-getParents ω ρ = catMaybes $ map (flip M.lookup $ ω) parents
-    where parents  = map (\(Parent s _) → s) ρ
+getParents ω ρ = mapMaybe (`M.lookup` ω) parents
+    where
+      parents  = map (\(Parent s _) → s) ρ
 
 -- | When an unknown 'Rule', 'Source', or other unexpected data type
 -- is found a 'Leaf' With an 'Unknown' 'Role' and error message is

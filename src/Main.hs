@@ -24,7 +24,7 @@ import Options
     )
 
 import qualified Data.Foldable      as F (find)
-import           Data.Maybe         (isNothing)
+import           Data.Maybe         (isNothing, fromMaybe)
 import           Data.Proof         (ProofMap, ProofTree)
 import           Data.TSTP          (F)
 import           System.Environment (getArgs)
@@ -70,8 +70,7 @@ main = do
         v ← progNameVersion
         putStrLn v  >> exitSuccess
 
-      | otherwise → do
-          mainCore opts
+      | otherwise → mainCore opts
 
 -- High level procedure
 mainCore ∷ Options → IO ()
@@ -97,9 +96,9 @@ mainCore opts = do
       axioms = getAxioms rules
 
   let conj ∷ F
-      conj = case getConjeture rules of
-        Nothing → error "Couldn't find a conjecture, or it was not unique"
-        Just f  → f
+      conj = fromMaybe
+        (error "Couldn't find a conjecture, or it was not unique")
+        (getConjeture rules)
 
   -- Construction of map an tree structures that are meant to be
   -- traversed to create the final Agda code.

@@ -7,5 +7,4 @@
 module Main where
 
 main ∷ IO ()
-main = do
-  putStrLn "TODO: tests"
+main = putStrLn "TODO: tests"

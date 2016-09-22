@@ -15,8 +15,8 @@ import           Data.TSTP
 import           Util          (agdafy)
 
 
-univquant_free_vars ∷ Formula → Formula
-univquant_free_vars cnf = Quant All free_vars cnf
+univquantFreeVars ∷ Formula → Formula
+univquantFreeVars cnf = Quant All free_vars cnf
     where free_vars = toList $ freeVarsF cnf
 
 readRole ∷ String → Role
@@ -36,7 +36,7 @@ readRole "type"               = Type
 readRole _                    = Unknown
 
 binOp ∷ BinOp → Formula → Formula → Formula
-binOp op f1 f2 = BinOp f1 op f2
+binOp op f1 = BinOp f1 op
 
 readRule ∷ String → Rule
 readRule "canonicalize" = Canonicalize

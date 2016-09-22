@@ -52,7 +52,7 @@ type Tactic = AgdaSignature → Maybe (IO ())
 -- using every tactic in @χ@ and in case of failure prints the default
 -- implementation.
 resolveTactic ∷ AgdaSignature → [Tactic] → IO ()
-resolveTactic τ γ = case mapMaybe (flip ($) τ) γ of
+resolveTactic τ γ = case mapMaybe ($ τ) γ of
                       [] → asPostulate τ
                       (x:xs) → do otherOptions xs
                                   x
@@ -61,7 +61,7 @@ resolveTactic τ γ = case mapMaybe (flip ($) τ) γ of
 
 -- | Default implementation for any 'AgdaSignature' as an Agda postulate.
 asPostulate ∷ AgdaSignature → IO ()
-asPostulate s = (putStrLn $ "postulate" ▪ s) >> putStrLn []
+asPostulate s = putStrLn ("postulate" ▪ s) >> putStrLn []
 
 -- | In Metis some applications of the inference rule @canonicalize@
 -- result in trivial [a ↦ a] behavior that is captured in Agda with the

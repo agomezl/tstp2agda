@@ -37,6 +37,7 @@ import           Data.Set      (Set, fromList)
 import qualified Data.Set      (toList)
 import           GHC.IO.Handle (hDuplicateTo)
 import           System.IO     (IOMode (WriteMode), openFile, stdout)
+
 #if MIN_VERSION_base(4,7,0)
 import           Data.Foldable (any)
 import           Prelude       hiding (any)
@@ -81,7 +82,7 @@ instance Show a ⇒ BShow a where
 
 -- | Removes duplicate elements of a list.
 unique ∷ (Ord a) ⇒ [a] → [a]
-unique a = toList . fromList $ a
+unique = toList . fromList
 
 -- | 'printInd' @i b@, prints a with @b@ level of indentation @i@.
 printInd ∷ (Show a) ⇒ Int → a → IO ()
