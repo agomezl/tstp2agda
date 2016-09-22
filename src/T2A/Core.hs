@@ -63,8 +63,8 @@ fname (ScopedSignature a _) = a
 
 -- Pretty prints an `AgdaSignature`
 instance Show AgdaSignature where
-    show (ScopedSignature α (x:xs)) = α ▪ ":" ▪ ρ
     show (Signature α ρ)            = α ▪ ":" ▪ ρ
+    show (ScopedSignature α (x:xs)) = α ▪ ":" ▪ ρ
         where
           ρ = foldl ((▪) . (▪ '→')) (βshow x) xs
 

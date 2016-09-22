@@ -31,10 +31,14 @@ import           Data.Map            as M (lookup)
 import           Data.Maybe          (catMaybes)
 import           Data.Set            (Set)
 
-import           Data.TSTP           (F (..), Formula (..), Parent (..),
-                                      Source (..))
-import qualified Data.TSTP           as R (Role (..), Rule (..))
-
+import  Data.TSTP
+  ( F (..)
+  , Formula (..)
+  , Parent (..)
+  , Role (..)
+  , Rule (..)
+  , Source (..)
+  )
 
 #if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative ((<$>), (<*>))
@@ -45,12 +49,12 @@ import           Prelude             hiding (foldl, foldr)
 
 -- | Generic tree structure for representing the structure of a proof.
 data ProofTreeGen a =
-    -- | 'Leaf' 'r' 'a' is a node with 'R.Role' 'r' and content 'a' (usually
+    -- | 'Leaf' 'r' 'a' is a node with 'Role' 'r' and content 'a' (usually
     -- 'String', 'F' or 'Formula') and with no dependencies in other nodes.
-    Leaf R.Role a |
-    -- | 'Root' 'r' 'a' 'd' is a node with deduction 'R.Rule' 'r', content 'a'
+    Leaf Role a |
+    -- | 'Root' 'r' 'a' 'd' is a node with deduction 'Rule' 'r', content 'a'
     -- (usually 'String', 'F' or 'Formula'),  and dependencies 'd'.
-    Root R.Rule a [ProofTreeGen a]
+    Root Rule a [ProofTreeGen a]
          deriving (Eq,Ord,Show)
 
 -- | Simple type for sets of identifiers whit associated scopes
@@ -88,9 +92,9 @@ buildProofTree m formulaF =
   let namef ∷ String
       namef = name formulaF
   in case role formulaF of
-    R.Axiom       → Leaf R.Axiom namef
-    R.Conjecture  → Leaf R.Conjecture namef
-    R.Plain       → case source formulaF of
+    Axiom       → Leaf Axiom namef
+    Conjecture  → Leaf Conjecture namef
+    Plain       → case source formulaF of
       (Inference r _ p) → Root r namef (getParentsTree m p)
       sname       → unknownTree "Source" sname namef
     rname         →  unknownTree "Role" rname namef
@@ -116,12 +120,12 @@ getParents ∷ ProofMap -- ^ 'Map'
 getParents ω ρ = catMaybes $ map (flip M.lookup $ ω) parents
     where parents  = map (\(Parent s _) → s) ρ
 
--- | When an unknown 'R.Rule', 'Source', or other unexpected data type
--- is found a 'Leaf' With an 'R.Unknown' 'R.Role' and error message is
+-- | When an unknown 'Rule', 'Source', or other unexpected data type
+-- is found a 'Leaf' With an 'Unknown' 'Role' and error message is
 -- created.
 unknownTree ∷ (Show a) ⇒
               String     -- ^ Description of the unexpected data type
             → a          -- ^ Unexpected data
             → String     -- ^ Formula name
-            → ProofTree  -- ^ 'R.Unknown' node
-unknownTree m r n = Leaf R.Unknown $ m ++  ' ':show r  ++ " in " ++ n
+            → ProofTree  -- ^ 'Unknown' node
+unknownTree m r n = Leaf Unknown $ m ++  ' ':show r  ++ " in " ++ n
