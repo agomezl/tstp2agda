@@ -26,10 +26,9 @@ executable tstp2agda
   main-is:        Main.hs
   hs-source-dirs: src
   include-dirs:   src/Data
-                  src/Proof
                   src/T2A
-                  src/Test
                   src/TSTP
+                  src/Utils
 
   build-depends:  array >= 0.4 && < 1.0
                   , base >= 4.6.0.1 && < 4.10
@@ -120,7 +119,7 @@ library
 
 test-suite tstp2agda-test
   type:             exitcode-stdio-1.0
-  main-is:          Main.hs
+  main-is:          Test/Main.hs
   hs-source-dirs:   test
   build-depends:    array >= 0.5 && < 1.0
                   , base >= 4.6.0.1 && < 4.10
