@@ -1,13 +1,18 @@
 {
+
+-- | TSTP.Parser module
+
 module TSTP.Parser where
 
 import           Control.Monad
 import           Control.Monad.Identity
+
 import           Data.Char
 import           Data.Data
 import           Data.List              as L
 import           Data.Ratio
 import           Data.Set               as S
+
 import Data.TSTP
   ( AtomicWord (..)
   , BinOp (..)
@@ -41,7 +46,7 @@ import           TSTP.Lexer
 %error {
 
           ((\xs -> case xs of
-                    xs -> error ("Parse error, pos: "++show (L.take 25 xs))))
+                    xs -> error ("Parse error, pos: " ++ show (L.take 25 xs))))
        }
 
 %token
