@@ -48,7 +48,7 @@ import T2A
   , printSubGoals
   )
 
-import Util
+import Utils.Functions
   ( printInd
   , putStrLnInd
   , stdout2file

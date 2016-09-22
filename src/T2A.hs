@@ -22,6 +22,7 @@ module T2A (
    , parseFile
    ) where
 
+
 import           Control.Monad (foldM)
 import           Data.Foldable (toList)
 import qualified Data.Foldable as F (find)
@@ -42,11 +43,9 @@ import           Data.Set      as S (Set, empty, insert, singleton, union)
 
 import Data.TSTP
   ( bottom
-  , F
-  , formula
+  , F (formula, name, role, source)
+  , Formula
   , getFreeVars
-  , name
-  , role
   , Role (Axiom, Conjecture)
   , Rule (Negate, Strip)
   )
@@ -58,7 +57,7 @@ import T2A.Core
 
 import           T2A.Tactics   (resolveTacticGen)
 import           TSTP          (parseFile)
-import Util
+import Utils.Functions
   ( (▪)
   , checkIdScope
   , printInd
@@ -83,9 +82,10 @@ getAxioms = filter ((==) Axiom . role)
 -- | Try to extract a conjecture from a list of formulae and checks
 -- for uniqueness.
 getConjeture ∷ [F] → Maybe F
-getConjeture rules =  case filter ((==) Conjecture . role) rules of
-                        [l] → Just l
-                        _   → Nothing
+getConjeture rules =
+  case filter ((==) Conjecture . role) rules of
+    [l] → Just l
+    _   → Nothing
 
 printPreamble ∷ String -- ^ Module name
               → IO ()
@@ -109,13 +109,14 @@ printAuxSignatures ∷ ProofMap    -- ^ map of formulas
                    → IO ()
 printAuxSignatures ω γ = mapM_ resolveTacticGen signatures
     where
+      signatures ∷ [AgdaSignature]
       signatures = unique . concatMap signature $ γ
-      signature  = catMaybes -- Remove Nothings
+
+      -- signature ∷ [ProofTree ]→ [AgdaSignature]
+      signature = catMaybes -- Remove Nothings
                     . toList  -- Flatten the tree
                               -- Build (only) the required functions
                     . fmap (buildSignature ω)
-
-
 
 -- | Print the main subgoal implication function
 --
@@ -146,9 +147,16 @@ printProofBody ∷ [F]    -- ^ Axioms
          → String       -- ^ Name of @subGoalImplName@
          → IO ()
 printProofBody axioms conj proofName subgoals goalsName = do
-  let f = map formula $ axioms ++ [conj]
-  let γ = concatMap (\m → "{" ++ show m ++ "}") $ getFreeVars f
-  let ρ = proofName ▪ γ
+
+  let f ∷ [Formula]
+      f  = map formula $ axioms ++ [conj]
+
+  let γ ∷ String
+      γ = concatMap (\m → "{" ++ show m ++ "}") $ getFreeVars f
+
+  let ρ ∷ String
+      ρ = proofName ▪ γ
+
   print $ Signature proofName f
   putStrLn $ foldl (▪) ρ (map name axioms)
              ▪ "="

@@ -43,6 +43,7 @@ executable tstp2agda
 
   other-modules:
     Data.Proof
+    Data.Proof.ProofTreeGen
     Data.TSTP
     Data.TSTP.AtomicWord
     Data.TSTP.BinOp
@@ -69,7 +70,7 @@ executable tstp2agda
     TSTP.Base
     TSTP.Lexer
     TSTP.Parser
-    Util
+    Utils.Functions
     Utils.Monad
     Utils.PrettyPrint
     Utils.Version
@@ -85,6 +86,7 @@ library
                   , text >= 0.11.3.1 && < 1.3
   other-modules:
     Data.Proof
+    Data.Proof.ProofTreeGen
     Data.TSTP
     Data.TSTP.AtomicWord
     Data.TSTP.BinOp
@@ -111,7 +113,7 @@ library
     TSTP.Base
     TSTP.Lexer
     TSTP.Parser
-    Util
+    Utils.Functions
     Utils.Monad
     Utils.PrettyPrint
     Utils.Version

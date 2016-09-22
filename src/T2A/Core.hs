@@ -5,11 +5,19 @@
 {-# LANGUAGE UnicodeSyntax       #-}
 
 
-module T2A.Core where
+module T2A.Core
+  ( AgdaSignature
+    ( Signature
+    , ScopedSignature
+    )
+  , buildSignature
+  ) where
+
 
 import           Data.List  (isPrefixOf)
 import           Data.Map   as M (lookup)
 import           Data.Proof (ProofMap, getParents)
+
 import  Data.TSTP
   ( F (..)
   , Formula (..)
@@ -17,7 +25,8 @@ import  Data.TSTP
   , Source (..)
   , isBottom
   )
-import           Util       (βshow, (▪))
+
+import           Utils.Functions (βshow, (▪))
 
 
 -- Single function signature
@@ -28,6 +37,22 @@ data AgdaSignature = Signature String [Formula]
                    -- ^ Fully scoped signature with no newly
                    -- introduced type variables
                    deriving (Eq)
+
+-- Pretty prints an `AgdaSignature`
+instance Show AgdaSignature where
+    show (Signature α ρ)            = α ▪ ":" ▪ ρ
+    show (ScopedSignature α (x:xs)) = α ▪ ":" ▪ ρ
+        where
+          -- p ∷ String -- FIX
+          ρ = foldl ((▪) . (▪ '→')) (βshow x) xs
+
+instance Ord AgdaSignature where
+    a <= b = fname a <= fname b
+
+-- | Retrieve signature name
+fname ∷ AgdaSignature → String
+fname (Signature       a _) = a
+fname (ScopedSignature a _) = a
 
 -- | Given a proof map ω and some formula name φ, construct
 -- the appropriated 'AgdaSignature' based on the parents of φ
@@ -55,18 +80,3 @@ buildSignature ω φ
       if γ `elem` [Axiom, Conjecture]
         then Nothing
         else return $ Signature ("fun-" ++ φ) (ρ ++ [ζ])
-
--- | Retrieve signature name
-fname ∷ AgdaSignature → String
-fname (Signature       a _) = a
-fname (ScopedSignature a _) = a
-
--- Pretty prints an `AgdaSignature`
-instance Show AgdaSignature where
-    show (Signature α ρ)            = α ▪ ":" ▪ ρ
-    show (ScopedSignature α (x:xs)) = α ▪ ":" ▪ ρ
-        where
-          ρ = foldl ((▪) . (▪ '→')) (βshow x) xs
-
-instance Ord AgdaSignature where
-    a <= b = fname a <= fname b

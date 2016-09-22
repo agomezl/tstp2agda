@@ -1,5 +1,6 @@
 
--- | Util module
+-- | Utils.Functions module
+
 
 {-# LANGUAGE CPP                       #-}
 {-# LANGUAGE ExistentialQuantification #-}
@@ -15,7 +16,8 @@
 -- Assume we are using the newest versions when using ghci without cabal
 
 
-module Util (
+module Utils.Functions
+  (
   -- * Spaced concatenation
     (▪)
   , BShow(..)
@@ -87,12 +89,16 @@ unique = toList . fromList
 -- | 'printInd' @i b@, prints a with @b@ level of indentation @i@.
 printInd ∷ (Show a) ⇒ Int → a → IO ()
 printInd ind a = putStr spaces >> print a
-    where spaces = replicate ind ' '
+    where
+      spaces ∷ String
+      spaces = replicate ind ' '
 
 -- | 'printInd' @i str@, prints a with @str@ level of indentation @i@.
 putStrLnInd ∷ Int → String → IO ()
 putStrLnInd ind a = putStr spaces >> putStrLn a
-    where spaces = replicate ind ' '
+    where
+      spaces ∷ String
+      spaces = replicate ind ' '
 
 
 -- | 'swapPrefix' @a b str@, replaces prefix @a@ in @str@ with @b@
@@ -115,8 +121,10 @@ swapPrefix a b str
 -- parser every time an 'Data.TSTP.AtomicWord' is created.
 agdafy ∷ String → String
 agdafy = map repl
-    where repl '_' = '-'
-          repl  a  = a
+    where
+      repl ∷ Char → Char
+      repl '_' = '-'
+      repl  a  = a
 
 -- | Redirect all stdout output into a file or do nothing (in case of
 -- 'Nothing')

@@ -22,7 +22,7 @@ import           TSTP.Lexer          (alexScanTokens)
 import           TSTP.Parser         (parseTSTP)
 
 #if __GLASGOW_HASKELL__ <= 708
-import           Control.Applicative      ((<$>))
+import           Control.Applicative ((<$>))
 #endif
 
 

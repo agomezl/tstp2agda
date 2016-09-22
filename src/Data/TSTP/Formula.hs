@@ -21,7 +21,7 @@ import           Data.TSTP.InfixPred  (InfixPred (..))
 import           Data.TSTP.Quant      (Quant (..))
 import           Data.TSTP.Term       (Term (..))
 import           Data.TSTP.V          (V (..))
-import           Util                 (βshow, (▪))
+import           Utils.Functions      (βshow, (▪))
 
 
 -- The following code is based on:
