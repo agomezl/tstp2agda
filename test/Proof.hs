@@ -6,6 +6,7 @@
 
 module Test.Proof where
 
+
 import           Data.TSTP
 
 base1 ∷ [F]
