@@ -1,15 +1,18 @@
+
 -- | Function module
 
 {-# LANGUAGE UnicodeSyntax #-}
+
 
 module Test.Function where
 
 import           Data.Foldable (toList)
 import           Data.Maybe    (catMaybes)
-import           Data.Proof
+import           Data.Proof    (base1)
 import           Data.TSTP
 import           T2A.Core
 import           Test.Proof
+
 
 func1 ∷ [Formula]
 func1 = do

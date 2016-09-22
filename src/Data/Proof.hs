@@ -1,8 +1,8 @@
 
 -- | Data.Proof module
 
+{-# LANGUAGE CPP           #-}
 {-# LANGUAGE UnicodeSyntax #-}
-{-# LANGUAGE CPP #-}
 
 
 #ifndef MIN_VERSION_base
@@ -10,42 +10,51 @@
 #endif
 -- Assume we are using the newest versions when using ghci without cabal
 
+
 module Data.Proof
   ( -- * Types
     ProofTreeGen(..)
-  , ProofTree
   , ProofMap
+  , ProofTree
   , IdSet
   -- * Constructors
-  , buildProofTree
   , buildProofMap
+  , buildProofTree
   -- * Internals
   , getParents
   , getParentsTree
   , unknownTree
   ) where
 
-import Data.Map                 (Map, empty, insert)
-import Data.Map as M            (lookup)
-import Data.Maybe               (catMaybes)
-import Data.TSTP                (Formula(..),F(..),Parent(..),Source(..))
-import qualified Data.TSTP as R (Role(..),Rule(..))
-import Data.Set                 (Set)
-#if MIN_VERSION_base(4,7,0)
-import Prelude hiding           (foldr,foldl)
-import Control.Applicative      ((<$>),(<*>))
-import Data.Foldable            (Foldable(..))
-import Data.Traversable         (Traversable(..))
+import           Data.Map            (Map, empty, insert)
+import           Data.Map            as M (lookup)
+import           Data.Maybe          (catMaybes, mapMaybe)
+import           Data.Set            (Set)
+
+import  Data.TSTP
+  ( F (..)
+  , Formula (..)
+  , Parent (..)
+  , Role (..)
+  , Rule (..)
+  , Source (..)
+  )
+
+#if __GLASGOW_HASKELL__ <= 708
+import           Control.Applicative ((<$>), (<*>))
+import           Data.Foldable       (Foldable (..))
+import           Data.Traversable    (Traversable (..))
+import           Prelude             hiding (foldl, foldr)
 #endif
 
 -- | Generic tree structure for representing the structure of a proof.
 data ProofTreeGen a =
-    -- | 'Leaf' 'r' 'a' is a node with 'R.Role' 'r' and content 'a' (usually
+    -- | 'Leaf' 'r' 'a' is a node with 'Role' 'r' and content 'a' (usually
     -- 'String', 'F' or 'Formula') and with no dependencies in other nodes.
-    Leaf R.Role a |
-    -- | 'Root' 'r' 'a' 'd' is a node with deduction 'R.Rule' 'r', content 'a'
+    Leaf Role a |
+    -- | 'Root' 'r' 'a' 'd' is a node with deduction 'Rule' 'r', content 'a'
     -- (usually 'String', 'F' or 'Formula'),  and dependencies 'd'.
-    Root R.Rule a [ProofTreeGen a]
+    Root Rule a [ProofTreeGen a]
          deriving (Eq,Ord,Show)
 
 -- | Simple type for sets of identifiers whit associated scopes
@@ -61,12 +70,12 @@ instance Functor ProofTreeGen where
     fmap f (Root r a t) = Root r (f a) (map (fmap f) t)
 
 instance Foldable ProofTreeGen where
-    foldr f b (Leaf r a)    = f a b
-    foldr f b (Root r a t)  = f a $ foldr (flip $ foldr f) b t
+    foldr f b (Leaf r a)   = f a b
+    foldr f b (Root r a t) = f a $ foldr (flip $ foldr f) b t
 
 instance Traversable ProofTreeGen where
-    traverse f (Leaf r a)    = Leaf r <$> f a
-    traverse f (Root r a t)  = Root r <$> f a <*> traverse (traverse f) t
+    traverse f (Leaf r a)   = Leaf r <$> f a
+    traverse f (Root r a t) = Root r <$> f a <*> traverse (traverse f) t
 
 -- | 'Map' from formula names to an 'F' formula type, useful to get more
 -- information from a node in a 'ProofTree'.
@@ -79,20 +88,23 @@ buildProofTree ∷ ProofMap     -- ^ 'Map' for resolving dependencies
                → F            -- ^ Root formula
                → ProofTree    -- ^ Tree of formulas with the given
                               -- formula as root
-buildProofTree _ (F n R.Axiom _ _)      = Leaf R.Axiom n
-buildProofTree _ (F n R.Conjecture _ _) = Leaf R.Conjecture n
-buildProofTree m (F n R.Plain _ s)      = caseSrc s
-    where caseSrc  (Inference r _ p) = let parents = getParentsTree m p
-                                       in Root r n parents
-          caseSrc  _                 = unknownMsg
-          unknownMsg                 = unknownTree "Source" s n
-buildProofTree _ (F n r       _ _)      = unknownTree "Role" r n
+buildProofTree m formulaF =
+  let namef ∷ String
+      namef = name formulaF
+  in case role formulaF of
+    Axiom       → Leaf Axiom namef
+    Conjecture  → Leaf Conjecture namef
+    Plain       → case source formulaF of
+      (Inference r _ p) → Root r namef (getParentsTree m p)
+      sname       → unknownTree "Source" sname namef
+    rname         →  unknownTree "Role" rname namef
 
 -- | 'buildProofMap' 'lf', given a list of functions 'lf' builds a 'ProofMap'
 buildProofMap ∷ [F]      -- ^ List of functions
               → ProofMap -- ^ Map of the given functions indexed by its names
-buildProofMap f = foldl buildMap empty f
-    where buildMap m f' = insert (name f') f' m
+buildProofMap = foldl buildMap empty
+    where
+      buildMap m f' = insert (name f') f' m
 
 -- | 'getParentsTree' 'm' 'p', from a 'Map' 'm' and a list of parents 'p'
 -- return a list of corresponding parent subtrees.
@@ -106,15 +118,16 @@ getParentsTree m p = map (buildProofTree m) $ getParents m p
 getParents ∷ ProofMap -- ^ 'Map'
            → [Parent] -- ^ List of 'Parents
            → [F]      -- ^ List of parent formulas
-getParents ω ρ = catMaybes $ map (flip M.lookup $ ω) parents
-    where parents  = map (\(Parent s _) → s) ρ
+getParents ω ρ = mapMaybe (`M.lookup` ω) parents
+    where
+      parents  = map (\(Parent s _) → s) ρ
 
--- | When an unknown 'R.Rule', 'Source', or other unexpected data type
--- is found a 'Leaf' With an 'R.Unknown' 'R.Role' and error message is
+-- | When an unknown 'Rule', 'Source', or other unexpected data type
+-- is found a 'Leaf' With an 'Unknown' 'Role' and error message is
 -- created.
 unknownTree ∷ (Show a) ⇒
               String     -- ^ Description of the unexpected data type
             → a          -- ^ Unexpected data
             → String     -- ^ Formula name
-            → ProofTree  -- ^ 'R.Unknown' node
-unknownTree m r n = Leaf R.Unknown $ m ++  ' ':show r  ++ " in " ++ n
+            → ProofTree  -- ^ 'Unknown' node
+unknownTree m r n = Leaf Unknown $ m ++  ' ':show r  ++ " in " ++ n

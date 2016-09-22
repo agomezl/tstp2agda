@@ -4,20 +4,25 @@
 {-# LANGUAGE CPP           #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
+
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
-
 -- Assume we are using the newest versions when using ghci without cabal
 
-module TSTP (parse, parseFile) where
+
+module TSTP
+  ( parse
+  , parseFile
+  ) where
 
 import           Data.TSTP           (F)
 import           System.IO           (getContents)
 import           TSTP.Lexer          (alexScanTokens)
 import           TSTP.Parser         (parseTSTP)
-#if MIN_VERSION_base(4,7,0)
-import           Control.Applicative ((<$>))
+
+#if __GLASGOW_HASKELL__ <= 708
+import           Control.Applicative      ((<$>))
 #endif
 
 

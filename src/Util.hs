@@ -4,14 +4,17 @@
 {-# LANGUAGE CPP                       #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleInstances         #-}
+{-# LANGUAGE OverlappingInstances      #-}
 {-# LANGUAGE UndecidableInstances      #-}
 {-# LANGUAGE UnicodeSyntax             #-}
+
 
 #ifndef MIN_VERSION_base
 #define MIN_VERSION_base(a,b,c) 1
 #endif
-
 -- Assume we are using the newest versions when using ghci without cabal
+
+
 module Util (
   -- * Spaced concatenation
     (▪)
@@ -20,19 +23,21 @@ module Util (
   , printInd
   , putStrLnInd
   -- * List manipulation
-  , unique
   , swapPrefix
+  , unique
   -- * Others
   , agdafy
-  , stdout2file
   , checkIdScope
+  , stdout2file
   ) where
 
 import           Data.Foldable (toList)
 import           Data.List     (isPrefixOf)
 import           Data.Set      (Set, fromList)
+import qualified Data.Set      (toList)
 import           GHC.IO.Handle (hDuplicateTo)
 import           System.IO     (IOMode (WriteMode), openFile, stdout)
+
 #if MIN_VERSION_base(4,7,0)
 import           Data.Foldable (any)
 import           Prelude       hiding (any)
@@ -77,7 +82,7 @@ instance Show a ⇒ BShow a where
 
 -- | Removes duplicate elements of a list.
 unique ∷ (Ord a) ⇒ [a] → [a]
-unique a = toList . fromList $ a
+unique = toList . fromList
 
 -- | 'printInd' @i b@, prints a with @b@ level of indentation @i@.
 printInd ∷ (Show a) ⇒ Int → a → IO ()
@@ -121,5 +126,5 @@ stdout2file (Just o) = openFile o WriteMode >>= flip hDuplicateTo stdout
 
 -- | 'checkIdScope' @i t s@ check if any name in @s@ has a more
 -- general scope than @t@ with level @i@
-checkIdScope ∷ Int → String → Set (Int,String) → Bool
-checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) s
+checkIdScope ∷ Int → String → Set (Int, String) → Bool
+checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) (toList s)

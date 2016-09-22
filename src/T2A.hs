@@ -3,57 +3,82 @@
 
 {-# LANGUAGE UnicodeSyntax #-}
 
+
 module T2A (
    -- * Getters
      getSubGoals
-   , getRefutes
    , getAxioms
    , getConjeture
+   , getRefutes
    -- * Agda translation
-   , printPreamble
-   , printAuxSignatures
-   , printSubGoals
-   , printProofBody
-   , printProofWhere
    , buildProofMap
    , buildProofTree
+   , printAuxSignatures
+   , printPreamble
+   , printProofBody
+   , printProofWhere
+   , printSubGoals
    -- * TSTP parsing
    , parseFile
    ) where
 
 import           Control.Monad (foldM)
 import           Data.Foldable (toList)
+import qualified Data.Foldable as F (find)
 import           Data.List     (find, isPrefixOf)
 import           Data.Map      as M (lookup)
 import           Data.Maybe    (catMaybes, fromMaybe)
-import           Data.Proof    (ProofMap, ProofTree, buildProofMap,
-                                buildProofTree)
-import           Data.Proof    (IdSet, ProofTreeGen (..))
+
+import Data.Proof
+  ( buildProofMap
+  , buildProofTree
+  , IdSet
+  , ProofMap
+  , ProofTree
+  , ProofTreeGen (..)
+  )
+
 import           Data.Set      as S (Set, empty, insert, singleton, union)
-import           Data.TSTP     (F, Role (Axiom, Conjecture), bottom, formula,
-                                name, role)
-import           Data.TSTP     (Rule (Negate, Strip), getFreeVars)
-import           T2A.Core      (buildSignature)
-import           T2A.Core      (AgdaSignature (ScopedSignature, Signature))
+
+import Data.TSTP
+  ( bottom
+  , F
+  , formula
+  , getFreeVars
+  , name
+  , role
+  , Role (Axiom, Conjecture)
+  , Rule (Negate, Strip)
+  )
+
+import T2A.Core
+  ( AgdaSignature (ScopedSignature, Signature)
+  , buildSignature
+  )
+
 import           T2A.Tactics   (resolveTacticGen)
 import           TSTP          (parseFile)
-import           Util          (printInd, putStrLnInd, unique, (▪))
-import           Util          (checkIdScope, swapPrefix)
-
-import qualified Data.Foldable as F (find)
+import Util
+  ( (▪)
+  , checkIdScope
+  , printInd
+  , putStrLnInd
+  , swapPrefix
+  , unique
+  )
 
 
 -- | Extract subgoals from a list of formulae.
 getSubGoals ∷ [F] → [F]
-getSubGoals rules = filter (isPrefixOf "subgoal" . name) rules
+getSubGoals = filter (isPrefixOf "subgoal" . name)
 
 -- | Extract refuting steps from a list of formulae.
 getRefutes ∷ [F] → [F]
-getRefutes rules = filter (isPrefixOf "refute"  . name) rules
+getRefutes = filter (isPrefixOf "refute"  . name)
 
 -- | Extract axioms from a list of formulae.
 getAxioms ∷ [F] → [F]
-getAxioms rules = filter ((==) Axiom      . role) rules
+getAxioms = filter ((==) Axiom . role)
 
 -- | Try to extract a conjecture from a list of formulae and checks
 -- for uniqueness.
@@ -66,8 +91,8 @@ printPreamble ∷ String -- ^ Module name
               → IO ()
 printPreamble moduleName = do
   putStrLn $ "module" ▪ moduleName ▪ "where"
-  putStrLn $ "open import Data.FOL.Shallow"
-  putStrLn $ "open import Function using (id)"
+  putStrLn "open import Data.FOL.Shallow"
+  putStrLn "open import Function using (id)"
   putStrLn []
 
 -- | Print a series of auxiliary functions required to perform most
@@ -83,11 +108,12 @@ printAuxSignatures ∷ ProofMap    -- ^ map of formulas
                    → [ProofTree] -- ^ list of subgoals
                    → IO ()
 printAuxSignatures ω γ = mapM_ resolveTacticGen signatures
-    where signatures = unique . concat . map signature $ γ
-          signature t = catMaybes -- Remove Nothings
-                        . toList  -- Flatten the tree
-                                  -- Build (only) the requiered functions
-                        . fmap (buildSignature ω) $ t
+    where
+      signatures = unique . concatMap signature $ γ
+      signature  = catMaybes -- Remove Nothings
+                    . toList  -- Flatten the tree
+                              -- Build (only) the required functions
+                    . fmap (buildSignature ω)
 
 
 
@@ -121,9 +147,9 @@ printProofBody ∷ [F]    -- ^ Axioms
          → IO ()
 printProofBody axioms conj proofName subgoals goalsName = do
   let f = map formula $ axioms ++ [conj]
-  let γ = concat . map (\m → "{" ++ show m ++ "}") $ getFreeVars f
+  let γ = concatMap (\m → "{" ++ show m ++ "}") $ getFreeVars f
   let ρ = proofName ▪ γ
-  print $ Signature proofName $ f
+  print $ Signature proofName f
   putStrLn $ foldl (▪) ρ (map name axioms)
              ▪ "="
              ▪ foldl (▪) goalsName (map name subgoals)

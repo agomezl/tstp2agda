@@ -1,4 +1,4 @@
-# This file has been generated -- see https://github.com/hvr/multi-ghc-travis
+# This file was adapted from https://github.com/hvr/multi-ghc-travis
 language: c
 sudo: false
 
@@ -25,12 +25,6 @@ matrix:
     - env: CABALVER=1.24 GHCVER=8.0.1
       compiler: ": #GHC 8.0.1"
       addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.1,alex-3.1.7,happy-1.19.5], sources: [hvr-ghc]}}
-    - env: CABALVER=1.24 GHCVER=head
-      compiler: ": #GHC head"
-      addons: {apt: {packages: [cabal-install-1.24,ghc-head,alex-3.1.7,happy-1.19.5], sources: [hvr-ghc]}}
-
-  allow_failures:
-   - env: CABALVER=1.24 GHCVER=head
 
 before_install:
  - unset CC
@@ -75,7 +69,7 @@ install:
       cp -a $HOME/.cabal/lib $HOME/.cabal/share $HOME/.cabal/bin installplan.txt $HOME/.cabsnap/;
    fi
  - cabal install cabal-install
- - cabal install agda
+ - cabal install agda --force-reinstalls
 
 # Here starts the actual work to be performed for the package under test;
 # any command which exits with a non-zero exit code causes the build to fail.
@@ -87,7 +81,7 @@ script:
  # - cd ${T2A_HOME}
  - ./run-tests.sh
  - cabal check
- - cabal sdist   # tests that a source-distribution can be generated
+ - cabal sdist -v   # tests that a source-distribution can be generated
 
 # Check that the resulting source distribution can be built & installed.
 # If there are no other `.tar.gz` files in `dist`, this can be even simpler:
