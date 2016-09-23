@@ -23,5 +23,5 @@ instance Show Term where
   show (NumberLitTerm      r )      = show r
   show (DistinctObjectTerm t )      =      t
   show (FunApp (AtomicWord w ) [])  =      w
-  -- TODO: what functions are in Sh allow.agda or in agda itself?
-  show (FunApp (AtomicWord w ) [a]) = error "Don't really know what this is"
+  -- TODO: what functions are in Shallow.agda or in agda itself?
+  show (FunApp (AtomicWord _ ) _) = error "Don't really know what this is"

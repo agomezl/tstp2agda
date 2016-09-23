@@ -3,7 +3,6 @@
 
 {-# LANGUAGE CPP                  #-}
 {-# LANGUAGE FlexibleInstances    #-}
-{-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE UnicodeSyntax        #-}
 
 
@@ -68,11 +67,18 @@ module Data.TSTP
   , Theory(..)
   ) where
 
+
 import           Data.TSTP.AtomicWord (AtomicWord (..))
 import           Data.TSTP.BinOp      (BinOp (..))
 import           Data.TSTP.F          (F (..))
-import           Data.TSTP.Formula    (Formula (..), freeVarsF, freeVarsT,
-                                       getFreeVars)
+
+import Data.TSTP.Formula
+  ( Formula (..)
+  , freeVarsF
+  , freeVarsT
+  , getFreeVars
+  )
+
 import           Data.TSTP.GData      (GData (..), GTerm (..))
 import           Data.TSTP.InfixPred  (InfixPred (..))
 import           Data.TSTP.IntroType  (IntroType (..))

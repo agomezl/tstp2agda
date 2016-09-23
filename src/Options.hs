@@ -21,9 +21,8 @@ module Options
   , processOptions
   ) where
 
-import           Data.Char          (isDigit)
-import           Data.List          (foldl', nub)
-import qualified Data.Text          as T (pack)
+
+import           Data.List          (foldl')
 import           System.Environment (getProgName)
 import           Utils.PrettyPrint  (Doc, Pretty (pretty), squotes, (<>))
 
@@ -71,7 +70,7 @@ inputFileOpt file opts =
 
 moduleNameOpt ∷ String → OM
 moduleNameOpt [] _ = Left $
-  pretty "option " <> squotes "--module" <> pretty " requires an argument NAME"
+  pretty "option " <> squotes "--module-name" <> pretty " requires an argument NAME"
 moduleNameOpt mname opts = Right opts { optModuleName = mname}
 
 outputFileOpt ∷ FilePath → OM
@@ -82,7 +81,7 @@ outputFileOpt file opts =
 
 proofNameOpt ∷ String → OM
 proofNameOpt [] _ = Left $
-  pretty "option " <> squotes "--module" <> pretty " requires an argument NAME"
+  pretty "option " <> squotes "--proof-name" <> pretty " requires an argument NAME"
 proofNameOpt pname opts = Right opts { optProofName = pname}
 
 versionOpt ∷ OM
@@ -92,19 +91,21 @@ versionOpt opts = Right opts { optVersion = True }
 options ∷ [OptDescr OM]
 options =
   [ Option ['f'] ["file","File"] (ReqArg inputFileOpt "FILE")
-      "TSTP input file     (def: STDIN)"
+      "TSTP input file     (default: STDIN)"
   , Option ['h'] ["help"] (NoArg helpOpt)
       "prints help message"
   , Option ['m'] ["module-name"] (ReqArg moduleNameOpt "NAME")
-      "module name         (def: Main)"
+      "module name         (default: Main)"
   , Option ['o'] ["output"] (ReqArg outputFileOpt "FILE")
-      "output to file      (def: STDOUT)"
+      "output to file      (default: STDOUT)"
   , Option ['p'] ["proof-name"] (ReqArg proofNameOpt "NAME")
-      "main proof name     (def: proof)"
+      "main proof name     (default: proof)"
+  , Option []  ["version"] (NoArg versionOpt)
+               "Show version number"
   ]
 
 usageHeader ∷ String → String
-usageHeader prgName = "Usage: " ++ prgName ++ " [OPTIONS] FILE\n"
+usageHeader prgName = "Usage: " ++ prgName ++ " [OPTIONS]\n"
 
 -- | Print usage information.
 printUsage ∷ IO ()

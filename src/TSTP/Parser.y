@@ -2,7 +2,17 @@
 
 -- | TSTP.Parser module
 
+{-# OPTIONS -fno-warn-incomplete-patterns       #-}
+{-# OPTIONS -fno-warn-incomplete-uni-patterns   #-}
+{-# OPTIONS -fno-warn-missing-local-signatures  #-}
+{-# OPTIONS -fno-warn-missing-signatures        #-}
+{-# OPTIONS -fno-warn-monomorphism-restriction  #-}
+{-# OPTIONS -fno-warn-name-shadowing            #-}
+{-# OPTIONS -fno-warn-unused-matches            #-}
+
+
 module TSTP.Parser where
+
 
 import           Control.Monad
 import           Control.Monad.Identity
@@ -213,7 +223,6 @@ unary_formula : fol_infix_unary  {$1}
 cnf_formula :: {Formula}
 cnf_formula : disjunction         {$1}
             | lp disjunction  rp  {$2}
-
 
 
 disjunction :: {Formula}

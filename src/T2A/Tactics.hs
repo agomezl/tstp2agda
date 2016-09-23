@@ -1,6 +1,9 @@
 
 -- | Tactics
 
+{-# OPTIONS -fno-warn-missing-local-signatures  #-}
+{-# OPTIONS -fno-warn-missing-signatures        #-}
+
 {-# LANGUAGE UnicodeSyntax #-}
 
 
@@ -14,10 +17,10 @@ module T2A.Tactics
   , identity
   ) where
 
-import           Data.Maybe (mapMaybe)
-import           Data.TSTP  (Formula (..))
-import           T2A.Core   (AgdaSignature (Signature))
-import           Util       ((▪))
+
+import           Data.Maybe      (mapMaybe)
+import           T2A.Core        (AgdaSignature (Signature))
+import           Utils.Functions ((▪))
 
 -- | A 'Tactic' is a function that tries to give a corresponding
 -- implementation to a Metis-generated proof step:
@@ -53,10 +56,11 @@ type Tactic = AgdaSignature → Maybe (IO ())
 -- implementation.
 resolveTactic ∷ AgdaSignature → [Tactic] → IO ()
 resolveTactic τ γ = case mapMaybe ($ τ) γ of
-                      [] → asPostulate τ
+                      []     → asPostulate τ
                       (x:xs) → do otherOptions xs
                                   x
-    where otherOptions x = putStrLn $ "--" ▪ length x ▪ "more viable options"
+    where
+      otherOptions x = putStrLn $ "--" ▪ length x ▪ "more viable options"
 
 
 -- | Default implementation for any 'AgdaSignature' as an Agda postulate.
@@ -77,4 +81,5 @@ identity _      = Nothing
 -- | Similar to 'resolveTactic' but using all the build-in tactics.
 resolveTacticGen ∷ AgdaSignature →  IO ()
 resolveTacticGen τ = resolveTactic τ tacList
-    where tacList = [identity]
+    where
+      tacList = [identity]

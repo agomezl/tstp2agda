@@ -1,23 +1,64 @@
 
 -- | Base module
 
-{-# LANGUAGE UnicodeSyntax #-}
 {-# OPTIONS_HADDOCK hide   #-}
+
+{-# LANGUAGE UnicodeSyntax #-}
 
 
 module TSTP.Base where
 
-import           Data.Function (on)
-import           Data.Monoid   (mappend)
-import           Data.Set      (Set, difference, empty, fromList, singleton,
-                                toList, unions)
-import           Data.TSTP
-import           Util          (agdafy)
+
+import           Data.Set      (toList)
+
+import Data.TSTP
+  ( AtomicWord (..)
+  , BinOp
+  , Formula (..)
+  , freeVarsF
+  , IntroType
+      ( Assumption_
+      , AxiomOfChoice
+      , Definition_
+      , Tautology
+      , UnknownType
+      )
+  , Quant (All)
+  , Role
+      ( Assumption
+      , Axiom
+      , Conjecture
+      , Definition
+      , FiDomain
+      , FiFunctors
+      , FiPredicates
+      , Hypothesis
+      , Lemma
+      , NegatedConjecture
+      , Plain
+      , Theorem
+      , Type
+      , Unknown
+      )
+  , Rule
+      ( Canonicalize
+      , Negate
+      , NewRule
+      , Simplify
+      , Strip
+      )
+  , Status (..)
+  , V
+  )
+
+import           Utils.Functions (agdafy)
 
 
 univquantFreeVars ∷ Formula → Formula
-univquantFreeVars cnf = Quant All free_vars cnf
-    where free_vars = toList $ freeVarsF cnf
+univquantFreeVars cnf = Quant All freeVars cnf
+    where
+      freeVars ∷ [V]
+      freeVars = toList $ freeVarsF cnf
 
 readRole ∷ String → Role
 readRole "assumption"         = Assumption

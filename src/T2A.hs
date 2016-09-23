@@ -1,6 +1,9 @@
 
 -- | T2A module
 
+{-# OPTIONS -fno-warn-missing-local-signatures  #-}
+{-# OPTIONS -fno-warn-missing-signatures        #-}
+
 {-# LANGUAGE UnicodeSyntax #-}
 
 
@@ -22,10 +25,11 @@ module T2A (
    , parseFile
    ) where
 
+
 import           Control.Monad (foldM)
 import           Data.Foldable (toList)
 import qualified Data.Foldable as F (find)
-import           Data.List     (find, isPrefixOf)
+import           Data.List     (isPrefixOf)
 import           Data.Map      as M (lookup)
 import           Data.Maybe    (catMaybes, fromMaybe)
 
@@ -38,15 +42,13 @@ import Data.Proof
   , ProofTreeGen (..)
   )
 
-import           Data.Set      as S (Set, empty, insert, singleton, union)
+import           Data.Set      as S (empty, insert, union)
 
 import Data.TSTP
   ( bottom
-  , F
-  , formula
+  , F (formula, name, role)
+  , Formula
   , getFreeVars
-  , name
-  , role
   , Role (Axiom, Conjecture)
   , Rule (Negate, Strip)
   )
@@ -58,7 +60,7 @@ import T2A.Core
 
 import           T2A.Tactics   (resolveTacticGen)
 import           TSTP          (parseFile)
-import Util
+import Utils.Functions
   ( (▪)
   , checkIdScope
   , printInd
@@ -83,9 +85,10 @@ getAxioms = filter ((==) Axiom . role)
 -- | Try to extract a conjecture from a list of formulae and checks
 -- for uniqueness.
 getConjeture ∷ [F] → Maybe F
-getConjeture rules =  case filter ((==) Conjecture . role) rules of
-                        [l] → Just l
-                        _   → Nothing
+getConjeture rules =
+  case filter ((==) Conjecture . role) rules of
+    [l] → Just l
+    _   → Nothing
 
 printPreamble ∷ String -- ^ Module name
               → IO ()
@@ -109,13 +112,14 @@ printAuxSignatures ∷ ProofMap    -- ^ map of formulas
                    → IO ()
 printAuxSignatures ω γ = mapM_ resolveTacticGen signatures
     where
+      signatures ∷ [AgdaSignature]
       signatures = unique . concatMap signature $ γ
-      signature  = catMaybes -- Remove Nothings
+
+      signature ∷ ProofTree → [AgdaSignature]
+      signature = catMaybes -- Remove Nothings
                     . toList  -- Flatten the tree
                               -- Build (only) the required functions
                     . fmap (buildSignature ω)
-
-
 
 -- | Print the main subgoal implication function
 --
@@ -146,9 +150,16 @@ printProofBody ∷ [F]    -- ^ Axioms
          → String       -- ^ Name of @subGoalImplName@
          → IO ()
 printProofBody axioms conj proofName subgoals goalsName = do
-  let f = map formula $ axioms ++ [conj]
-  let γ = concatMap (\m → "{" ++ show m ++ "}") $ getFreeVars f
-  let ρ = proofName ▪ γ
+
+  let f ∷ [Formula]
+      f  = map formula $ axioms ++ [conj]
+
+  let γ ∷ String
+      γ = concatMap (\m → "{" ++ show m ++ "}") $ getFreeVars f
+
+  let ρ ∷ String
+      ρ = proofName ▪ γ
+
   print $ Signature proofName f
   putStrLn $ foldl (▪) ρ (map name axioms)
              ▪ "="
@@ -185,30 +196,35 @@ printProofBody axioms conj proofName subgoals goalsName = do
 printProofWhere ∷ ProofMap → ProofTree → IO ()
 printProofWhere m t = do
   let subgoal = fromMaybe (error "No subgoal") $ F.find (isPrefixOf "subgoal") t
-  let negate  = fromMaybe (error "No negate")  $ F.find (isPrefixOf "negate")  t
-  (i,a,s) ← printProofWhereBody 4 m t empty
-  putStrLnInd 4 $  subgoal ▪ "=" ▪ "proofByContradiction" ▪ ("fun-" ++ negate)
+  let snegate = fromMaybe (error "No negate")  $ F.find (isPrefixOf "negate")  t
+  _ ← printProofWhereBody 4 m t empty
+  putStrLnInd 4 $  subgoal ▪ "=" ▪ "proofByContradiction" ▪ ("fun-" ++ snegate)
   return ()
 
-printProofWhereBody ∷ Int → ProofMap → ProofTree → IdSet → IO (Int,String,IdSet)
-printProofWhereBody _ _ (Leaf _ a)         _ = return (4,a,empty)
-printProofWhereBody ind _ (Root Strip a _) _ = return (4,a,empty)
-printProofWhereBody ind m (Root r a p) ω =
+printProofWhereBody ∷ Int → ProofMap → ProofTree → IdSet → IO (Int, String, IdSet)
+printProofWhereBody _ _ (Leaf _ a)         _  = return (4, a, empty)
+printProofWhereBody _ _ (Root Strip a _) _    = return (4, a, empty)
+printProofWhereBody ind m (Root r a p) ω      =
     if checkIdScope ind a ω
-    then return (4,a,empty)
-    else do
-      let scopeFold (i,a,s) b = do
-            (i₀,a₀,s₀) ← printProofWhereBody i m b s
-            return (max i i₀, a ▪ a₀, s `union` s₀)
-      (ξ,ρ,s) ← foldM scopeFold (ind,"fun-" ++ a,insert (ind,a) ω ) p
-      case r of
-        Negate → do
-               let f = fromMaybe (error "Error formula not found") (M.lookup a m)
-               printInd ξ $ ScopedSignature ("fun-" ++ a) [formula f,bottom]
-               let negLHS = swapPrefix "negate" "refute" a
-               putStrLnInd ξ $ ("fun-" ++ a) ▪ a ▪ "=" ▪ negLHS
-               putStrLnInd (ξ + 2) "where"
-               return (ξ + 4, a,s)
-        _      → do
-               putStrLnInd ξ $ a ▪ "=" ▪ ρ
-               return (ξ,a,s)
+      then return (4, a, empty)
+      else do
+        let scopeFold (i, aa, s) b = do
+              (i₀,a₀,s₀) ← printProofWhereBody i m b s
+              return (max i i₀, aa ▪ a₀, s `union` s₀)
+        (ξ,ρ,s) ← foldM scopeFold (ind, "fun-" ++ a, insert (ind, a) ω ) p
+        case r of
+          Negate → do
+            let f ∷ F
+                f = fromMaybe (error "Error formula not found") (M.lookup a m)
+
+            printInd ξ $ ScopedSignature ("fun-" ++ a) [formula f,bottom]
+
+            let negLHS = swapPrefix "negate" "refute" a
+
+            putStrLnInd ξ $ ("fun-" ++ a) ▪ a ▪ "=" ▪ negLHS
+            putStrLnInd (ξ + 2) "where"
+            return (ξ + 4, a,s)
+
+          _      → do
+            putStrLnInd ξ $ a ▪ "=" ▪ ρ
+            return (ξ,a,s)

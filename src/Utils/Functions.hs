@@ -1,5 +1,6 @@
 
--- | Util module
+-- | Utils.Functions module
+
 
 {-# LANGUAGE CPP                       #-}
 {-# LANGUAGE ExistentialQuantification #-}
@@ -15,7 +16,8 @@
 -- Assume we are using the newest versions when using ghci without cabal
 
 
-module Util (
+module Utils.Functions
+  (
   -- * Spaced concatenation
     (▪)
   , BShow(..)
@@ -31,10 +33,11 @@ module Util (
   , stdout2file
   ) where
 
+
 import           Data.Foldable (toList)
 import           Data.List     (isPrefixOf)
 import           Data.Set      (Set, fromList)
-import qualified Data.Set      (toList)
+import qualified Data.Set      as S
 import           GHC.IO.Handle (hDuplicateTo)
 import           System.IO     (IOMode (WriteMode), openFile, stdout)
 
@@ -55,7 +58,7 @@ infixr 4 ▪
 -- instances for 'String' and 'Show' 'a'.
 
 class BShow a where
-    βshow ∷ a -> String
+    βshow ∷ a → String
 
 -- TODO: fix overlapping mess
 
@@ -87,12 +90,16 @@ unique = toList . fromList
 -- | 'printInd' @i b@, prints a with @b@ level of indentation @i@.
 printInd ∷ (Show a) ⇒ Int → a → IO ()
 printInd ind a = putStr spaces >> print a
-    where spaces = replicate ind ' '
+    where
+      spaces ∷ String
+      spaces = replicate ind ' '
 
 -- | 'printInd' @i str@, prints a with @str@ level of indentation @i@.
 putStrLnInd ∷ Int → String → IO ()
 putStrLnInd ind a = putStr spaces >> putStrLn a
-    where spaces = replicate ind ' '
+    where
+      spaces ∷ String
+      spaces = replicate ind ' '
 
 
 -- | 'swapPrefix' @a b str@, replaces prefix @a@ in @str@ with @b@
@@ -115,8 +122,10 @@ swapPrefix a b str
 -- parser every time an 'Data.TSTP.AtomicWord' is created.
 agdafy ∷ String → String
 agdafy = map repl
-    where repl '_' = '-'
-          repl  a  = a
+    where
+      repl ∷ Char → Char
+      repl '_' = '-'
+      repl  a  = a
 
 -- | Redirect all stdout output into a file or do nothing (in case of
 -- 'Nothing')
@@ -127,4 +136,4 @@ stdout2file (Just o) = openFile o WriteMode >>= flip hDuplicateTo stdout
 -- | 'checkIdScope' @i t s@ check if any name in @s@ has a more
 -- general scope than @t@ with level @i@
 checkIdScope ∷ Int → String → Set (Int, String) → Bool
-checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) (toList s)
+checkIdScope i f s = any (\(i₀,f₀) →  f₀ == f && i₀ <= i ) (S.toList s)

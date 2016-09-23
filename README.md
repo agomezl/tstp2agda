@@ -1,4 +1,6 @@
-# tstp2agda [![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https://travis-ci.org/agomezl/tstp2agda)
+tstp2agda [![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https://travis-ci.org/agomezl/tstp2agda)
+====
+
 
 A proof tool for translating TSTP proofs to Agda code. Only [Metis](http://www.gilith.com/software/metis/) proofs for now.
 
@@ -12,14 +14,16 @@ $ cabal install
 
 ## Usage
 
+```Bash
+Usage: tstp2agda [OPTIONS] FILE
+
+  -f FILE  --file=FILE, --File=FILE  TSTP input file     (def: STDIN)
+  -h       --help                    prints help message
+  -m NAME  --module-name=NAME        module name         (def: Main)
+  -o FILE  --output=FILE             output to file      (def: STDOUT)
+  -p NAME  --proof-name=NAME         main proof name     (def: proof)
 ```
-Usage: tstp2agda [OPTIONS]
-  -f File  --file=File, --File=File  TSTP input file     (def: STDIN)
-  -o File  --output=File             output to file      (def: STDOUT)
-  -p Name  --proof-name=Name         main proof name     (def: proof)
-  -m Name  --module-name=Name        module name         (def: Main)
-  -h, -?   --help                    prints help message
-```
+
 ## Inside the code
 
 ### How it works `Main.hs`

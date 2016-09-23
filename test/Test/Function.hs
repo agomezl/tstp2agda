@@ -6,6 +6,7 @@
 
 module Test.Function where
 
+
 import           Data.Foldable (toList)
 import           Data.Maybe    (catMaybes)
 import           Data.Proof    (base1)
