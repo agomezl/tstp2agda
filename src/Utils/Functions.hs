@@ -5,7 +5,6 @@
 {-# LANGUAGE CPP                       #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleInstances         #-}
-{-# LANGUAGE OverlappingInstances      #-}
 {-# LANGUAGE UndecidableInstances      #-}
 {-# LANGUAGE UnicodeSyntax             #-}
 

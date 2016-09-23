@@ -1,10 +1,9 @@
 
 -- | T2A module
 
-{-# OPTIONS -fno-warn-missing-local-signatures  #-}
-{-# OPTIONS -fno-warn-missing-signatures        #-}
+{-# OPTIONS -fno-warn-missing-signatures  #-}
 
-{-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE UnicodeSyntax                #-}
 
 
 module T2A (

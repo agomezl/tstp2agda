@@ -1,7 +1,6 @@
 
 -- | Tactics
 
-{-# OPTIONS -fno-warn-missing-local-signatures  #-}
 {-# OPTIONS -fno-warn-missing-signatures        #-}
 
 {-# LANGUAGE UnicodeSyntax #-}

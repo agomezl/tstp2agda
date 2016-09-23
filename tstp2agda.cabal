@@ -5,6 +5,7 @@ cabal-version: >= 1.8
 author:        Alejandro Gómez-Londoño with contributions by Jonathan Prieto-Cubides
 license:       MIT
 license-file:  LICENSE
+maintainer:    Alejandro Gómez-Londoño
 category:      Language
 homepage:      https://github.com/agomezl/tstp2agda
 bug-reports:   https://github.com/agomezl/tstp2agda/issues/
@@ -30,12 +31,12 @@ executable tstp2agda
                   src/Utils
 
   build-depends:  array >= 0.4 && < 1.0
-                  , base >= 4.6.0.1 && < 4.10
-                  , bytestring >= 0.10.0.2 && < 0.11
-                  , containers >= 0.5.0.0 && < 0.6
-                  , mtl >= 2.2.1 && < 2.3
-                  , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
-                  , text >= 0.11.3.1 && < 1.3
+                , base >= 4.6.0.1 && < 4.10
+                , bytestring >= 0.10.0.2 && < 0.11
+                , containers >= 0.5.0.0 && < 0.6
+                , mtl >= 2.2.1 && < 2.3
+                , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
+                , text >= 0.11.3.1 && < 1.3
 
   build-tools: cpphs >= 1.19
 
@@ -127,11 +128,6 @@ executable tstp2agda
      ghc-options: -fwarn-deriving-typeable
                   -fwarn-unticked-promoted-constructors
 
-  if impl(ghc >= 7.6) && impl(ghc < 8.0)
-    ghc-options: -fwarn-missing-local-sigs
-                 -- This option will be removed in GHC 8.0.1.
-                 -fwarn-pointless-pragmas
-
   -- This option will be deprected in GHC 8.0.1.
   if impl(ghc >= 7.8) && impl(ghc < 8.0)
     ghc-options: -fwarn-duplicate-constraints
@@ -141,8 +137,7 @@ executable tstp2agda
     ghc-options: -fwarn-context-quantification
 
   if impl(ghc >= 8.0)
-    ghc-options: -Wmissing-local-signatures
-                 -Wmissing-monadfail-instances
+    ghc-options: -Wmissing-monadfail-instances
                  -Wmissing-pattern-synonym-signatures
                  -Wnoncanonical-monad-instances
                  -Wnoncanonical-monoid-instances
@@ -156,12 +151,12 @@ executable tstp2agda
 library
   hs-source-dirs: src
   build-depends:  array >= 0.4 && < 1.0
-                  , base >= 4.6.0.1 && < 4.10
-                  , bytestring >= 0.10.0.2 && < 0.11
-                  , containers >= 0.5.0.0 && < 0.6
-                  , mtl >= 2.2.1 && < 2.3
-                  , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
-                  , text >= 0.11.3.1 && < 1.3
+                , base >= 4.6.0.1 && < 4.10
+                , bytestring >= 0.10.0.2 && < 0.11
+                , containers >= 0.5.0.0 && < 0.6
+                , mtl >= 2.2.1 && < 2.3
+                , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
+                , text >= 0.11.3.1 && < 1.3
   other-modules:
     Data.Proof
     Data.Proof.ProofTreeGen
