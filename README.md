@@ -15,13 +15,14 @@ $ cabal install
 ## Usage
 
 ```Bash
-Usage: tstp2agda [OPTIONS] FILE
+Usage: tstp2agda [OPTIONS]
 
-  -f FILE  --file=FILE, --File=FILE  TSTP input file     (def: STDIN)
+  -f FILE  --file=FILE, --File=FILE  TSTP input file     (default: STDIN)
   -h       --help                    prints help message
-  -m NAME  --module-name=NAME        module name         (def: Main)
-  -o FILE  --output=FILE             output to file      (def: STDOUT)
-  -p NAME  --proof-name=NAME         main proof name     (def: proof)
+  -m NAME  --module-name=NAME        module name         (default: Main)
+  -o FILE  --output=FILE             output to file      (default: STDOUT)
+  -p NAME  --proof-name=NAME         main proof name     (default: proof)
+           --version                 Show version number
 ```
 
 ## Inside the code
