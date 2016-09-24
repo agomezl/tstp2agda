@@ -75,7 +75,6 @@ executable tstp2agda
     Utils.Version
 
   ghc-options: -w
-               -Werror
                -- Using cpphs as the C preprocessor.
                -pgmP cpphs -optP --cpp
 
@@ -146,7 +145,6 @@ executable tstp2agda
                  -Wunrecognised-warning-flags
                  -Wunused-foralls
 
-  ghc-prof-options: -fprof-auto
 
 library
   hs-source-dirs: src
