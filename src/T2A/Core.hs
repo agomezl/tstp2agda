@@ -1,8 +1,9 @@
 
 -- | Core module
 
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE UnicodeSyntax       #-}
+{-# LANGUAGE OverlappingInstances #-}
+{-# LANGUAGE ScopedTypeVariables  #-}
+{-# LANGUAGE UnicodeSyntax        #-}
 
 
 module T2A.Core

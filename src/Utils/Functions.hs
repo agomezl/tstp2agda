@@ -1,7 +1,6 @@
 
 -- | Utils.Functions module
 
-
 {-# LANGUAGE CPP                       #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleInstances         #-}
@@ -100,7 +99,6 @@ putStrLnInd ind a = putStr spaces >> putStrLn a
     where
       spaces ∷ String
       spaces = replicate ind ' '
-
 
 -- | 'swapPrefix' @a b str@, replaces prefix @a@ in @str@ with @b@
 -- checking that @a@ is a prefix of @str@.
