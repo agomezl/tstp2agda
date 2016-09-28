@@ -5,6 +5,7 @@
 {-# LANGUAGE CPP                       #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleInstances         #-}
+{-# LANGUAGE OverlappingInstances      #-}
 {-# LANGUAGE UndecidableInstances      #-}
 {-# LANGUAGE UnicodeSyntax             #-}
 
@@ -124,7 +125,7 @@ agdafy = map repl
     where
       repl ∷ Char → Char
       repl '_' = '-'
-      repl  a  = a
+      repl a   = a
 
 -- | Redirect all stdout output into a file or do nothing (in case of
 -- 'Nothing')

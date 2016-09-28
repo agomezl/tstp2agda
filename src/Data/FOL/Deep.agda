@@ -6,11 +6,11 @@ open import Data.Vec
 
 infixl 5 _▴_ _▾_ _⇒_
 
-constrains :  ℕ  → Set₁
+constrains : ℕ → Set₁
 constrains zero    = Set
 constrains (suc n) = {A : Set} → constrains n
 
-data Fol : (n : ℕ) → Set  where
+data Fol : (n : ℕ) → Set where
   _▴_ : {n : ℕ}   → Fol n → Fol n → Fol n
   _▾_ : {n : ℕ}   → Fol n → Fol n → Fol n
   _⇒_ : {n : ℕ}   → Fol n → Fol n → Fol n
@@ -25,4 +25,4 @@ data Fol : (n : ℕ) → Set  where
 δ (∼ a)    n = {!!}
 
 getN : {n : ℕ} → Fol n → ℕ
-getN  {n} _ = n
+getN {n} _ = n

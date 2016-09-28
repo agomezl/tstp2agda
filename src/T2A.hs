@@ -110,15 +110,15 @@ printAuxSignatures ∷ ProofMap    -- ^ map of formulas
                    → [ProofTree] -- ^ list of subgoals
                    → IO ()
 printAuxSignatures ω γ = mapM_ resolveTacticGen signatures
-    where
-      signatures ∷ [AgdaSignature]
-      signatures = unique . concatMap signature $ γ
+  where
+    signatures ∷ [AgdaSignature]
+    signatures = unique . concatMap signature $ γ
 
-      signature ∷ ProofTree → [AgdaSignature]
-      signature = catMaybes -- Remove Nothings
-                    . toList  -- Flatten the tree
-                              -- Build (only) the required functions
-                    . fmap (buildSignature ω)
+    signature ∷ ProofTree → [AgdaSignature]
+    signature = catMaybes -- Remove Nothings
+                . toList  -- Flatten the tree
+                          -- Build (only) the required functions
+                . fmap (buildSignature ω)
 
 -- | Print the main subgoal implication function
 --

@@ -38,7 +38,7 @@ import Data.Proof.ProofTreeGen
   , IdSet
   )
 
-import  Data.TSTP
+import Data.TSTP
   ( F (..)
   , Parent (..)
   , Role (..)

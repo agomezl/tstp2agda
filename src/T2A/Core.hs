@@ -18,7 +18,7 @@ import           Data.List  (isPrefixOf)
 import           Data.Map   as M (lookup)
 import           Data.Proof (ProofMap, getParents)
 
-import  Data.TSTP
+import Data.TSTP
   ( F (..)
   , Formula (..)
   , Role (..)
@@ -29,7 +29,7 @@ import           Utils.Functions (βshow, (▪))
 
 
 -- Single function signature
--- | An  Agda type signature @α : τ@
+-- | An Agda type signature @α : τ@
 data AgdaSignature = Signature String [Formula]
                    -- ^ Regular top level signature
                    | ScopedSignature String [Formula]

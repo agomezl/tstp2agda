@@ -16,7 +16,7 @@ import           System.Environment (getProgName)
 
 toUpperFirst ∷ String → String
 toUpperFirst []       = []
-toUpperFirst (x : xs) =  toUpper x : xs
+toUpperFirst (x : xs) = toUpper x : xs
 
 -- Uncomment this in order to use ghcid with Main.hs
 

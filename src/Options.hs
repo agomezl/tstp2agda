@@ -100,8 +100,8 @@ options =
       "output to file      (default: STDOUT)"
   , Option ['p'] ["proof-name"] (ReqArg proofNameOpt "NAME")
       "main proof name     (default: proof)"
-  , Option []  ["version"] (NoArg versionOpt)
-               "Show version number"
+  , Option []    ["version"] (NoArg versionOpt)
+      "Show version number"
   ]
 
 usageHeader ∷ String → String
