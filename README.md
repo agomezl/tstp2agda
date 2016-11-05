@@ -65,7 +65,7 @@ fof(subgoal_0, plain, (z), inference(strip, [], [a4])).
 We proceed to reconstruct using tstp2agda saving the output into an
 Agda file
 
-```
+```agda
 $ tstp2agda Basic-1.tstp > Basic-1.agda
 $ cat Basic-1.agda
 
