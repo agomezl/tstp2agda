@@ -21,7 +21,6 @@ $ cabal install
 Usage: tstp2agda [OPTIONS] FILE
 
   -h       --help              Prints help message
-  -m NAME  --module-name=NAME  Module name         (default: Main)
   -o FILE  --output=FILE       Output to file      (default: STDOUT)
   -p NAME  --proof-name=NAME   Main proof name     (default: proof)
            --version           Show version number
