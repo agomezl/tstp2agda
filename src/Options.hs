@@ -90,22 +90,20 @@ versionOpt opts = Right opts { optVersion = True }
 -- | Description of the command-line 'Options'.
 options ∷ [OptDescr OM]
 options =
-  [ Option ['f'] ["file","File"] (ReqArg inputFileOpt "FILE")
-      "TSTP input file     (default: STDIN)"
-  , Option ['h'] ["help"] (NoArg helpOpt)
-      "prints help message"
+  [ Option ['h'] ["help"] (NoArg helpOpt)
+      "Prints help message"
   , Option ['m'] ["module-name"] (ReqArg moduleNameOpt "NAME")
-      "module name         (default: Main)"
+      "Module name         (default: Main)"
   , Option ['o'] ["output"] (ReqArg outputFileOpt "FILE")
-      "output to file      (default: STDOUT)"
+      "Output to file      (default: STDOUT)"
   , Option ['p'] ["proof-name"] (ReqArg proofNameOpt "NAME")
-      "main proof name     (default: proof)"
+      "Main proof name     (default: proof)"
   , Option []    ["version"] (NoArg versionOpt)
       "Show version number"
   ]
 
 usageHeader ∷ String → String
-usageHeader prgName = "Usage: " ++ prgName ++ " [OPTIONS]\n"
+usageHeader prgName = "Usage: " ++ prgName ++ " [OPTIONS] FILE\n"
 
 -- | Print usage information.
 printUsage ∷ IO ()
