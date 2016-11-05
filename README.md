@@ -66,7 +66,7 @@ We proceed to reconstruct using tstp2agda saving the output into an
 Agda file
 
 ```agda
-$ tstp2agda Basic-1.tstp > Basic-1.agda
+$ tstp2agda -o Basic-1.agda Basic-1.tstp
 $ cat Basic-1.agda
 
 -- | tstp2agda proof
