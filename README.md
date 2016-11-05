@@ -4,12 +4,12 @@ tstp2agda [![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https:/
 
 A proof tool for translating TSTP proofs to [Agda] code.
 Only [Metis](http://www.gilith.com/software/metis/) proofs for now.
-Supporting metis 2.3 (release 20160714).
+Tested with Metis 2.3 (release 20160714).
 
 
 ## Installation
 
-```bash
+```
 $ git clone https://github.com/agomezl/tstp2agda.git
 $ cd tstp2agda
 $ cabal install
@@ -17,7 +17,7 @@ $ cabal install
 
 ## Usage
 
-```Bash
+```
 Usage: tstp2agda [OPTIONS] FILE
 
   -h       --help              Prints help message
@@ -30,11 +30,9 @@ Usage: tstp2agda [OPTIONS] FILE
 
 ## First proof reconstruction
 
-Locating on this source, we are going to find a proof in Agda of one example,
-reconstructing the proof given by the ATP Metis of
-`example/problem/Basic-1.tptp` file. Let's see
+Given a problem in TPTP format like this one
 
-```Bash
+```
 $ cd examples/problem
 $ cat Basic-1.tptp
 fof(a1,axiom,a).
@@ -42,10 +40,13 @@ fof(a2,axiom,b).
 fof(a3,axiom, (a & b) => z).
 fof(a4,conjecture,z).
 ```
-Then, we run Metis and we get something like this
 
-```Bash
-$ metis --show proof Basic-1.tptp
+we can get a proof in TSTP format using the Metis
+
+
+```
+$ metis --show proof Basic-1.tptp > Basic-1.tstp
+$ cat Basic-1.tstp
 ---------------------------------------------------------------------------
 SZS status Theorem for Basic-1.tptp
 
@@ -62,15 +63,10 @@ fof(subgoal_0, plain, (z), inference(strip, [], [a4])).
 ...
 ```
 
-To reconstruct, we save the above proof
+We proceed to reconstruct using tstp2agda saving the output into an
+Agda file
 
-```Bash
-$ metis --show proof Basic-1.tptp > Basic-1.tstp
 ```
-
-And, we proceed to reconstruct using tstp2agda saving the output into an Agda file
-
-```Bash
 $ tstp2agda Basic-1.tstp > Basic-1.agda
 $ cat Basic-1.agda
 
@@ -118,9 +114,10 @@ proof {a}{b}{z} a1 a2 a3 = goals subgoal-0
 
 ```
 
-If everything is alright, we can compile the Agda file and that's all
+If everything is alright, we can type-check the Agda file and that's
+all
 
-```Bash
+```
 $ agda Basic-1.agda
 ```
 
