@@ -22,7 +22,7 @@ import           Data.TSTP.InfixPred  (InfixPred (..))
 import           Data.TSTP.Quant      (Quant (..))
 import           Data.TSTP.Term       (Term (..))
 import           Data.TSTP.V          (V (..))
-import           Utils.Functions      (βshow, (▪))
+import           Utils.Functions      (βshow, (▪), (<>))
 
 
 -- The following code is based on:
@@ -41,15 +41,15 @@ data Formula = BinOp Formula BinOp Formula    -- ^ Binary connective application
 -- Pretty print instance of Show for Formula and Term
 instance Show Formula where
   -- To avoid confusion every α → β is printed as (α → β)
-  show (BinOp     f₁  (:=>:) f₂) = '(' ▪ f₁   ▪ '→' ▪ f₂  ▪ ')'
-  show (BinOp     f₁  op     f₂) = f₁  ▪ op   ▪ f₂
-  show (InfixPred t₁  r      t₂) = t₁  ▪ r ▪ t₂
+  show (BinOp     f₁  (:=>:) f₂) = '(' <> f₁ ▪ '→' ▪ f₂ <> ')'
+  show (BinOp     f₁  op     f₂) = f₁ ▪ op ▪ f₂
+  show (InfixPred t₁  r      t₂) = t₁ ▪ r  ▪ t₂
   -- Predicates are just functions that return ⊤ with some parameter
   show (PredApp   ρ          []) = show ρ
-  show (PredApp   ρ          φ ) = '(' ▪ ρ    ▪ ':' ▪ φ   ▪ "→ ⊤" ▪ ')'
+  show (PredApp   ρ          φ ) = '(' <> ρ ▪ ':' ▪ φ ▪ "→ ⊤" <> ')'
   show (Quant     All []     f ) = βshow f
-  show (Quant     All υ      f ) = '(' ▪ foldl (▪) "{" υ  ▪ ": Set }" ▪ '→' ▪ f ▪ ')'
-  show (Quant     Exists υ   f ) = '(' ▪ foldl (▪) "{" υ  ▪ ": Set }" ▪ '→' ▪ f ▪ ')'
+  show (Quant     All υ      f ) = '(' <> foldl (▪) "{" υ  ▪ ": Set}" ▪ '→' ▪ f <> ')'
+  show (Quant     Exists υ   f ) = '(' <> foldl (▪) "{" υ  ▪ ": Set}" ▪ '→' ▪ f <> ')'
   show ((:~:)                f ) = '¬' ▪ f
 
 -- Overlaped instance of Show [Formula] for "easy" representation of
@@ -59,12 +59,12 @@ instance {-# OVERLAPPING #-} Show [Formula] where
 #else
 instance Show [Formula] where
 #endif
-  show []     = []
+  show []       = []
   show φ@(x:xs) = fvars ▪ foldl ((▪) . (▪ '→')) (βshow x) xs
       where
         fvars = case getFreeVars φ of
           [] → []
-          (y:ys) → '{' ▪ foldl (▪) (βshow y) ys ▪ ": Set} →"
+          (y:ys) → '{'  <> foldl (▪) (βshow y) ys ▪ ": Set} →"
 
 
 -- | 'freeVarsF' 'f', returns a 'Set' of all free variables of 'f'.

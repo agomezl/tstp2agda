@@ -92,10 +92,10 @@ getConjeture rules =
 printPreamble ∷ String -- ^ Module name
               → IO ()
 printPreamble moduleName = do
-  putStrLn $ "module" ▪ moduleName ▪ "where"
+  putStrLn $ "\n-- |" ▪ moduleName ▪ " proof\n"
+  putStrLn $ "module" ▪ moduleName ▪ "where\n"
   putStrLn "open import Data.FOL.Shallow"
-  putStrLn "open import Function using (id)"
-  putStrLn []
+  putStrLn "open import Function using (id)\n"
 
 -- | Print a series of auxiliary functions required to perform most
 -- of the steps of the proof. Every 'Data.TSTP.Formula' has a corresponding

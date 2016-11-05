@@ -19,6 +19,7 @@ module Utils.Functions
   (
   -- * Spaced concatenation
     (▪)
+  , (<>)
   , BShow(..)
   -- * Printing with indentation
   , printInd
@@ -51,6 +52,13 @@ infixr 4 ▪
 -- concatenation of printable types separated by spaces.
 (▪) ∷ forall a b. (BShow a, BShow b) ⇒ a → b → String
 (▪) α₁ α₂ = βshow α₁ ++ " " ++ βshow α₂
+
+infixr 4 <>
+
+-- | '"foo" ▪ "bar"' = '"foo bar"'. Its main use is to simplify the
+-- concatenation of printable types separated by spaces.
+(<>) ∷ forall a b. (BShow a, BShow b) ⇒ a → b → String
+(<>) α₁ α₂ = βshow α₁ ++ βshow α₂
 
 -- | 'BShow' fixes 'Show' 'String' instance behavior @length "foo" ≠
 -- length (show "foo")@ with two new instances (and overlapped)
