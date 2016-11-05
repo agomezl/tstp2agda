@@ -40,7 +40,7 @@ fof(a3,axiom, (a & b) => z).
 fof(a4,conjecture,z).
 ```
 
-we can get a proof in TSTP format using the Metis
+we can get a proof in TSTP format using Metis
 
 
 ```
