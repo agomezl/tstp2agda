@@ -12,7 +12,6 @@ module Options
     ( Options --Improve Haddock information.
     , optHelp
     , optInputFile
-    , optModuleName
     , optOutputFile
     , optProofName
     , optVersion
@@ -40,7 +39,6 @@ import System.Console.GetOpt
 data Options = Options
   { optHelp           ∷ Bool
   , optInputFile      ∷ Maybe FilePath
-  , optModuleName     ∷ String
   , optOutputFile     ∷ Maybe FilePath
   , optProofName      ∷ String
   , optVersion        ∷ Bool
@@ -50,7 +48,6 @@ defaultOptions ∷ Options
 defaultOptions = Options
   { optHelp           = False
   , optInputFile      = Nothing
-  , optModuleName     = "Main"
   , optOutputFile     = Nothing
   , optProofName      = "proof"
   , optVersion        = False
@@ -67,11 +64,6 @@ inputFileOpt file opts =
   case optInputFile opts of
     Nothing → Right opts { optInputFile = Just file }
     Just _  → Left $ pretty "only one input file allowed"
-
-moduleNameOpt ∷ String → OM
-moduleNameOpt [] _ = Left $
-  pretty "option " <> squotes "--module-name" <> pretty " requires an argument NAME"
-moduleNameOpt mname opts = Right opts { optModuleName = mname}
 
 outputFileOpt ∷ FilePath → OM
 outputFileOpt file opts =
@@ -92,8 +84,6 @@ options ∷ [OptDescr OM]
 options =
   [ Option ['h'] ["help"] (NoArg helpOpt)
       "Prints help message"
-  , Option ['m'] ["module-name"] (ReqArg moduleNameOpt "NAME")
-      "Module name         (default: Main)"
   , Option ['o'] ["output"] (ReqArg outputFileOpt "FILE")
       "Output to file      (default: STDOUT)"
   , Option ['p'] ["proof-name"] (ReqArg proofNameOpt "NAME")

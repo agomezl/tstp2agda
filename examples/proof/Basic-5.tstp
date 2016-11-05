@@ -135,4 +135,3 @@ fof(normalize_3_7, plain, ($false),
 cnf(refute_3_0, plain, ($false),
     inference(canonicalize, [], [normalize_3_7])).
 SZS output end CNFRefutation for Basic-5.tptp
-

@@ -34,4 +34,3 @@ fof(normalize_0_5, plain, ($false),
 cnf(refute_0_0, plain, ($false),
     inference(canonicalize, [], [normalize_0_5])).
 SZS output end CNFRefutation for problem/trivial.tptp
-

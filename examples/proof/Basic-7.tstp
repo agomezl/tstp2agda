@@ -42,4 +42,3 @@ fof(normalize_0_7, plain, ($false),
 cnf(refute_0_0, plain, ($false),
     inference(canonicalize, [], [normalize_0_7])).
 SZS output end CNFRefutation for Basic-7.tptp
-

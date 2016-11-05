@@ -14,7 +14,6 @@ import Options
     Options
     ( optHelp
     , optInputFile
-    , optModuleName
     , optOutputFile
     , optProofName
     , optVersion
@@ -74,7 +73,7 @@ mainCore opts = do
   stdout2file $ optOutputFile opts
 
   -- PREAMBLE : module definitions and imports
-  printPreamble $ optModuleName opts
+  printPreamble
 
   -- STEP 0 : axioms,conjetures and subgoals
   let subgoals ∷ [F]

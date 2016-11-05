@@ -2,7 +2,10 @@ tstp2agda [![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https:/
 ====
 
 
-A proof tool for translating TSTP proofs to Agda code. Only [Metis](http://www.gilith.com/software/metis/) proofs for now.
+A proof tool for translating TSTP proofs to [Agda] code.
+Only [Metis](http://www.gilith.com/software/metis/) proofs for now.
+Supporting metis 2.3 (release 20160714).
+
 
 ## Installation
 
@@ -15,105 +18,113 @@ $ cabal install
 ## Usage
 
 ```Bash
-Usage: tstp2agda [OPTIONS]
+Usage: tstp2agda [OPTIONS] FILE
 
-  -f FILE  --file=FILE, --File=FILE  TSTP input file     (default: STDIN)
-  -h       --help                    prints help message
-  -m NAME  --module-name=NAME        module name         (default: Main)
-  -o FILE  --output=FILE             output to file      (default: STDOUT)
-  -p NAME  --proof-name=NAME         main proof name     (default: proof)
-           --version                 Show version number
+  -h       --Help              Prints help message
+  -m NAME  --module-name=NAME  Module name         (default: Main)
+  -o FILE  --output=FILE       Output to file      (default: STDOUT)
+  -p NAME  --proof-name=NAME   Main proof name     (default: proof)
+           --version           Show version number
+
 ```
 
-## Inside the code
+## First proof reconstruction
 
-### How it works `Main.hs`
-
-Given a problem in TPTP format like this one
+Locating on this source, we are going to find a proof in Agda of one example,
+reconstructing the proof given by the ATP Metis of
+`example/problem/Basic-1.tptp` file. Let's see
 
 ```Bash
-  $ cat problem.tstp
-  fof(a1,axiom,a).
-  fof(a2,conjecture,a).
+$ cd examples/problem
+$ cat Basic-1.tptp
+fof(a1,axiom,a).
+fof(a2,axiom,b).
+fof(a3,axiom, (a & b) => z).
+fof(a4,conjecture,z).
 ```
-We can get a proof  in TSTP format using the ATP Metis
+Then, we run Metis and we get something like this
 
 ```Bash
-   $ cat proof.tstp
-   -------------------------------------------------------------------------
-   SZS status Theorem for examples/problem/Test-1.tstp
-   SZS output start CNFRefutation for examples/problem/Test-1.tstp
-   fof(a1, axiom, (a)).
-   fof(a2, conjecture, (a)).
-   fof(subgoal_0, plain, (a), inference(strip, [], [a2])).
-   fof(negate_0_0, plain, (~ a), inference(negate, [], [subgoal_0])).
-   fof(normalize_0_0, plain, (~ a),
-       inference(canonicalize, [], [negate_0_0])).
-   fof(normalize_0_1, plain, (a), inference(canonicalize, [], [a1])).
-   fof(normalize_0_2, plain, ($false),
-       inference(simplify, [], [normalize_0_0, normalize_0_1])).
-   cnf(refute_0_0, plain, ($false),
-       inference(canonicalize, [], [normalize_0_2])).
-   SZS output end CNFRefutation for examples/problem/Test-1.tstp
+$ metis --show proof Basic-1.tptp
+---------------------------------------------------------------------------
+SZS status Theorem for Basic-1.tptp
+
+SZS output start CNFRefutation for Basic-1.tptp
+fof(a1, axiom, (a)).
+
+fof(a2, axiom, (b)).
+
+fof(a3, axiom, ((a & b) => z)).
+
+fof(a4, conjecture, (z)).
+
+fof(subgoal_0, plain, (z), inference(strip, [], [a4])).
+...
 ```
 
-Then, we create some data structures to store all information from the proof.
+To reconstruct, we save the above proof
 
-```Haskell
-  main ∷ IO ()
-  main = do
-   -- read the file
-   formulas ← 'parseFile' "proof.tstp"
-   -- create a map
-   proofmap ← 'buildProofMap' formulas
-   -- get subgoals,refutes,axioms, and the conjecture
-   let subgoals    = 'getSubGoals' formulas
-   let refutes     = 'getRefutes' formulas
-   let axioms      = 'getAxioms' formulas
-   let (Just conj) = 'getConjeture' formulas
-   -- build a 'proofTree' for each subgoal (using his associated refute)
-   let prooftree = 'map' ('buildProofTree' proofmap) refutes
-```
-And the reconstruction process takes place:
-
-```
- -- PREAMBLE: module definitions and imports
- 'printPreamble' \"BaseProof\"
- -- STEP 1: Print auxiliary functions
- 'printAuxSignatures' proofmap prooftree
- -- STEP 2: Subgoal handling
- 'printSubGoals' subgoals conj "goals"
- -- STEP 3: Print main function signature
- 'printProofBody' axioms conj "proof" subgoals "goals"
- -- STEP 4: Print all the step of the proof as local definitions
- 'mapM_' ('printProofWhere' proofmap  prooftree
+```Bash
+$ metis --show proof Basic-1.tptp > Basic-1.tstp
 ```
 
-And `tstp2agda` outputs a Agda code based on the original proof.
+And, we proceed to reconstruct using tstp2agda saving the output into an Agda file
 
-```Agda
-$ cat BaseProof.agda
-module BaseProof where
+```Bash
+$ tstp2agda Basic-1.tstp > Basic-1.agda
+$ cat Basic-1.agda
+
+-- | tstp2agda proof
+
 open import Data.FOL.Shallow
-postulate fun-normalize-0-0 : { a : Set} → ¬ a → ¬ a
-postulate fun-normalize-0-1 : { a : Set} → a → a
-postulate fun-normalize-0-2 : { a : Set} → ¬ a → a → ⊥
+open import Function using (id)
+
+-- 0 more viable options
+fun-normalize-0-0 : {z : Set} → ¬ z → ¬ z
+fun-normalize-0-0 = id
+
+postulate fun-normalize-0-1 : {a b z : Set} → (a ∧ b → z) → ¬ a ∨ ¬ b ∨ z
+
+-- 0 more viable options
+fun-normalize-0-2 : {a : Set} → a → a
+fun-normalize-0-2 = id
+
+-- 0 more viable options
+fun-normalize-0-3 : {b : Set} → b → b
+fun-normalize-0-3 = id
+
+postulate fun-normalize-0-4 : {a b z : Set} → ¬ a ∨ ¬ b ∨ z → a → b → z
+
+postulate fun-normalize-0-5 : {z : Set} → ¬ z → z → ⊥
+
 postulate fun-refute-0-0 :  ⊥ → ⊥
-postulate goals : { a : Set} → a → a
-proof : { a : Set} → a → a
-proof {a} a1 = goals subgoal-0
- where
-   fun-negate-0-0 : ¬ a → ⊥
-   fun-negate-0-0 negate-0-0 = refute-0-0
-     where
-       normalize-0-0 = fun-normalize-0-0 negate-0-0
-       normalize-0-1 = fun-normalize-0-1 a1
-       normalize-0-2 = fun-normalize-0-2 normalize-0-0 normalize-0-1
-       refute-0-0 = fun-refute-0-0 normalize-0-2
-     subgoal-0 = proofByContradiction fun-negate-0-0
+
+postulate goals : {z : Set} → z → z
+
+proof : {a b z : Set} → a → b → (a ∧ b → z) → z
+proof {a}{b}{z} a1 a2 a3 = goals subgoal-0
+  where
+    fun-negate-0-0 : ¬ z → ⊥
+    fun-negate-0-0 negate-0-0 = refute-0-0
+      where
+        normalize-0-0 = fun-normalize-0-0 negate-0-0
+        normalize-0-1 = fun-normalize-0-1 a3
+        normalize-0-2 = fun-normalize-0-2 a1
+        normalize-0-3 = fun-normalize-0-3 a2
+        normalize-0-4 = fun-normalize-0-4 normalize-0-1 normalize-0-2 normalize-0-3
+        normalize-0-5 = fun-normalize-0-5 normalize-0-0 normalize-0-4
+        refute-0-0 = fun-refute-0-0 normalize-0-5
+    subgoal-0 = proofByContradiction fun-negate-0-0
+
+```
+
+If everything is alright, we can compile the Agda file and that's all
+
+```Bash
+$ agda Basic-1.agda
 ```
 
 ## Links
 
-* [Agda wiki](http://wiki.portal.chalmers.se/agda/pmwiki.php)
+* [Agda](http://wiki.portal.chalmers.se/agda/pmwiki.php)
 * [TSTP](http://www.cs.miami.edu/~tptp/TSTP/)

@@ -89,11 +89,9 @@ getConjeture rules =
     [l] → Just l
     _   → Nothing
 
-printPreamble ∷ String -- ^ Module name
-              → IO ()
-printPreamble moduleName = do
-  putStrLn $ "\n-- |" ▪ moduleName ▪ " proof\n"
-  putStrLn $ "module" ▪ moduleName ▪ "where\n"
+printPreamble ∷ IO ()
+printPreamble = do
+  putStrLn $ "\n-- | tstp2agda proof\n"
   putStrLn "open import Data.FOL.Shallow"
   putStrLn "open import Function using (id)\n"
 
