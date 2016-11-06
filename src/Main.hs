@@ -22,13 +22,14 @@ import Options
     , processOptions
     )
 
-import           Data.Maybe         (fromMaybe)
+import           Data.Maybe         (fromJust, fromMaybe)
 import           Data.Proof         (ProofMap, ProofTree)
 import           Data.TSTP          (F)
 import           System.Environment (getArgs)
 import           System.Exit        (exitSuccess)
 import           Utils.Functions    (stdout2file)
 import           Utils.Monad        (die)
+import           Utils.PrettyPrint  (text)
 import           Utils.Version      (progNameVersion)
 
 import T2A
@@ -60,7 +61,11 @@ main = do
         v ← progNameVersion
         putStrLn v  >> exitSuccess
 
-      | otherwise → mainCore opts
+      | otherwise → do
+          file ← case optInputFile opts of
+            Nothing → die $ text "missing input file (try --help)"
+            Just f  → return f
+          mainCore opts
 
 -- High level procedure
 mainCore ∷ Options → IO ()
@@ -68,7 +73,7 @@ mainCore opts = do
 
   -- Reads all the rules, perhaps more error handling is requiered in
   -- TSTP.hs especially on the alex/happy part of `parseFile` and `parse`
-  rules ∷ [F] ← parseFile $ optInputFile opts
+  rules ∷ [F] ← parseFile $ fromJust $ optInputFile opts
 
   stdout2file $ optOutputFile opts
 

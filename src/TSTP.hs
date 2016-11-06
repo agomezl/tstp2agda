@@ -52,9 +52,6 @@ import           Control.Applicative ((<$>))
 parse ∷ String → [F]
 parse = parseTSTP . map snd . alexScanTokens
 
--- | Similar to `parse` but reading directly from a file or stdin.
 
-parseFile ∷ Maybe FilePath → IO [F]
-parseFile path = parse <$> case path of
-  Just filepath → readFile filepath
-  _             → getContents
+parseFile ∷ FilePath → IO [F]
+parseFile path = parse <$>  readFile path
