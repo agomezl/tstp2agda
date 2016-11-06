@@ -91,6 +91,7 @@ getConjeture rules =
 
 printPreamble ∷ IO ()
 printPreamble = do
+  putStrLn "\n-- tstp2agda proof\n"
   putStrLn "open import Data.FOL.Shallow"
   putStrLn "open import Function using (id)\n"
 

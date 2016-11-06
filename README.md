@@ -69,7 +69,7 @@ Agda file
 $ tstp2agda -o Basic-1.agda Basic-1.tstp
 $ cat Basic-1.agda
 
--- | tstp2agda proof
+-- tstp2agda proof
 
 open import Data.FOL.Shallow
 open import Function using (id)
