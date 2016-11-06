@@ -2,7 +2,7 @@ tstp2agda [![Build Status](https://travis-ci.org/agomezl/tstp2agda.svg)](https:/
 ====
 
 
-A proof tool for translating TSTP proofs to [Agda] code.
+A proof tool for translating TSTP proofs to [Agda](https://github.com/agda/agda) code.
 Only [Metis](http://www.gilith.com/software/metis/) proofs for now.
 Tested with Metis 2.3 (release 20160714).
 
