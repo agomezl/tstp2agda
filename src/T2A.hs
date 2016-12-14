@@ -97,7 +97,7 @@ printPreamble embedding n = do
       putStrLn "open import Data.FOL.Shallow"
       putStrLn "open import Function using (id)\n"
     'd' → do
-      putStrLn "open import Data.FOL.Deep "++ show n ++ "\n\n"
+      putStrLn $ "open import Data.FOL.Deep " ++ show n ++ "\n"
 
 
 -- | Print a series of auxiliary functions required to perform most

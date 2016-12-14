@@ -28,7 +28,17 @@ import Data.List (intercalate)
 
 import           Data.Maybe         (fromJust, fromMaybe)
 import           Data.Proof         (ProofMap, ProofTree)
-import           Data.TSTP          (F (..), Formula (..) )
+
+import           Data.TSTP            (F (..), Formula (..) )
+import           Data.TSTP.Formula    (getFreeVars)
+import           Data.TSTP.AtomicWord (AtomicWord (..))
+import           Data.TSTP.BinOp      (BinOp (..))
+import           Data.TSTP.InfixPred  (InfixPred (..))
+import           Data.TSTP.Quant      (Quant (..))
+import           Data.TSTP.Term       (Term (..)) 
+import           Data.TSTP.V          (V (..))
+import           Utils.Functions      (βshow, (▪), (<>))
+
 import           System.Environment (getArgs)
 import           System.Exit        (exitSuccess)
 import           Utils.Functions    (stdout2file)
@@ -77,13 +87,20 @@ mainCore opts = do
 
   tstp ∷ [F] ← parseFile $ fromJust $ optInputFile opts
 
-
   -- STEP 0 : axioms,conjetures and subgoals
   let subgoals ∷ [F]
       subgoals = getSubGoals tstp
 
+  putStrLn "subgoals"
+  print subgoals
+  putStrLn "\n"
+
   let refutes ∷ [F]
       refutes = getRefutes tstp
+
+  putStrLn "refutes"
+  print refutes
+  putStrLn "\n"
 
   let axioms ∷ [F]
       axioms = getAxioms tstp
@@ -99,17 +116,29 @@ mainCore opts = do
   let rulesMap ∷ ProofMap
       rulesMap = buildProofMap tstp
 
+  putStrLn "rulesMap"
+  print rulesMap
+  putStrLn "\n"
+
   let rulesTrees ∷ [ProofTree]
       rulesTrees = map (buildProofTree rulesMap) refutes
+
+  putStrLn "rulesTrees"
+  print rulesTrees
+  putStrLn "\n"
+
 
   let embedding ∷ Char
       embedding = optEmbedding opts
 
   stdout2file $ optOutputFile opts
-  printPreamble embedding (length axioms)
+
+  let formulas ∷ [Formula]
+      formulas = map formula tstp
 
   case embedding of
     's' → do
+      printPreamble embedding 0
       -- STEP 1 : Print auxiliary functions
       printAuxSignatures rulesMap rulesTrees
 
@@ -123,22 +152,68 @@ mainCore opts = do
       mapM_ (printProofWhere rulesMap) rulesTrees
 
     'd' → do
-      putStrLn "-- Definitions "
+      let freevars ∷ [V]
+          freevars = getFreeVars formulas
+
+      printPreamble embedding (length freevars)
+
+      putStrLn "-- Vars"
+      printVars freevars 0
+
       printAxioms axioms
+
+      printPremises axioms
+
+      printConjecture conj
+
+      printProof axioms
+
       return ()
 
+printVar ∷ V → Int → String
+printVar f n = intercalate "\n" $
+  [  show f ++ " : Prop"
+  ,  show f ++ " = Var (# " ++ show n ++ ")"
+  ]
 
-printDeepFormula ∷ Formula → String
-printDeepFormula f = "⊤"
+printVars ∷ [V] → Int → IO String
+printVars [] _ = return ""
+printVars (f : fs) n = do
+  putStrLn $ printVar f n ++ "\n"
+  printVars fs (n+1)
 
+showDeepFormula ∷ Formula → String
+showDeepFormula (BinOp     f₁  (:=>:) f₂) = '(' <> f₁ ▪ '⇒' ▪ f₂ <> ')'
+showDeepFormula (BinOp     f₁  op     f₂) = f₁ ▪ op ▪ f₂
+showDeepFormula (InfixPred t₁  r      t₂) = t₁ ▪ r  ▪ t₂
+showDeepFormula (PredApp   ρ          []) = show ρ
+showDeepFormula (PredApp   ρ          φ ) = '(' <> ρ ▪ ':' ▪ φ ▪ "⇒ ⊤" <> ')'
+showDeepFormula ((:~:)                f ) = '¬' ▪ f
+showDeepFormula _ = "⊤"
 
-printAxiom :: F → String
+printAxiom ∷ F → String
 printAxiom f = intercalate "\n" $
   let axiom = name f
-  in [  axiom ++ " : " ++ "Prop"
-     ,  axiom ++ " = " ++ printDeepFormula (formula f)
+  in [  axiom ++ " : Prop"
+     ,  axiom ++ " = " ++ showDeepFormula (formula f)
      ]
 
-printAxioms :: [F] → IO ()
-printAxioms fs = putStrLn $
-  intercalate "\n\n" $ map printAxiom fs
+printAxioms ∷ [F] → IO ()
+printAxioms fs = do
+  putStrLn "-- Axioms"
+  putStrLn $ intercalate "\n\n" $ map printAxiom fs
+
+printPremises ∷ [F] → IO ()
+printPremises fs = do
+  putStrLn $ "\n-- Premises"
+  putStrLn $ "Γ : Ctxt"
+  putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name fs))
+
+printConjecture ∷ F → IO ()
+printConjecture f = do
+  putStrLn "\n-- Conjecture"
+  putStrLn $ printAxiom f
+
+printProof ∷ [F] → IO ()
+printProof _ = do
+  putStrLn $ "\n-- Proof"

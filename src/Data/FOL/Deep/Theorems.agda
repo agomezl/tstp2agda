@@ -153,3 +153,28 @@ lem2 {Γ} {φ}{ψ} seq =
             (weaken ψ (∧-proj₂ seq))
             (assume {Γ = Γ} ψ)))))
     (∧-proj₁ seq)
+
+
+postulate impl-pos : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ⇒ ψ → Γ ⊢  ¬ φ ∨ ψ
+postulate impl-neg : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ (φ ⇒ ψ) → Γ ⊢ φ ∧ ¬ ψ
+
+-- Translation of Formulas to Negation Normal Form.
+
+mutual
+  positive : Prop → Prop
+  positive (Var x) = Var x
+  positive ⊤ = ⊤
+  positive ⊥ = ⊥
+  positive (¬ φ)   = negative φ
+  positive (φ ∧ ψ) = (positive φ) ∧ (positive ψ)
+  positive (φ ∨ ψ) = (positive φ) ∨ (positive ψ)
+  positive (φ ⇒ ψ) = (negative φ) ∨ (positive ψ)
+
+  negative : Prop → Prop
+  negative (Var x) = ¬ (Var x)
+  negative ⊤ = ⊥
+  negative ⊥ = ⊤
+  negative (¬ φ)   = positive φ
+  negative (φ ∧ ψ) = (negative φ) ∨ (negative ψ)
+  negative (φ ∨ ψ) = (negative φ) ∧ (negative ψ)
+  negative (φ ⇒ ψ) = (positive φ) ∧ (negative ψ)
