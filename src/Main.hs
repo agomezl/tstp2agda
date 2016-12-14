@@ -12,7 +12,8 @@ module Main (main) where
 import Options
   (
     Options
-    ( optHelp
+    ( optEmbedding
+    , optHelp
     , optInputFile
     , optOutputFile
     , optProofName
@@ -22,9 +23,12 @@ import Options
     , processOptions
     )
 
+import Data.List (intercalate)
+
+
 import           Data.Maybe         (fromJust, fromMaybe)
 import           Data.Proof         (ProofMap, ProofTree)
-import           Data.TSTP          (F)
+import           Data.TSTP          (F (..), Formula (..) )
 import           System.Environment (getArgs)
 import           System.Exit        (exitSuccess)
 import           Utils.Functions    (stdout2file)
@@ -71,47 +75,70 @@ main = do
 mainCore ∷ Options → IO ()
 mainCore opts = do
 
-  -- Reads all the rules, perhaps more error handling is requiered in
-  -- TSTP.hs especially on the alex/happy part of `parseFile` and `parse`
-  rules ∷ [F] ← parseFile $ fromJust $ optInputFile opts
+  tstp ∷ [F] ← parseFile $ fromJust $ optInputFile opts
 
-  stdout2file $ optOutputFile opts
-
-  -- PREAMBLE : module definitions and imports
-  printPreamble
 
   -- STEP 0 : axioms,conjetures and subgoals
   let subgoals ∷ [F]
-      subgoals = getSubGoals rules
+      subgoals = getSubGoals tstp
 
   let refutes ∷ [F]
-      refutes = getRefutes rules
+      refutes = getRefutes tstp
 
   let axioms ∷ [F]
-      axioms = getAxioms rules
+      axioms = getAxioms tstp
 
   let conj ∷ F
       conj = fromMaybe
         (error "Couldn't find a conjecture, or it was not unique")
-        (getConjeture rules)
+        (getConjeture tstp)
 
-  -- Construction of map an tree structures that are meant to be
+  -- Construction of map and tree structures that are meant to be
   -- traversed to create the final Agda code.
 
   let rulesMap ∷ ProofMap
-      rulesMap = buildProofMap rules
+      rulesMap = buildProofMap tstp
 
   let rulesTrees ∷ [ProofTree]
       rulesTrees = map (buildProofTree rulesMap) refutes
 
-  -- STEP 1 : Print auxiliary functions
-  printAuxSignatures rulesMap rulesTrees
+  let embedding ∷ Char
+      embedding = optEmbedding opts
 
-  -- STEP 2 : Subgoal handling
-  printSubGoals subgoals conj "goals"
+  stdout2file $ optOutputFile opts
+  printPreamble embedding (length axioms)
 
-  -- STEP 3 : Print main function signature
-  printProofBody axioms conj (optProofName opts) subgoals "goals"
+  case embedding of
+    's' → do
+      -- STEP 1 : Print auxiliary functions
+      printAuxSignatures rulesMap rulesTrees
 
-  -- STEP 4 :
-  mapM_ (printProofWhere rulesMap) rulesTrees
+      -- STEP 2 : Subgoal handling
+      printSubGoals subgoals conj "goals"
+
+      -- STEP 3 : Print main function signature
+      printProofBody axioms conj (optProofName opts) subgoals "goals"
+
+      -- STEP 4 :
+      mapM_ (printProofWhere rulesMap) rulesTrees
+
+    'd' → do
+      putStrLn "-- Definitions "
+      printAxioms axioms
+      return ()
+
+
+printDeepFormula ∷ Formula → String
+printDeepFormula f = "⊤"
+
+
+printAxiom :: F → String
+printAxiom f = intercalate "\n" $
+  let axiom = name f
+  in [  axiom ++ " : " ++ "Prop"
+     ,  axiom ++ " = " ++ printDeepFormula (formula f)
+     ]
+
+printAxioms :: [F] → IO ()
+printAxioms fs = putStrLn $
+  intercalate "\n\n" $ map printAxiom fs
