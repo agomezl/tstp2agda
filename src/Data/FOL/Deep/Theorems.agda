@@ -160,6 +160,7 @@ postulate impl-neg : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ (φ ⇒ ψ) → Γ �
 
 -- Translation of Formulas to Negation Normal Form.
 
+
 mutual
   positive : Prop → Prop
   positive (Var x) = Var x
