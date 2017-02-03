@@ -12,7 +12,8 @@ module Main (main) where
 import Options
   (
     Options
-    ( optHelp
+    ( optEmbedding
+    , optHelp
     , optInputFile
     , optOutputFile
     , optProofName
@@ -22,9 +23,22 @@ import Options
     , processOptions
     )
 
+import Data.List (intercalate)
+
+
 import           Data.Maybe         (fromJust, fromMaybe)
 import           Data.Proof         (ProofMap, ProofTree)
-import           Data.TSTP          (F)
+
+import           Data.TSTP            (F (..), Formula (..) )
+import           Data.TSTP.Formula    (getFreeVars)
+import           Data.TSTP.AtomicWord (AtomicWord (..))
+import           Data.TSTP.BinOp      (BinOp (..))
+import           Data.TSTP.InfixPred  (InfixPred (..))
+import           Data.TSTP.Quant      (Quant (..))
+import           Data.TSTP.Term       (Term (..)) 
+import           Data.TSTP.V          (V (..))
+import           Utils.Functions      (βshow, (▪), (<>))
+
 import           System.Environment (getArgs)
 import           System.Exit        (exitSuccess)
 import           Utils.Functions    (stdout2file)
@@ -71,47 +85,135 @@ main = do
 mainCore ∷ Options → IO ()
 mainCore opts = do
 
-  -- Reads all the rules, perhaps more error handling is requiered in
-  -- TSTP.hs especially on the alex/happy part of `parseFile` and `parse`
-  rules ∷ [F] ← parseFile $ fromJust $ optInputFile opts
-
-  stdout2file $ optOutputFile opts
-
-  -- PREAMBLE : module definitions and imports
-  printPreamble
+  tstp ∷ [F] ← parseFile $ fromJust $ optInputFile opts
 
   -- STEP 0 : axioms,conjetures and subgoals
   let subgoals ∷ [F]
-      subgoals = getSubGoals rules
+      subgoals = getSubGoals tstp
+
+  putStrLn "subgoals"
+  print subgoals
+  putStrLn "\n"
 
   let refutes ∷ [F]
-      refutes = getRefutes rules
+      refutes = getRefutes tstp
+
+  putStrLn "refutes"
+  print refutes
+  putStrLn "\n"
 
   let axioms ∷ [F]
-      axioms = getAxioms rules
+      axioms = getAxioms tstp
 
   let conj ∷ F
       conj = fromMaybe
         (error "Couldn't find a conjecture, or it was not unique")
-        (getConjeture rules)
+        (getConjeture tstp)
 
-  -- Construction of map an tree structures that are meant to be
+  -- Construction of map and tree structures that are meant to be
   -- traversed to create the final Agda code.
 
   let rulesMap ∷ ProofMap
-      rulesMap = buildProofMap rules
+      rulesMap = buildProofMap tstp
+
+  putStrLn "rulesMap"
+  print rulesMap
+  putStrLn "\n"
 
   let rulesTrees ∷ [ProofTree]
       rulesTrees = map (buildProofTree rulesMap) refutes
 
-  -- STEP 1 : Print auxiliary functions
-  printAuxSignatures rulesMap rulesTrees
+  putStrLn "rulesTrees"
+  print rulesTrees
+  putStrLn "\n"
 
-  -- STEP 2 : Subgoal handling
-  printSubGoals subgoals conj "goals"
 
-  -- STEP 3 : Print main function signature
-  printProofBody axioms conj (optProofName opts) subgoals "goals"
+  let embedding ∷ Char
+      embedding = optEmbedding opts
 
-  -- STEP 4 :
-  mapM_ (printProofWhere rulesMap) rulesTrees
+  stdout2file $ optOutputFile opts
+
+  let formulas ∷ [Formula]
+      formulas = map formula tstp
+
+  case embedding of
+    's' → do
+      printPreamble embedding 0
+      -- STEP 1 : Print auxiliary functions
+      printAuxSignatures rulesMap rulesTrees
+
+      -- STEP 2 : Subgoal handling
+      printSubGoals subgoals conj "goals"
+
+      -- STEP 3 : Print main function signature
+      printProofBody axioms conj (optProofName opts) subgoals "goals"
+
+      -- STEP 4 :
+      mapM_ (printProofWhere rulesMap) rulesTrees
+
+    'd' → do
+      let freevars ∷ [V]
+          freevars = getFreeVars formulas
+
+      printPreamble embedding (length freevars)
+
+      putStrLn "-- Vars"
+      printVars freevars 0
+
+      printAxioms axioms
+
+      printPremises axioms
+
+      printConjecture conj
+
+      printProof axioms
+
+      return ()
+
+printVar ∷ V → Int → String
+printVar f n = intercalate "\n" $
+  [  show f ++ " : Prop"
+  ,  show f ++ " = Var (# " ++ show n ++ ")"
+  ]
+
+printVars ∷ [V] → Int → IO String
+printVars [] _ = return ""
+printVars (f : fs) n = do
+  putStrLn $ printVar f n ++ "\n"
+  printVars fs (n+1)
+
+showDeepFormula ∷ Formula → String
+showDeepFormula (BinOp     f₁  (:=>:) f₂) = '(' <> f₁ ▪ '⇒' ▪ f₂ <> ')'
+showDeepFormula (BinOp     f₁  op     f₂) = f₁ ▪ op ▪ f₂
+showDeepFormula (InfixPred t₁  r      t₂) = t₁ ▪ r  ▪ t₂
+showDeepFormula (PredApp   ρ          []) = show ρ
+showDeepFormula (PredApp   ρ          φ ) = '(' <> ρ ▪ ':' ▪ φ ▪ "⇒ ⊤" <> ')'
+showDeepFormula ((:~:)                f ) = '¬' ▪ f
+showDeepFormula _ = "⊤"
+
+printAxiom ∷ F → String
+printAxiom f = intercalate "\n" $
+  let axiom = name f
+  in [  axiom ++ " : Prop"
+     ,  axiom ++ " = " ++ showDeepFormula (formula f)
+     ]
+
+printAxioms ∷ [F] → IO ()
+printAxioms fs = do
+  putStrLn "-- Axioms"
+  putStrLn $ intercalate "\n\n" $ map printAxiom fs
+
+printPremises ∷ [F] → IO ()
+printPremises fs = do
+  putStrLn $ "\n-- Premises"
+  putStrLn $ "Γ : Ctxt"
+  putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name fs))
+
+printConjecture ∷ F → IO ()
+printConjecture f = do
+  putStrLn "\n-- Conjecture"
+  putStrLn $ printAxiom f
+
+printProof ∷ [F] → IO ()
+printProof _ = do
+  putStrLn $ "\n-- Proof"

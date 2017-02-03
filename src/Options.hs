@@ -10,6 +10,7 @@ module Options
   , OM
   , Options
     ( Options --Improve Haddock information.
+    , optEmbedding
     , optHelp
     , optInputFile
     , optOutputFile
@@ -37,7 +38,8 @@ import System.Console.GetOpt
 
 -- | Program command-line options.
 data Options = Options
-  { optHelp           ∷ Bool
+  { optEmbedding      ∷ Char
+  , optHelp           ∷ Bool
   , optInputFile      ∷ Maybe FilePath
   , optOutputFile     ∷ Maybe FilePath
   , optProofName      ∷ String
@@ -46,7 +48,8 @@ data Options = Options
 
 defaultOptions ∷ Options
 defaultOptions = Options
-  { optHelp           = False
+  { optEmbedding      = 's'
+  , optHelp           = False
   , optInputFile      = Nothing
   , optOutputFile     = Nothing
   , optProofName      = "proof"
@@ -55,6 +58,13 @@ defaultOptions = Options
 
 -- | 'Options' monad.
 type OM = Options → Either Doc Options
+
+embeddingOpt ∷ String → OM
+embeddingOpt "deep" opts    = Right opts { optEmbedding = 'd'}
+embeddingOpt "shallow" opts = Right opts { optEmbedding = 's'}
+embeddingOpt _ _ = Left $
+  pretty "option " <> squotes "--embedding" <> pretty " requires an argument NAME"
+
 
 helpOpt ∷ OM
 helpOpt opts = Right opts { optHelp = True }
@@ -82,7 +92,9 @@ versionOpt opts = Right opts { optVersion = True }
 -- | Description of the command-line 'Options'.
 options ∷ [OptDescr OM]
 options =
-  [ Option ['h'] ["help"] (NoArg helpOpt)
+  [ Option ['e'] ["embedding"] (ReqArg embeddingOpt "NAME")
+      "shallow or deep (default: shallow)"
+  , Option ['h'] ["help"] (NoArg helpOpt)
       "Prints help message"
   , Option ['o'] ["output"] (ReqArg outputFileOpt "FILE")
       "Output to file      (default: STDOUT)"
@@ -107,6 +119,6 @@ processOptionsHelper argv f defaults =
     (o, _, [])   → foldl' (>>=) (return defaults) o
     (_, _, errs) → Left $ pretty $ unlines errs
 
--- -- | Processing the command-line 'Options'.
+-- | Processing the command-line 'Options'.
 processOptions ∷ [String] → Either Doc Options
 processOptions argv = processOptionsHelper argv inputFileOpt defaultOptions
