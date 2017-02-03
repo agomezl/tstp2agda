@@ -1,4 +1,4 @@
-open import Data.Nat public using (ℕ)
+open import sData.Nat public using (ℕ)
 
 module Data.FOL.Deep.Theorems (n : ℕ) where
 

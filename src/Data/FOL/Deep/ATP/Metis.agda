@@ -5,6 +5,17 @@ module Data.FOL.Deep.ATP.Metis (n : ℕ) where
 open import Data.FOL.Deep.Syntax n
 open import Data.FOL.Deep.Theorems n
 
+-- Inference Rules.
+
+strip : Prop → Prop
+strip φ = φ
+
+negate : Prop → Prop
+negate φ = negative φ
+
+canonicalize : Prop → Prop
+canonicalize φ = positive φ
+
 resolve : ∀ {Γ} {L C D} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D
 resolve {Γ} {L}{C}{D} seq₁ seq₂ =
   lem1 $ ⇒-elim {Γ = Γ}
