@@ -9,10 +9,10 @@ open import Data.Nat public using (ℕ)
 module Data.FOL.Deep (n : ℕ) where
 
 -- Definition of connectives and ⊢ relation.
-open import Data.FOL.Deep.Syntax n public
+open import Data.FOL.Deep.Syntax n
 
 -- Valuation and ⊨ relation.
-open import Data.FOL.Deep.Semantics n public
+open import Data.FOL.Deep.Semantics n
 
 -- Some lemmas and common theorems.
-open import Data.FOL.Deep.Theorems n public
+open import Data.FOL.Deep.Theorems n
