@@ -155,7 +155,7 @@ library
                 , mtl >= 2.2.1 && < 2.3
                 , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
                 , text >= 0.11.3.1 && < 1.3
-  other-modules:
+  exposed-modules:
     Data.Proof
     Data.Proof.ProofTreeGen
     Data.TSTP
@@ -175,8 +175,6 @@ library
     Data.TSTP.Term
     Data.TSTP.Theory
     Data.TSTP.V
-    Options
-    Paths_tstp2agda
     T2A
     T2A.Core
     T2A.Tactics
@@ -188,6 +186,9 @@ library
     Utils.Monad
     Utils.PrettyPrint
     Utils.Version
+  other-modules:
+    Options
+    Paths_tstp2agda
 
 test-suite tstp2agda-test
   type:             exitcode-stdio-1.0
