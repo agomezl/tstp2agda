@@ -91,16 +91,8 @@ mainCore opts = do
   let subgoals ∷ [F]
       subgoals = getSubGoals tstp
 
-  putStrLn "subgoals"
-  print subgoals
-  putStrLn "\n"
-
   let refutes ∷ [F]
       refutes = getRefutes tstp
-
-  putStrLn "refutes"
-  print refutes
-  putStrLn "\n"
 
   let axioms ∷ [F]
       axioms = getAxioms tstp
@@ -116,17 +108,8 @@ mainCore opts = do
   let rulesMap ∷ ProofMap
       rulesMap = buildProofMap tstp
 
-  putStrLn "rulesMap"
-  print rulesMap
-  putStrLn "\n"
-
   let rulesTrees ∷ [ProofTree]
       rulesTrees = map (buildProofTree rulesMap) refutes
-
-  putStrLn "rulesTrees"
-  print rulesTrees
-  putStrLn "\n"
-
 
   let embedding ∷ Char
       embedding = optEmbedding opts
