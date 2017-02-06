@@ -13,28 +13,56 @@ before_cache:
 
 matrix:
   include:
-    - env: CABALVER=1.18 GHCVER=7.6.3
+    - env: CABALVER=1.22 GHCVER=7.6.3
       compiler: ": #GHC 7.6.3"
-      addons: {apt: {packages: [cabal-install-1.18,ghc-7.6.3,alex-3.1.7,happy-1.19.5], sources: [hvr-ghc]}}
-    - env: CABALVER=1.18 GHCVER=7.8.4
+      addons: {apt:
+        { packages : [
+            alex-3.1.7
+          , cabal-install-1.22
+          , ghc-7.6.3
+          , happy-1.19.5]
+          , sources: [hvr-ghc]}} 
+
+- env: CABALVER=1.22 GHCVER=7.8.4
       compiler: ": #GHC 7.8.4"
-      addons: {apt: {packages: [cabal-install-1.18,ghc-7.8.4,alex-3.1.7,happy-1.19.5], sources: [hvr-ghc]}}
-    - env: CABALVER=1.22 GHCVER=7.10.3
+      addons: {apt:
+        { packages : [
+            alex-3.1.7
+          , cabal-install-1.22
+          , ghc-7.6.3
+          , happy-1.19.5]
+          , sources: [hvr-ghc]}} 
+
+- env: CABALVER=1.22 GHCVER=7.10.3
       compiler: ": #GHC 7.10.3"
-      addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.3,alex-3.1.7,happy-1.19.5], sources: [hvr-ghc]}}
+      addons: {apt:
+        { packages : [
+            alex-3.1.7
+          , cabal-install-1.22
+          , ghc-7.6.3
+          , happy-1.19.5]
+          , sources: [hvr-ghc]}}
+          
     - env: CABALVER=1.24 GHCVER=8.0.1
       compiler: ": #GHC 8.0.1"
-      addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.1,alex-3.1.7,happy-1.19.5], sources: [hvr-ghc]}}
+      addons: {apt:
+        { packages : [
+            alex-3.1.7
+          , cabal-install-1.22
+          , ghc-7.6.3
+          , happy-1.19.5]
+          , sources: [hvr-ghc]}} 
 
 before_install:
  - unset CC
- - export HAPPYVER=1.19.5
- - export ALEXVER=3.1.7
- - export T2A_HOME=`pwd`
- - export PATH=~/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:/opt/happy/$HAPPYVER/bin:/opt/alex/$ALEXVER/bin:$PATH
+ - export CMD_HOME=`pwd`
+ - export MY_HOME=${HOME}/build/jonaprieto
+ - mkdir ${HOME}/bin
+ - export PATH=/home/travis/.cabal/bin:${MY_HOME}/bin:/opt/ghc/${GHC_VER}/bin:/opt/cabal/${CABAL_VER}/bin:/opt/alex/3.1.7/bin:/opt/happy/1.19.5/bin:${PATH}
 
 install:
  - cabal --version
+ - cabal update
  - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
  - if [ -f $HOME/.cabal/packages/hackage.haskell.org/00-index.tar.gz ];
    then
@@ -43,7 +71,7 @@ install:
    fi
  - travis_retry cabal update -v
  - sed -i 's/^jobs:/-- jobs:/' ${HOME}/.cabal/config
- - cabal install --only-dependencies --enable-tests --enable-benchmarks --dry -v > installplan.txt
+ - cabal install --force-reinstalls --only-dependencies --enable-tests --enable-benchmarks --dry -v > installplan.txt
  - sed -i -e '1,/^Resolving /d' installplan.txt; cat installplan.txt
 
 # check whether current requested install-plan matches cached package-db snapshot
@@ -69,7 +97,21 @@ install:
       cp -a $HOME/.cabal/lib $HOME/.cabal/share $HOME/.cabal/bin installplan.txt $HOME/.cabsnap/;
    fi
  - cabal install cabal-install
- - cabal install agda --force-reinstalls
+ - export JOBS=2
+# --------------------------------------------------------------------------
+# Installing Agda from the source
+
+ - cabal install cpphs-1.20.2
+
+ - git clone https://github.com/agda/agda.git ${MY_HOME}/agda
+ - cd ${MY_HOME}/agda
+ - git checkout stable-2.5
+ - cabal install -only-dependencies --force-reinstalls
+ - cabal configure -v2
+ - cabal build -v2 -j${JOBS}
+ - cabal copy
+ - cabal register
+ - cd ${HOME}
 
 # Here starts the actual work to be performed for the package under test;
 # any command which exits with a non-zero exit code causes the build to fail.
