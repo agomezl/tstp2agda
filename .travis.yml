@@ -13,7 +13,7 @@ before_cache:
 
 matrix:
   include:
-    - env: CABALVER=1.22 GHCVER=7.6.3
+    - env: CABAL_VER=1.22 GHC_VER=7.6.3
       compiler: ": #GHC 7.6.3"
       addons: {apt:
         { packages : [
@@ -23,7 +23,7 @@ matrix:
           , happy-1.19.5]
           , sources: [hvr-ghc]}}
 
-    - env: CABALVER=1.22 GHCVER=7.8.4
+    - env: CABAL_VER=1.22 GHC_VER=7.8.4
       compiler: ": #GHC 7.8.4"
       addons: {apt:
         { packages : [
@@ -33,21 +33,21 @@ matrix:
           , happy-1.19.5]
           , sources: [hvr-ghc]}}
 
-    - env: CABALVER=1.22 GHCVER=7.10.3
+    - env: CABAL_VER=1.22 GHC_VER=7.10.3
       compiler: ": #GHC 7.10.3"
       addons: {apt:
         { packages : [
             alex-3.1.7
-          , cabal-install-1.22
+          , cabal-install-1.24
           , ghc-7.6.3
           , happy-1.19.5]
           , sources: [hvr-ghc]}}
-    - env: CABALVER=1.24 GHCVER=8.0.1
-      compiler: ": #GHC 8.0.1"
+    - env: CABAL_VER=1.24 GHC_VER=8.0.2
+      compiler: ": #GHC 8.0.2"
       addons: {apt:
         { packages : [
             alex-3.1.7
-          , cabal-install-1.22
+          , cabal-install-1.24
           , ghc-7.6.3
           , happy-1.19.5]
           , sources: [hvr-ghc]}}
