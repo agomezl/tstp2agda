@@ -1,0 +1,10 @@
+% -----------------------------------------------------------------------------
+% Name: PROP_2
+%
+% Collection: nonequality
+% Description: Problems without equality from various sources
+% Source: Metis
+% -----------------------------------------------------------------------------
+
+
+fof(goal, conjecture, (~ ~ p <=> p)).

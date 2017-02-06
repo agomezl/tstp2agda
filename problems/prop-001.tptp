@@ -1,0 +1,2 @@
+fof(lm, axiom, a).
+fof(goal, conjecture, a).

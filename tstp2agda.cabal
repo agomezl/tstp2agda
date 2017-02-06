@@ -1,7 +1,7 @@
 name:          tstp2agda
 version:       0.1.1.0
 build-type:    Simple
-cabal-version: >= 1.8
+cabal-version: >= 1.18
 author:        Alejandro Gómez-Londoño with contributions by Jonathan Prieto-Cubides
 license:       MIT
 license-file:  LICENSE
@@ -10,7 +10,6 @@ category:      Language
 homepage:      https://github.com/agomezl/tstp2agda
 bug-reports:   https://github.com/agomezl/tstp2agda/issues/
 synopsis:      Proof-term reconstruction from TSTP to Agda
-tested-with:   GHC == 7.6.3, GHC == 7.8.4, GHC == 7.10.3, GHC == 8.0.1
 description:
   A haskell program for translating <http://www.cs.miami.edu/~tptp/TSTP/ TSTP>
   proofs into <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda> code.

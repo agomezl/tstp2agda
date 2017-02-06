@@ -21,9 +21,9 @@ matrix:
           , cabal-install-1.22
           , ghc-7.6.3
           , happy-1.19.5]
-          , sources: [hvr-ghc]}} 
+          , sources: [hvr-ghc]}}
 
-- env: CABALVER=1.22 GHCVER=7.8.4
+    - env: CABALVER=1.22 GHCVER=7.8.4
       compiler: ": #GHC 7.8.4"
       addons: {apt:
         { packages : [
@@ -31,9 +31,9 @@ matrix:
           , cabal-install-1.22
           , ghc-7.6.3
           , happy-1.19.5]
-          , sources: [hvr-ghc]}} 
+          , sources: [hvr-ghc]}}
 
-- env: CABALVER=1.22 GHCVER=7.10.3
+    - env: CABALVER=1.22 GHCVER=7.10.3
       compiler: ": #GHC 7.10.3"
       addons: {apt:
         { packages : [
@@ -42,7 +42,6 @@ matrix:
           , ghc-7.6.3
           , happy-1.19.5]
           , sources: [hvr-ghc]}}
-          
     - env: CABALVER=1.24 GHCVER=8.0.1
       compiler: ": #GHC 8.0.1"
       addons: {apt:
@@ -51,7 +50,7 @@ matrix:
           , cabal-install-1.22
           , ghc-7.6.3
           , happy-1.19.5]
-          , sources: [hvr-ghc]}} 
+          , sources: [hvr-ghc]}}
 
 before_install:
  - unset CC

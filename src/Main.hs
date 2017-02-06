@@ -1,4 +1,3 @@
-
 -- | Main module
 
 {-# LANGUAGE MultiWayIf          #-}
@@ -35,7 +34,7 @@ import           Data.TSTP.AtomicWord (AtomicWord (..))
 import           Data.TSTP.BinOp      (BinOp (..))
 import           Data.TSTP.InfixPred  (InfixPred (..))
 import           Data.TSTP.Quant      (Quant (..))
-import           Data.TSTP.Term       (Term (..)) 
+import           Data.TSTP.Term       (Term (..))
 import           Data.TSTP.V          (V (..))
 import           Utils.Functions      (βshow, (▪), (<>))
 
@@ -135,6 +134,7 @@ mainCore opts = do
       mapM_ (printProofWhere rulesMap) rulesTrees
 
     'd' → do
+
       let freevars ∷ [V]
           freevars = getFreeVars formulas
 
@@ -143,14 +143,16 @@ mainCore opts = do
       putStrLn "-- Vars"
       printVars freevars 0
 
+      putStrLn "-- Axioms"
       printAxioms axioms
 
+      putStrLn "-- Premises"
       printPremises axioms
 
+      putStrLn "-- Conjecture"
       printConjecture conj
 
       printProof axioms
-
       return ()
 
 printVar ∷ V → Int → String
