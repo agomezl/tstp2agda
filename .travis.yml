@@ -100,12 +100,16 @@ install:
 # --------------------------------------------------------------------------
 # Installing Agda from the source
 
+
  - cabal install cpphs-1.20.2
 
- - git clone https://github.com/agda/agda.git ${MY_HOME}/agda
- - cd ${MY_HOME}/agda
- - git checkout stable-2.5
- - make install-bin
+ - git clone https://github.com/asr/eagda.git ${MY_HOME}/eagda
+ - cd ${MY_HOME}/eagda
+ - cabal install --only-dependencies --force-reinstalls
+ - cabal configure -v2
+ - cabal build -v2 -j${JOBS}
+ - cabal copy
+ - cabal register
  - cd ${HOME}
 
 # Here starts the actual work to be performed for the package under test;
