@@ -105,11 +105,7 @@ install:
  - git clone https://github.com/agda/agda.git ${MY_HOME}/agda
  - cd ${MY_HOME}/agda
  - git checkout stable-2.5
- - cabal install -only-dependencies --force-reinstalls
- - cabal configure -v2
- - cabal build -v2 -j${JOBS}
- - cabal copy
- - cabal register
+ - make install-bin
  - cd ${HOME}
 
 # Here starts the actual work to be performed for the package under test;
