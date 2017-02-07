@@ -1,0 +1,67 @@
+---------------------------------------------------------------------------
+SZS status Theorem for test/problems/prop-020.tptp
+
+SZS output start CNFRefutation for test/problems/prop-020.tptp
+fof(goal, conjecture,
+    (((q => r) & (r => (p & q)) & (p => (q & r))) => (p <=> q))).
+
+fof(subgoal_0, plain,
+    ((((q => r) & (r => (p & q)) & (p => (q & r))) & p) => q),
+    inference(strip, [], [goal])).
+
+fof(subgoal_1, plain,
+    ((((q => r) & (r => (p & q)) & (p => (q & r))) & q) => p),
+    inference(strip, [], [goal])).
+
+fof(negate_0_0, plain,
+    (~ ((((q => r) & (r => (p & q)) & (p => (q & r))) & p) => q)),
+    inference(negate, [], [subgoal_0])).
+
+fof(normalize_0_0, plain,
+    (~ q & p & (~ p | (q & r)) & (~ q | r) & (~ r | (p & q))),
+    inference(canonicalize, [], [negate_0_0])).
+
+fof(normalize_0_1, plain, (~ p | (q & r)),
+    inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_2, plain, (p), inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_3, plain, (~ q), inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_4, plain, ($false),
+    inference(simplify, [],
+              [normalize_0_1, normalize_0_2, normalize_0_3])).
+
+cnf(refute_0_0, plain, ($false),
+    inference(canonicalize, [], [normalize_0_4])).
+
+fof(negate_1_0, plain,
+    (~ ((((q => r) & (r => (p & q)) & (p => (q & r))) & q) => p)),
+    inference(negate, [], [subgoal_1])).
+
+fof(normalize_1_0, plain,
+    (~ p & q & (~ p | (q & r)) & (~ q | r) & (~ r | (p & q))),
+    inference(canonicalize, [], [negate_1_0])).
+
+fof(normalize_1_1, plain, (~ r | (p & q)),
+    inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_2, plain, (~ q | r),
+    inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_3, plain, (q), inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_4, plain, (r),
+    inference(simplify, [], [normalize_1_2, normalize_1_3])).
+
+fof(normalize_1_5, plain, (~ p), inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_6, plain, ($false),
+    inference(simplify, [],
+              [normalize_1_1, normalize_1_4, normalize_1_5,
+               normalize_1_3])).
+
+cnf(refute_1_0, plain, ($false),
+    inference(canonicalize, [], [normalize_1_6])).
+SZS output end CNFRefutation for test/problems/prop-020.tptp
+

@@ -1,0 +1,3 @@
+
+-- tstp2agda proof
+

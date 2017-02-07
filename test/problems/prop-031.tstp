@@ -1,0 +1,37 @@
+---------------------------------------------------------------------------
+SZS status Theorem for test/problems/prop-031.tptp
+
+SZS output start CNFRefutation for test/problems/prop-031.tptp
+fof(a1, axiom, (a)).
+
+fof(a2, axiom, (b)).
+
+fof(a3, axiom, ((a & b) => z)).
+
+fof(a4, conjecture, (z)).
+
+fof(subgoal_0, plain, (z), inference(strip, [], [a4])).
+
+fof(negate_0_0, plain, (~ z), inference(negate, [], [subgoal_0])).
+
+fof(normalize_0_0, plain, (~ z),
+    inference(canonicalize, [], [negate_0_0])).
+
+fof(normalize_0_1, plain, (~ a | ~ b | z),
+    inference(canonicalize, [], [a3])).
+
+fof(normalize_0_2, plain, (a), inference(canonicalize, [], [a1])).
+
+fof(normalize_0_3, plain, (b), inference(canonicalize, [], [a2])).
+
+fof(normalize_0_4, plain, (z),
+    inference(simplify, [],
+              [normalize_0_1, normalize_0_2, normalize_0_3])).
+
+fof(normalize_0_5, plain, ($false),
+    inference(simplify, [], [normalize_0_0, normalize_0_4])).
+
+cnf(refute_0_0, plain, ($false),
+    inference(canonicalize, [], [normalize_0_5])).
+SZS output end CNFRefutation for test/problems/prop-031.tptp
+

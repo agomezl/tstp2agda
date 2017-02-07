@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------
-../../dist/build/tstp2agda/tstp2agda --help
+../dist/build/tstp2agda/tstp2agda --help
 <<<
 >>>
 Usage: tstp2agda [OPTIONS] FILE
@@ -17,7 +17,7 @@ Usage: tstp2agda [OPTIONS] FILE
 
 # --------------------------------------------------------------------
 # version
-../../dist/build/tstp2agda/tstp2agda --version
+../dist/build/tstp2agda/tstp2agda --version
 >>>
 Tstp2agda version 0.1.1.0
 >>>2

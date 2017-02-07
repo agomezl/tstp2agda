@@ -1,4 +1,4 @@
-open import Data.Nat public using (ℕ)
+open import Data.Nat using (ℕ)
 
 ------------------------------------------------------------------------------
 -- Deep Embedding : Propositional Logic
@@ -9,10 +9,10 @@ open import Data.Nat public using (ℕ)
 module Data.FOL.Deep (n : ℕ) where
 
 -- Definition of connectives and ⊢ relation.
-open import Data.FOL.Deep.Syntax n
+open import Data.FOL.Deep.Syntax n public
 
 -- Valuation and ⊨ relation.
-open import Data.FOL.Deep.Semantics n
+open import Data.FOL.Deep.Semantics n public
 
 -- Some lemmas and common theorems.
-open import Data.FOL.Deep.Theorems n
+open import Data.FOL.Deep.Theorems n public

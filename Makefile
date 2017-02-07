@@ -8,7 +8,7 @@ BIN_NAME_GHC=tstp2agda
 GHC_FLAGS=-i${SRC_DIR}/
 AGDA_FLAGS= -c ${SRC_DIR}/${AGDA_MAIN} -i ${SRC_DIR}/ -i ${AGDA_STDLIB_DIR}/ \
 	   --compile-dir=${BIN_DIR}/ --ghc-flag=${GHC_FLAGS}
-PROP_PROBLEMS=${PWD}/problems/
+PROP_PROBLEMS=test/problems/
 
 .PONY : clean agda-bin haskell-bin
 haskell-bin : bin/tstp2agda
@@ -56,7 +56,7 @@ basic-test :
 
 .PHONY : deep-test
 deep-test :
-	shelltest --color --execdir --precise --debug $(tests_deep)/basic.test
+	shelltest --color --execdir --precise $(tests_path)/basic.test $(tests_deep)/basic.test
 	@echo "$@ succeeded!"
 
 
@@ -90,8 +90,10 @@ haddock :
 
 .PHONY : install-bin
 install-bin :
+	cabal configure
+	cabal build
 	cabal install --disable-documentation
-
+	cabal sdist
 
 .PHONY : install-fix-whitespace
 install-fix-whitespace :
@@ -111,35 +113,32 @@ TODO :
 
 .PHONY : problems
 problems-metis:
-	@echo ${PWD}
-	@cd ${PROP_PROBLEMS}
-	@find . -type f -name "prop*.tptp" -exec sh -c "metis --show proof --show saturation {} > {}.tstp" \;
-
+	$(shell find ${PROP_PROBLEMS} -type f -name "prop*.tptp" -exec sh -c 'metis --show proof --show saturation {} > {}s' \;)
+	$(shell rename .tptps .tstp ${PROP_PROBLEMS}*.tptps)
 
 .PHONY : problems-agda
 problems-agda :
-	@echo ${PWD}
-	@cd ${PROP_PROBLEMS}
-	@find . -type f -name "prop*.tptp.tstp" -exec sh -c "basename {} ; tstp2agda {} -e deep > `basename {}`.agda" \;
-	@echo
-	@echo "Generated files!"
-	ls ${PROP_PROBLEMS}
+	$(shell find ${PROP_PROBLEMS} -type f -name "prop*tstp" -exec sh -c "tstp2agda {} -e deep > {}a" \;)
+	$(shell rename .tstpa .agda ${PROP_PROBLEMS}*.tstpa)
 
 
 clean :
-	rm -fr ${BIN_DIR}
-	rm -f ${SRC_DIR}/TSTP/Lexer.hs
-	rm -f ${SRC_DIR}/TSTP/Parser.hs
-	find ${SRC_DIR} -regex ".*\(\.hi\|\.o\|\.agdai\)$$" -exec rm -f {} \;
-	rm -f ${PROP_PROBLEMS}/*.agda
-	rm -f ${PROP_PROBLEMS}/*.tstp
-	rm -f cnf*
-	rm -f saturation.tptp
-
+	@rm -fr ${BIN_DIR}
+	@rm -f ${SRC_DIR}/TSTP/Lexer.hs
+	@rm -f ${SRC_DIR}/TSTP/Parser.hs
+	@find ${SRC_DIR} -regex ".*\(\.hi\|\.o\|\.agdai\)$$" -exec rm -f {} \;
+	@rm -f ${PROP_PROBLEMS}/*.agda
+	@rm -f ${PROP_PROBLEMS}/*.tstp
+	@rm -f cnf*
+	@rm -f saturation.tptp
+	@rm -rf dist
 
 
 .PHONY : tests
 tests :
+	- make clean
+	- make problems-metis
+	- make problems-agda
 	- make basic-test
 	- make deep-test
 	- make shallow-test
@@ -148,14 +147,8 @@ tests :
 	- make haddock
 	- @echo "$@ succeeded!"
 
-
-.PHONY : deep
-deep :
-	- make basic-test
-	- make deep-test
-
 .PHONY : changed
 changed :
 	- cabal build
-	- make deep
+	- make deep-test
 

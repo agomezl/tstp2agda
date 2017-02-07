@@ -143,13 +143,10 @@ mainCore opts = do
       putStrLn "-- Vars"
       printVars freevars 0
 
-      putStrLn "-- Axioms"
       printAxioms axioms
 
-      putStrLn "-- Premises"
       printPremises axioms
 
-      putStrLn "-- Conjecture"
       printConjecture conj
 
       printProof axioms
@@ -184,11 +181,13 @@ printAxiom f = intercalate "\n" $
      ]
 
 printAxioms ∷ [F] → IO ()
+printAxioms [] = return ()
 printAxioms fs = do
   putStrLn "-- Axioms"
   putStrLn $ intercalate "\n\n" $ map printAxiom fs
 
 printPremises ∷ [F] → IO ()
+printPremises [] = return ()
 printPremises fs = do
   putStrLn $ "\n-- Premises"
   putStrLn $ "Γ : Ctxt"

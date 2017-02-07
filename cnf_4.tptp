@@ -1,0 +1,4 @@
+% CNF clauses for test/problems/prop-022.tptp
+
+
+cnf(0, negated_conjecture, ($false)).

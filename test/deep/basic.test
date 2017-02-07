@@ -1,15 +1,24 @@
-# --------------------------------------------------------------------
-../../dist/build/tstp2agda/tstp2agda --help
+# ---------------------------------------------------------------------------
+../../dist/build/tstp2agda/tstp2agda ./../problems/prop-000.tstp --embedding deep --output=prop-000.agda
 <<<
 >>>
-Usage: tstp2agda [OPTIONS] FILE
+>>>2
+>>>= 0
+# --------------------------------------------------------------------
 
-  -e NAME  --embedding=NAME   shallow or deep (default: shallow)
-  -h       --help             Prints help message
-  -o FILE  --output=FILE      Output to file      (default: STDOUT)
-  -p NAME  --proof-name=NAME  Main proof name     (default: proof)
-           --version          Show version number
 
+# ---------------------------------------------------------------------------
+diff ./../problems/prop-000.agda prop-000.agda
+<<<
+>>>
+>>>2
+>>>= 0
+# --------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+agda prop-000.agda --include-path=./../../src --include-path=./../libraries/agda-stdlib/src --verbose=0
+<<<
+>>>
 >>>2
 >>>= 0
 # --------------------------------------------------------------------
