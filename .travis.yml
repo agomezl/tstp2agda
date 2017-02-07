@@ -110,7 +110,7 @@ install:
  - cabal build -v2 -j${JOBS}
  - cabal copy
  - cabal register
- - cd ${HOME}
+ - cd ${CMD_HOME}
 
 # Here starts the actual work to be performed for the package under test;
 # any command which exits with a non-zero exit code causes the build to fail.
