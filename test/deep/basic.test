@@ -1,0 +1,15 @@
+# --------------------------------------------------------------------
+../../dist/build/tstp2agda/tstp2agda --help
+<<<
+>>>
+Usage: tstp2agda [OPTIONS] FILE
+
+  -e NAME  --embedding=NAME   shallow or deep (default: shallow)
+  -h       --help             Prints help message
+  -o FILE  --output=FILE      Output to file      (default: STDOUT)
+  -p NAME  --proof-name=NAME  Main proof name     (default: proof)
+           --version          Show version number
+
+>>>2
+>>>= 0
+# --------------------------------------------------------------------

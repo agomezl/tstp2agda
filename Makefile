@@ -11,7 +11,6 @@ AGDA_FLAGS= -c ${SRC_DIR}/${AGDA_MAIN} -i ${SRC_DIR}/ -i ${AGDA_STDLIB_DIR}/ \
 PROP_PROBLEMS=${PWD}/problems/
 
 .PONY : clean agda-bin haskell-bin
-
 haskell-bin : bin/tstp2agda
 agda-bin : bin/Main
 
@@ -28,8 +27,10 @@ bin/tstp2agda : bin \
 src/TSTP/Lexer.hs : src/TSTP/Lexer.x
 	alex -g -o $@ $<
 
+
 src/TSTP/Parser.hs : src/TSTP/Parser.y
 	happy -agc -o $@ $<
+
 
 bin/Main : bin \
 			      src/*.agda \
@@ -38,15 +39,33 @@ bin/Main : bin \
 			      src/Data/*.hs
 	agda ${AGDA_FLAGS}
 
+
 bin :
 	mkdir -p bin
 
-test_path = test/basics
 
-.PHONY : errors
-errors :
-	shelltest --color --execdir --precise  $(tests_path)/basics.test
+tests_path 		= test
+tests_deep 		= test/deep
+tests_shallow = test/shallow
+
+
+.PHONY : basic-tests
+basic-test :
+	shelltest --color --execdir --precise  $(tests_path)/basic.test
 	@echo "$@ succeeded!"
+
+.PHONY : deep-test
+deep-test :
+	shelltest --color --execdir --precise --debug $(tests_deep)/basic.test
+	@echo "$@ succeeded!"
+
+
+.PHONY : shallow-test
+shallow-test :
+	cd $(tests_shallow)
+	sh run-tests.sh
+	@echo "$@ succeeded!"
+
 
 # Hlint test
 
@@ -73,6 +92,7 @@ haddock :
 install-bin :
 	cabal install --disable-documentation
 
+
 .PHONY : install-fix-whitespace
 install-fix-whitespace :
 	cd src/fix-whitespace && cabal install
@@ -81,11 +101,13 @@ install-fix-whitespace :
 check-whitespace :
 	fix-whitespace --check
 
+
 .PHONY : TODO
 TODO :
-	find . -type d \( -path './.git' -o -path './dist' \) -prune -o -print \
-	| xargs grep -I 'TODO' \
+	@find . -type d \( -path './.git' -o -path './dist' \) -prune -o -print \
+	| xargs grep -I -s 'TODO' \
 	| sort
+
 
 .PHONY : problems
 problems-metis:
@@ -103,6 +125,7 @@ problems-agda :
 	@echo "Generated files!"
 	ls ${PROP_PROBLEMS}
 
+
 clean :
 	rm -fr ${BIN_DIR}
 	rm -f ${SRC_DIR}/TSTP/Lexer.hs
@@ -114,10 +137,25 @@ clean :
 	rm -f saturation.tptp
 
 
+
 .PHONY : tests
 tests :
-	make errors
-	make hlint
-	make check-whitespace
-	make haddock
-	@echo "$@ succeeded!"
+	- make basic-test
+	- make deep-test
+	- make shallow-test
+	- make hlint
+	- make check-whitespace
+	- make haddock
+	- @echo "$@ succeeded!"
+
+
+.PHONY : deep
+deep :
+	- make basic-test
+	- make deep-test
+
+.PHONY : changed
+changed :
+	- cabal build
+	- make deep
+

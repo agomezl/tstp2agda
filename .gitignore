@@ -117,3 +117,6 @@ Temporary Items
 .apdisk
 
 # End of https://www.gitignore.io/api/agda,haskell,linux,emacs,osx
+
+src/TSTP/Lexer.hs
+src/TSTP/Parser.hs
