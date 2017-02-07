@@ -12,39 +12,80 @@ PROP_PROBLEMS=${PWD}/problems/
 
 .PONY : clean agda-bin haskell-bin
 
-haskell-bin : ${BIN_DIR}/${BIN_NAME_GHC}
-agda-bin : ${BIN_DIR}/${BIN_NAME_AGDA}
+haskell-bin : bin/tstp2agda
+agda-bin : bin/Main
 
 
-${BIN_DIR}/${BIN_NAME_GHC} : ${BIN_DIR} \
-			     ${SRC_DIR}/*.hs \
-			     ${SRC_DIR}/TSTP/*.hs \
-			     ${SRC_DIR}/Data/*.hs \
-			     ${SRC_DIR}/TSTP/Lexer.hs \
-			     ${SRC_DIR}/TSTP/Parser.hs
-	ghc ${SRC_DIR}/Main.hs -o ${BIN_DIR}/${BIN_NAME_GHC} ${GHC_FLAGS}
+bin/tstp2agda : bin \
+			     src/*.hs \
+			     src/TSTP/*.hs \
+			     src/Data/*.hs \
+			     src/TSTP/Lexer.hs \
+			     src/TSTP/Parser.hs
+	ghc src/Main.hs -o bin/tstp2agda ${GHC_FLAGS}
 
 
-${SRC_DIR}/TSTP/Lexer.hs : ${SRC_DIR}/TSTP/Lexer.x
+src/TSTP/Lexer.hs : src/TSTP/Lexer.x
 	alex -g -o $@ $<
 
-${SRC_DIR}/TSTP/Parser.hs : ${SRC_DIR}/TSTP/Parser.y
+src/TSTP/Parser.hs : src/TSTP/Parser.y
 	happy -agc -o $@ $<
 
-${BIN_DIR}/${BIN_NAME_AGDA} : ${BIN_DIR} \
-			      ${SRC_DIR}/*.agda \
-			      ${SRC_DIR}/TSTP/*.agda \
-			      ${SRC_DIR}/TSTP/*.hs \
-			      ${SRC_DIR}/Data/*.hs
+bin/Main : bin \
+			      src/*.agda \
+			      src/TSTP/*.agda \
+			      src/TSTP/*.hs \
+			      src/Data/*.hs
 	agda ${AGDA_FLAGS}
 
-${BIN_DIR} :
-	mkdir -p ${BIN_DIR}
+bin :
+	mkdir -p bin
 
+test_path = test/basics
+
+.PHONY : errors
+errors :
+	shelltest --color --execdir --precise  $(tests_path)/basics.test
+	@echo "$@ succeeded!"
+
+# Hlint test
+
+# Requires HLint >= 1.9.36 and run `cabal build` or `cabal install`
+# before.
+.PHONY : hlint
+hlint :
+	hlint --color=never Setup.hs
+	hlint --color=never \
+              --cpp-file=dist/build/autogen/cabal_macros.h \
+              --cpp-include=src/ \
+              src/
+	@echo "$@ succeeded!"
+
+.PHONY : haddock
+haddock :
+	cabal configure
+	cabal haddock --executables \
+	              --haddock-option=--use-unicode \
+	              --hyperlink-source
+	@echo "$@ succeeded!"
 
 .PHONY : install-bin
 install-bin :
-	- cabal install
+	cabal install --disable-documentation
+
+.PHONY : install-fix-whitespace
+install-fix-whitespace :
+	cd src/fix-whitespace && cabal install
+
+.PHONY : check-whitespace
+check-whitespace :
+	fix-whitespace --check
+
+.PHONY : TODO
+TODO :
+	find . -type d \( -path './.git' -o -path './dist' \) -prune -o -print \
+	| xargs grep -I 'TODO' \
+	| sort
 
 .PHONY : problems
 problems-metis:
@@ -71,3 +112,12 @@ clean :
 	rm -f ${PROP_PROBLEMS}/*.tstp
 	rm -f cnf*
 	rm -f saturation.tptp
+
+
+.PHONY : tests
+tests :
+	make errors
+	make hlint
+	make check-whitespace
+	make haddock
+	@echo "$@ succeeded!"
