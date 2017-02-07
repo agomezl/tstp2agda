@@ -164,6 +164,8 @@ printVars (f : fs) n = do
   putStrLn $ printVar f n ++ "\n"
   printVars fs (n+1)
 
+-- TODO: the recursivity is missing...
+-- fix test/problems/prop-002.tptp
 showDeepFormula ∷ Formula → String
 showDeepFormula (BinOp     f₁  (:=>:) f₂) = '(' <> f₁ ▪ '⇒' ▪ f₂ <> ')'
 showDeepFormula (BinOp     f₁  op     f₂) = f₁ ▪ op ▪ f₂
@@ -182,22 +184,32 @@ printAxiom f = intercalate "\n" $
 
 printAxioms ∷ [F] → IO ()
 printAxioms [] = return ()
-printAxioms fs = do
+printAxioms [a] = do
+  putStrLn "-- Axiom"
+  putStrLn $ printAxiom a ++ "\n"
+printAxioms as = do
   putStrLn "-- Axioms"
-  putStrLn $ intercalate "\n\n" $ map printAxiom fs
+  putStrLn $ intercalate "\n\n" $ map printAxiom as
+  putStrLn ""
 
 printPremises ∷ [F] → IO ()
 printPremises [] = return ()
-printPremises fs = do
-  putStrLn $ "\n-- Premises"
-  putStrLn $ "Γ : Ctxt"
-  putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name fs))
+printPremises [p] = do
+  putStrLn "-- Premise"
+  putStrLn "Γ : Ctxt"
+  putStrLn $ "Γ = [ " ++ name p ++ " ]\n"
+printPremises ps = do
+  putStrLn "-- Premises"
+  putStrLn "Γ : Ctxt"
+  putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name ps))
+  putStrLn ""
 
 printConjecture ∷ F → IO ()
 printConjecture f = do
-  putStrLn "\n-- Conjecture"
-  putStrLn $ printAxiom f
+  putStrLn "-- Conjecture"
+  putStrLn $ printAxiom f ++ "\n"
 
 printProof ∷ [F] → IO ()
+printProof [] = return ()
 printProof _ = do
   putStrLn $ "\n-- Proof"

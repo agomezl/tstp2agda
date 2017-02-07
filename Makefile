@@ -56,7 +56,7 @@ basic-test :
 
 .PHONY : deep-test
 deep-test :
-	shelltest --color --execdir --precise $(tests_path)/basic.test $(tests_deep)/basic.test
+	shelltest --color --execdir --precise $(tests_path)/basic.test $(tests_deep)/ --include=.test
 	@echo "$@ succeeded!"
 
 
