@@ -113,12 +113,12 @@ TODO :
 
 .PHONY : problems
 problems-metis:
-	$(shell find ${PROP_PROBLEMS} -type f -name "prop*.tptp" -exec sh -c 'metis --show proof --show saturation {} > {}s' \;)
+	$(shell find ${PROP_PROBLEMS} -type f -name "prop*.tptp" -exec sh -c 'metis --show proof {} > {}s' \;)
 	$(shell rename .tptps .tstp ${PROP_PROBLEMS}*.tptps)
 
 .PHONY : problems-agda
 problems-agda :
-	$(shell find ${PROP_PROBLEMS} -type f -name "prop*tstp" -exec sh -c "tstp2agda {} -e deep > {}a" \;)
+	$(shell find ${PROP_PROBLEMS} -type f -name "prop*tstp" -exec sh -c "tstp2agda {} -e deep > {}a" \; -print0)
 	$(shell rename .tstpa .agda ${PROP_PROBLEMS}*.tstpa)
 
 
@@ -127,8 +127,11 @@ clean :
 	@rm -f ${SRC_DIR}/TSTP/Lexer.hs
 	@rm -f ${SRC_DIR}/TSTP/Parser.hs
 	@find ${SRC_DIR} -regex ".*\(\.hi\|\.o\|\.agdai\)$$" -exec rm -f {} \;
-	@rm -f ${PROP_PROBLEMS}/*.agda
-	@rm -f ${PROP_PROBLEMS}/*.tstp
+	@rm -f test/problems/*.agda
+	@rm -f test/problems/*.agdai
+	@rm -f test/problems/*.tstp
+	@rm -f test/deep/*.agda
+	@rm -f test/deep/*.agdai
 	@rm -f cnf*
 	@rm -f saturation.tptp
 	@rm -rf dist

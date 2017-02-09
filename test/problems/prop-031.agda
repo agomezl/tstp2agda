@@ -21,14 +21,24 @@ a2 : Prop
 a2 = b
 
 a3 : Prop
-a3 = (a ∧ b ⇒ z)
+a3 = ((a ∧ b) ⇒ z)
 
 -- Premises
 Γ : Ctxt
 Γ = ∅ , a1 , a2 , a3
+
+-- Subgoal
+subgoal-0 : Prop
+subgoal-0 = z
 
 -- Conjecture
 a4 : Prop
 a4 = z
 
 -- Proof
+proof : Γ ⊢ goal
+proof =
+  RAA {Γ = Γ , ¬ goal} $
+    atp-canonicalize $
+      inference rule no supported yet $
+-- no supported yet

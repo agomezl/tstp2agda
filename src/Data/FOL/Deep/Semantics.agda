@@ -1,4 +1,4 @@
-open import Data.Nat public using (ℕ)
+open import Data.Nat using (ℕ)
 
 -- The parameter of the whole formalization
 --                    ↓
@@ -6,13 +6,13 @@ module Data.FOL.Deep.Semantics (n : ℕ) where
 
 open import Data.FOL.Deep.Syntax n
 
--- open import Data.Bool public using (Bool; true; false; not)
--- open import Data.Bool public renaming (_∧_ to _&&_; _∨_ to _||_)
--- open import Data.Fin  public using (Fin; zero; suc; #_)
-open import Data.List public using (List; []; _∷_; _++_; [_])
--- open import Data.Vec  public using (Vec; lookup)
---open import Function  public using (_$_)
--- open import Relation.Binary.PropositionalEquality public using (_≡_; refl)
+open import Data.Bool using (Bool; true; false; not)
+open import Data.Bool renaming (_∧_ to _&&_; _∨_ to _||_)
+open import Data.Fin  using (Fin; zero; suc; #_)
+open import Data.List using (List; []; _∷_; _++_; [_])
+open import Data.Vec  using (Vec; lookup)
+open import Function  using (_$_)
+open import Relation.Binary.PropositionalEquality public using (_≡_; refl)
 
 _!_ : {A : Set}{n : ℕ} → Vec A n → Fin n → A
 v ! idx = lookup idx v

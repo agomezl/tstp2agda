@@ -1,2 +1,2 @@
 name: tstp2agda
-include: src test/deep
+include: src test/deep test/problems

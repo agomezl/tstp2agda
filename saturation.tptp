@@ -1,4 +1,0 @@
-% Saturation clause set for test/problems/prop-005.tptp
-
-
-cnf(0, negated_conjecture, (~ x)).

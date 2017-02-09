@@ -13,9 +13,23 @@ q = Var (# 1)
 r : Prop
 r = Var (# 2)
 
+-- Premise
+Γ : Ctxt
+Γ = ∅
+
+-- Subgoals
+subgoal-0 : Prop
+subgoal-0 = ((((p ⇒ r) ∧ (¬ p ⇒ ¬ q)) ∧ (p ∨ q)) ⇒ p)
+
+subgoal-1 : Prop
+subgoal-1 = (((((p ⇒ r) ∧ (¬ p ⇒ ¬ q)) ∧ (p ∨ q)) ∧ p) ⇒ r)
 
 -- Conjecture
 goal : Prop
-goal = ((p → r) ∧ (¬ p → ¬ q) ∧ p ∨ q ⇒ p ∧ r)
+goal = ((((p ⇒ r) ∧ (¬ p ⇒ ¬ q)) ∧ (p ∨ q)) ⇒ (p ∧ r))
 
 -- Proof
+proof : Γ ⊢ goal
+proof =
+  RAA {Γ = Γ , ¬ goal} $
+-- no supported yet

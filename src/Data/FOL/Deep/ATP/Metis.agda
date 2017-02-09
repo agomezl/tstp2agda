@@ -1,20 +1,40 @@
-open import Data.Nat public using (ℕ)
+open import Data.Nat using (ℕ)
 
 module Data.FOL.Deep.ATP.Metis (n : ℕ) where
 
 open import Data.FOL.Deep.Syntax n
 open import Data.FOL.Deep.Theorems n
 
+open import Function using (_$_)
+
 -- Inference Rules.
 
-strip : Prop → Prop
-strip φ = φ
 
-negate : Prop → Prop
-negate φ = negative φ
+atp-strip : Prop → Prop
+atp-strip φ = φ
+
+atp-neg : Prop → Prop
+atp-neg φ = ¬ φ
 
 canonicalize : Prop → Prop
-canonicalize φ = positive φ
+canonicalize (φ ⇒ ψ) = ¬ φ ∨ ψ
+canonicalize (¬ (φ ⇒ ψ)) = φ ∧ ¬ ψ
+canonicalize (¬ ⊤) = ⊥
+canonicalize (¬ ⊥) = ⊤
+canonicalize φ = φ
+
+atp-canonicalize : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ canonicalize φ
+atp-canonicalize {Γ} {Var x} = id
+atp-canonicalize {Γ} {⊤} = id
+atp-canonicalize {Γ} {⊥} = id
+atp-canonicalize {Γ} {φ ∧ φ₁} = id
+atp-canonicalize {Γ} {φ ∨ φ₁} = id
+atp-canonicalize {Γ} {φ ⇒ φ₁} = impl-pos
+atp-canonicalize {Γ} {¬ (φ ⇒ φ₁)} = impl-neg
+atp-canonicalize {Γ} {¬ ⊤} = ¬-⊤
+atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥
+atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
+
 
 resolve : ∀ {Γ} {L C D} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D
 resolve {Γ} {L}{C}{D} seq₁ seq₂ =

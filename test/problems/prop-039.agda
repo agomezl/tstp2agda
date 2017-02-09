@@ -10,9 +10,23 @@ clause = Var (# 0)
 lit : Prop
 lit = Var (# 1)
 
+-- Premise
+Γ : Ctxt
+Γ = ∅
+
+-- Subgoals
+subgoal-0 : Prop
+subgoal-0 = (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
+
+subgoal-1 : Prop
+subgoal-1 = ((((lit ⇒ clause) ∧ clause) ∧ ¬ lit) ⇒ clause)
 
 -- Conjecture
 goal : Prop
-goal = ((lit → clause) ⇒ lit ∨ clause ↔ clause)
+goal = ((lit ⇒ clause) ⇒ ((lit ∨ clause) ⇔ clause))
 
 -- Proof
+proof : Γ ⊢ goal
+proof =
+  RAA {Γ = Γ , ¬ goal} $
+-- no supported yet

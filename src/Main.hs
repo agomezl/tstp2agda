@@ -28,7 +28,7 @@ import Data.List (intercalate)
 import           Data.Maybe         (fromJust, fromMaybe)
 import           Data.Proof         (ProofMap, ProofTree)
 
-import           Data.TSTP            (F (..), Formula (..) )
+import           Data.TSTP            (F (..), Formula (..), Rule (..), Role (..) )
 import           Data.TSTP.Formula    (getFreeVars)
 import           Data.TSTP.AtomicWord (AtomicWord (..))
 import           Data.TSTP.BinOp      (BinOp (..))
@@ -60,6 +60,7 @@ import T2A
   , printSubGoals
   )
 
+import Data.Proof (ProofTree (..), ProofMap (..), ProofTreeGen(..) )
 
 main ∷ IO ()
 main = do
@@ -147,9 +148,11 @@ mainCore opts = do
 
       printPremises axioms
 
+      printSubGoals' subgoals
+
       printConjecture conj
 
-      printProof axioms
+      printProof axioms subgoals conj rulesMap rulesTrees
       return ()
 
 printVar ∷ V → Int → String
@@ -164,15 +167,25 @@ printVars (f : fs) n = do
   putStrLn $ printVar f n ++ "\n"
   printVars fs (n+1)
 
--- TODO: the recursivity is missing...
--- fix test/problems/prop-002.tptp
 showDeepFormula ∷ Formula → String
-showDeepFormula (BinOp     f₁  (:=>:) f₂) = '(' <> f₁ ▪ '⇒' ▪ f₂ <> ')'
-showDeepFormula (BinOp     f₁  op     f₂) = f₁ ▪ op ▪ f₂
+showDeepFormula (BinOp     f₁  (:=>:) f₂) = '(' <> sf₁ ▪ '⇒' ▪ sf₂ <> ')'
+  where
+    sf₁ = showDeepFormula f₁
+    sf₂ = showDeepFormula f₂
+showDeepFormula (BinOp     f₁  (:<=>:) f₂) = '(' <> sf₁ ▪ '⇔' ▪ sf₂ <> ')'
+  where
+    sf₁ = showDeepFormula f₁
+    sf₂ = showDeepFormula f₂
+
+showDeepFormula (BinOp     f₁  op     f₂) = '(' <> sf₁ ▪ op ▪ sf₂ <> ')'
+  where
+    sf₁ = showDeepFormula f₁
+    sf₂ = showDeepFormula f₂
 showDeepFormula (InfixPred t₁  r      t₂) = t₁ ▪ r  ▪ t₂
 showDeepFormula (PredApp   ρ          []) = show ρ
 showDeepFormula (PredApp   ρ          φ ) = '(' <> ρ ▪ ':' ▪ φ ▪ "⇒ ⊤" <> ')'
-showDeepFormula ((:~:)                f ) = '¬' ▪ f
+
+showDeepFormula ((:~:)                f ) = '¬' ▪ (showDeepFormula f)
 showDeepFormula _ = "⊤"
 
 printAxiom ∷ F → String
@@ -193,15 +206,20 @@ printAxioms as = do
   putStrLn ""
 
 printPremises ∷ [F] → IO ()
-printPremises [] = return ()
-printPremises [p] = do
-  putStrLn "-- Premise"
+printPremises premises = do
+  putStrLn $ "-- Premise" ++ (if (length premises < 2) then "" else "s")
   putStrLn "Γ : Ctxt"
-  putStrLn $ "Γ = [ " ++ name p ++ " ]\n"
-printPremises ps = do
-  putStrLn "-- Premises"
-  putStrLn "Γ : Ctxt"
-  putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name ps))
+  case premises of
+    []  → putStrLn "Γ = ∅"
+    [p] → putStrLn $ "Γ = [ " ++ name p ++ " ]\n"
+    ps  → putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name ps))
+  putStrLn ""
+
+printSubGoals' ∷ [F] → IO ()
+printSubGoals' [] = return ()
+printSubGoals' subgoals = do
+  putStrLn $ "-- Subgoal"++ if length subgoals < 2 then "" else "s"
+  putStrLn $ intercalate "\n\n" $ map printAxiom subgoals
   putStrLn ""
 
 printConjecture ∷ F → IO ()
@@ -209,7 +227,29 @@ printConjecture f = do
   putStrLn "-- Conjecture"
   putStrLn $ printAxiom f ++ "\n"
 
-printProof ∷ [F] → IO ()
-printProof [] = return ()
-printProof _ = do
-  putStrLn $ "\n-- Proof"
+printProof ∷ [F] → [F] → F → ProofMap → [ProofTree] → IO ()
+printProof axioms subgoals goal rmap rtree = do
+  putStrLn "-- Proof"
+  putStrLn "proof : Γ ⊢ goal"
+  putStrLn "proof ="
+  putStrLn "  RAA {Γ = Γ , ¬ goal} $"
+  putStrLn $ printSteps 2 rtree rmap goal axioms
+
+type Ident = Int
+
+getIdent ∷ Ident → String
+getIdent n = concat $ replicate (2 * n) " "
+
+printSteps ∷ Ident → [ProofTree] → ProofMap → F → [F] → String
+printSteps n [(Root inf tag subtree)] dict goal axioms =
+  getIdent n ++ inferenceName ++ " $\n" ++ printSteps (n+1) subtree dict goal axioms
+  where
+    inferenceName ∷ String
+    inferenceName = case inf of
+      Canonicalize → "atp-canonicalize"
+      Negate → "assume {Γ = Γ} $ atp-neg"
+      Strip  → "atp-strip"
+      _ → "inference rule no supported yet"
+printSteps n [Leaf Conjecture gname] dict goal axioms =
+  getIdent n ++ gname ++ "\n"
+printSteps _ _ _ _ _ = "-- no supported yet"

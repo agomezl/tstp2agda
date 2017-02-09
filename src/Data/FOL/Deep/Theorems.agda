@@ -1,11 +1,21 @@
-open import Data.Nat public using (ℕ)
+open import Data.Nat using (ℕ)
 
 module Data.FOL.Deep.Theorems (n : ℕ) where
 
 open import Data.FOL.Deep.Syntax n
-
+open import Function using (_$_)
 
 -- Equivalences.
+
+postulate id : ∀ {Γ : Ctxt} {φ} → Γ ⊢ φ → Γ ⊢ φ
+
+postulate ¬-⊤ : ∀ {Γ : Ctxt} → Γ ⊢ ¬ ⊤ → Γ ⊢ ⊥
+postulate ¬-⊤₂ : ∀ {Γ : Ctxt} → Γ ⊢ ⊤ → Γ ⊢ ¬ ⊥
+
+postulate ¬-⊥ : ∀ {Γ : Ctxt} → Γ ⊢ ¬ ⊥ → Γ ⊢ ⊤
+postulate ¬-⊥₂ : ∀ {Γ : Ctxt} → Γ ⊢ ⊥ → Γ ⊢ ¬ ⊤
+
+
 ∧-comm  : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ∧ ψ → Γ ⊢ ψ ∧ φ
 ∧-comm {Γ} {φ}{ψ} seq = ∧-intro (∧-proj₂ seq) (∧-proj₁ seq)
 

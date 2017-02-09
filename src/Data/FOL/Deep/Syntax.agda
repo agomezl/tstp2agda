@@ -1,17 +1,18 @@
-open import Data.Nat public using (ℕ; zero; suc)
+
+open import Data.Nat using (ℕ; zero; suc)
 
 -- The parameter of the whole formalization
 --                              ↓
 module Data.FOL.Deep.Syntax (n : ℕ) where
 
-open import Data.Bool public using (Bool; true; false; not)
-open import Data.Bool public renaming (_∧_ to _&&_; _∨_ to _||_)
-open import Data.Fin  public using (Fin; zero; suc; #_)
-open import Data.List public using (List; []; _∷_; _++_; [_])
-open import Data.Vec  public using (Vec; lookup)
+open import Data.Bool using (Bool; true; false; not)
+open import Data.Bool renaming (_∧_ to _&&_; _∨_ to _||_)
+open import Data.Fin  using (Fin; zero; suc; #_)
+open import Data.List using (List; []; _∷_; _++_; [_])
+open import Data.Vec  using (Vec; lookup)
 
-open import Function  public using (_$_)
-open import Relation.Binary.PropositionalEquality public using (_≡_; refl)
+open import Function  using (_$_)
+open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 
 Type = Set
 
@@ -108,3 +109,4 @@ data _⊢_ : (Γ : Ctxt)(φ : Prop) → Type where
 
   ⇒-elim   : ∀ {Γ : Ctxt} {φ ψ}                  → Γ ⊢ φ ⇒ ψ → Γ ⊢ φ
                                                  → Γ ⊢ ψ
+  atp-step : ∀ {Γ : Ctxt} {φ : Prop} → (rule : Prop → Prop) → Γ ⊢ φ → Γ ⊢ (rule φ)

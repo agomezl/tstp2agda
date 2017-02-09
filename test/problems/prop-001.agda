@@ -7,16 +7,27 @@ open import Data.FOL.Deep 1
 a : Prop
 a = Var (# 0)
 
--- Axioms
+-- Axiom
 lm : Prop
 lm = a
 
--- Premises
+-- Premise
 Γ : Ctxt
-Γ = ∅ , lm
+Γ = [ lm ]
+
+
+-- Subgoal
+subgoal-0 : Prop
+subgoal-0 = a
 
 -- Conjecture
 goal : Prop
 goal = a
 
 -- Proof
+proof : Γ ⊢ goal
+proof =
+  RAA {Γ = Γ , ¬ goal} $
+    atp-canonicalize $
+      inference rule no supported yet $
+-- no supported yet

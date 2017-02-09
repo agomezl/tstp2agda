@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------------------------------
-../../dist/build/tstp2agda/tstp2agda ./../problems/prop-001.tstp --embedding deep --output=prop-001.agda
+../../dist/build/tstp2agda/tstp2agda ./../problems/prop-001.tstp --embedding deep --output=check-prop-001.agda
 <<<
 >>>
 >>>2
@@ -8,7 +8,7 @@
 
 
 # ------------------------------------------------------------------------------------------------------
-diff ./../problems/prop-001.agda prop-001.agda
+diff ./../problems/prop-001.agda check-prop-001.agda
 <<<
 >>>
 >>>2
@@ -17,7 +17,7 @@ diff ./../problems/prop-001.agda prop-001.agda
 
 
 # -----------------------------------------------------------------------------------------------------
-agda prop-001.agda --include-path=./../../src --include-path=./../libraries/agda-stdlib/src --verbose=0
+agda check-prop-001.agda --include-path=./../../src --include-path=./../libraries/agda-stdlib/src --verbose=0
 <<<
 >>>
 >>>2

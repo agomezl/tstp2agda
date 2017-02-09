@@ -17,7 +17,7 @@ module TSTP
   ) where
 
 
-import           Data.TSTP           (F)
+import           Data.TSTP           (F (..))
 import           System.IO           (getContents)
 import           TSTP.Lexer          (alexScanTokens)
 import           TSTP.Parser         (parseTSTP)
