@@ -275,6 +275,7 @@ printSteps sname n [(Root inf tag subtree)] dict goal axioms =
     inferenceName = case inf of
       Canonicalize → "atp-canonicalize"
       Strip  → "atp-strip"
+      Simplify → "atp-simplify"
       _ → "inference rule no supported yet"
 
 printSteps sname n [Leaf Conjecture gname] dict goal axioms =

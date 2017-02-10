@@ -171,6 +171,9 @@ postulate impl-neg : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ (φ ⇒ ψ) → Γ �
 
 -- Translation of Formulas to Negation Normal Form.
 
+postulate contra : ∀ {Γ : Ctxt} {φ} → Γ ⊢ φ ∧ ¬ φ → Γ ⊢ ⊥
+postulate contra₂ : ∀ {Γ : Ctxt} {φ} → Γ ⊢ ¬ φ ∧ φ → Γ ⊢ ⊥
+
 
 mutual
   positive : Prop → Prop

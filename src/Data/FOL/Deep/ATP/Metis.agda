@@ -56,6 +56,20 @@ atp-canonicalize {Γ} {¬ ⊤} = ¬-⊤
 atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥
 atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
 
+simplify : Prop → Prop
+-- simplify (φ ∨ ¬ ψ) = ⊥
+-- simplify (¬ φ ∨ ψ) = ⊥
+simplify φ = φ
+
+
+atp-simplify : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ simplify φ
+atp-simplify {Γ} {Var x} = id
+atp-simplify {Γ} {⊤} = id
+atp-simplify {Γ} {⊥} = id
+-- atp-simplify {Γ} {φ ∧ ¬ φ} = contra
+-- atp-simplify {Γ} {¬ φ ∧ φ} = contra₂
+atp-simplify {Γ} {φ} seq = id (atp-step (λ _ → simplify φ) seq)
+
 
 resolve : ∀ {Γ} {L C D} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D
 resolve {Γ} {L}{C}{D} seq₁ seq₂ =
@@ -71,3 +85,4 @@ resolve {Γ} {L}{C}{D} seq₁ seq₂ =
            ∧-intro
             (weaken (¬ C ∧ ¬ D) seq₁)
              (∧-proj₁ $ assume {Γ = Γ} $ ¬ C ∧ ¬ D)))
+
