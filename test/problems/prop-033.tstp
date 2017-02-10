@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------
-SZS status Theorem for test/problems/prop-033.tptp
+SZS status Theorem for test/problems//prop-033.tptp
 
-SZS output start CNFRefutation for test/problems/prop-033.tptp
+SZS output start CNFRefutation for test/problems//prop-033.tptp
 fof(a1, axiom, (a)).
 
 fof(a2, axiom, (b)).
@@ -70,5 +70,5 @@ fof(normalize_1_7, plain, ($false),
 
 cnf(refute_1_0, plain, ($false),
     inference(canonicalize, [], [normalize_1_7])).
-SZS output end CNFRefutation for test/problems/prop-033.tptp
+SZS output end CNFRefutation for test/problems//prop-033.tptp
 

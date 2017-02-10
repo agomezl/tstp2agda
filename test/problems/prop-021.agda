@@ -2,6 +2,7 @@
 -- tstp2agda proof
 
 open import Data.FOL.Deep 1
+open import Data.FOL.Deep.ATP.Metis1
 
 -- Vars
 p : Prop

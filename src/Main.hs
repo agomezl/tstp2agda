@@ -158,7 +158,10 @@ mainCore opts = do
 printVar ∷ V → Int → String
 printVar f n = intercalate "\n" $
   [  show f ++ " : Prop"
-  ,  show f ++ " = Var (# " ++ show n ++ ")"
+  ,  show f ++ case show f of
+       "$true" → " = ⊤"
+       "$false"→ " = ⊥"
+       s → " Var (# " ++ show n ++ ")"
   ]
 
 printVars ∷ [V] → Int → IO String
@@ -232,7 +235,7 @@ printProof axioms subgoals goal rmap rtree = do
   putStrLn "-- Proof"
   putStrLn "proof : Γ ⊢ goal"
   putStrLn "proof ="
-  putStrLn "  RAA {Γ = Γ , ¬ goal} $"
+  putStrLn "  RAA $"
   putStrLn $ printSteps 2 rtree rmap goal axioms
 
 type Ident = Int

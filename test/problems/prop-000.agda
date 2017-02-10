@@ -3,9 +3,10 @@
 
 open import Data.FOL.Deep 1
 open import Data.FOL.Deep.ATP.Metis 1
+
 -- Vars
 $true : Prop
-$true = Var (# 0)
+$true = ⊤
 
 -- Premise
 Γ : Ctxt
@@ -25,6 +26,7 @@ proof =
   RAA $
     atp-canonicalize $
       atp-canonicalize $
-        (atp-canonicalize $
-          (assume {Γ = Γ} (atp-neg (atp-strip {!!}))))
+        assume {Γ = Γ} $ atp-neg $
+          atp-strip $
+            goal
 

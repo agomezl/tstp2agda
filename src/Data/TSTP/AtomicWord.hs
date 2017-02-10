@@ -11,5 +11,6 @@ newtype AtomicWord = AtomicWord String
     deriving (Eq, Ord, Read)
 
 instance Show AtomicWord where
-    show (AtomicWord "$false") = "⊥"
+--    show (AtomicWord "$false") = "⊥"
+--    show (AtomicWord "$true") = "⊤"
     show (AtomicWord a) = a
