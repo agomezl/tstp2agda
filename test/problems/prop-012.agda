@@ -2,7 +2,7 @@
 -- tstp2agda proof
 
 open import Data.FOL.Deep 1
-open import Data.FOL.Deep.ATP.Metis1
+open import Data.FOL.Deep.ATP.Metis 1
 
 -- Vars
 p : Prop
@@ -12,19 +12,35 @@ p = Var (# 0)
 Γ : Ctxt
 Γ = ∅
 
--- Subgoals
-subgoal-0 : Prop
-subgoal-0 = (¬ ¬ p ⇒ p)
-
-subgoal-1 : Prop
-subgoal-1 = (p ⇒ p)
-
 -- Conjecture
 goal : Prop
 goal = (¬ ¬ p ⇔ p)
 
--- Proof
-proof : Γ ⊢ goal
-proof =
-  RAA {Γ = Γ , ¬ goal} $
--- no supported yet
+-- Subgoals
+subgoal₀ : Prop
+subgoal₀ = (¬ ¬ p ⇒ p)
+
+subgoal₁ : Prop
+subgoal₁ = (p ⇒ p)
+
+-- Metis Proof.
+proof₀ : Γ ⊢ subgoal₀
+proof₀ =
+  RAA $
+    atp-canonicalize $
+      atp-canonicalize $
+        atp-strip $
+          assume {Γ = Γ} $
+            atp-neg subgoal₀
+
+
+proof₁ : Γ ⊢ subgoal₁
+proof₁ =
+  RAA $
+    atp-canonicalize $
+      atp-canonicalize $
+        atp-strip $
+          assume {Γ = Γ} $
+            atp-neg subgoal₁
+
+

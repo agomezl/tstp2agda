@@ -2,7 +2,7 @@
 -- tstp2agda proof
 
 open import Data.FOL.Deep 2
-open import Data.FOL.Deep.ATP.Metis2
+open import Data.FOL.Deep.ATP.Metis 2
 
 -- Vars
 p : Prop
@@ -15,19 +15,33 @@ q = Var (# 1)
 Γ : Ctxt
 Γ = ∅
 
--- Subgoals
-subgoal-0 : Prop
-subgoal-0 = ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
-
-subgoal-1 : Prop
-subgoal-1 = (((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ∧ ¬ ¬ q) ⇒ q)
-
 -- Conjecture
 goal : Prop
 goal = ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ ¬ (¬ q ∨ ¬ q))
 
--- Proof
-proof : Γ ⊢ goal
-proof =
-  RAA {Γ = Γ , ¬ goal} $
+-- Subgoals
+subgoal₀ : Prop
+subgoal₀ = ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
+
+subgoal₁ : Prop
+subgoal₁ = (((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ∧ ¬ ¬ q) ⇒ q)
+
+-- Metis Proof.
+proof₀ : Γ ⊢ subgoal₀
+proof₀ =
+  RAA $
+    atp-canonicalize $
+      inference rule no supported yet $
 -- no supported yet
+
+
+proof₁ : Γ ⊢ subgoal₁
+proof₁ =
+  RAA $
+    atp-canonicalize $
+      atp-canonicalize $
+        atp-strip $
+          assume {Γ = Γ} $
+            atp-neg subgoal₁
+
+

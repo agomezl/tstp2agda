@@ -35,6 +35,7 @@ import Data.Proof (ProofMap, ProofTree)
 
 import qualified Text.Show.Pretty as Pr
 import Data.Maybe
+import Data.List
 
 isConjecture :: F → [F] → Bool
 isConjecture _ [] = False
@@ -49,6 +50,23 @@ prop n ="/home/hotel/tstp2agda/test/problems/prop-" ++ num ++ ".tstp"
       else "0" ++ show n
 
 problem n = parse <$> readFile (prop n)
+
+
+subIndex ∷ Char → Char
+subIndex '0' = '₀'
+subIndex '1' = '₁'
+subIndex '2' = '₂'
+subIndex '3' = '₃'
+subIndex '4' = '₄'
+subIndex '5' = '₅'
+subIndex '6' = '₆'
+subIndex '7' = '₇'
+subIndex '8' = '₈'
+subIndex '9' = '₉'
+subIndex s   = s
+
+stdName :: String → String
+stdName = map subIndex $ concat $ splitOn "-"
 
 
 main ∷ IO ()

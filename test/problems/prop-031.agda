@@ -2,7 +2,7 @@
 -- tstp2agda proof
 
 open import Data.FOL.Deep 3
-open import Data.FOL.Deep.ATP.Metis3
+open import Data.FOL.Deep.ATP.Metis 3
 
 -- Vars
 a : Prop
@@ -15,31 +15,33 @@ z : Prop
 z = Var (# 2)
 
 -- Axioms
-a1 : Prop
-a1 = a
+a₁ : Prop
+a₁ = a
 
-a2 : Prop
-a2 = b
+a₂ : Prop
+a₂ = b
 
-a3 : Prop
-a3 = ((a ∧ b) ⇒ z)
+a₃ : Prop
+a₃ = ((a ∧ b) ⇒ z)
 
 -- Premises
 Γ : Ctxt
 Γ = ∅ , a1 , a2 , a3
 
--- Subgoal
-subgoal-0 : Prop
-subgoal-0 = z
-
 -- Conjecture
-a4 : Prop
-a4 = z
+a₄ : Prop
+a₄ = z
 
--- Proof
-proof : Γ ⊢ goal
-proof =
-  RAA {Γ = Γ , ¬ goal} $
+-- Subgoal
+subgoal₀ : Prop
+subgoal₀ = z
+
+-- Metis Proof.
+proof₀ : Γ ⊢ subgoal₀
+proof₀ =
+  RAA $
     atp-canonicalize $
       inference rule no supported yet $
 -- no supported yet
+
+

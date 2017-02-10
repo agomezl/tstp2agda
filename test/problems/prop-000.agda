@@ -12,21 +12,22 @@ $true = ⊤
 Γ : Ctxt
 Γ = ∅
 
--- Subgoal
-subgoal-0 : Prop
-subgoal-0 = $true
-
 -- Conjecture
 goal : Prop
 goal = $true
 
--- Proof
-proof : Γ ⊢ goal
-proof =
+-- Subgoal
+subgoal₀ : Prop
+subgoal₀ = $true
+
+-- Metis Proof.
+proof₀ : Γ ⊢ subgoal₀
+proof₀ =
   RAA $
     atp-canonicalize $
       atp-canonicalize $
-        assume {Γ = Γ} $ atp-neg $
-          atp-strip $
-            goal
+        atp-strip $
+          assume {Γ = Γ} $
+            atp-neg subgoal₀
+
 

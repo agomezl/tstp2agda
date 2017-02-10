@@ -1,0 +1,4 @@
+% CNF clauses for prop-041.tptp
+
+
+cnf(0, negated_conjecture, ($false)).

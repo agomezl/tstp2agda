@@ -9,9 +9,30 @@ open import Function using (_$_)
 
 -- Inference Rules.
 
+$false : Prop
+$false = ⊥
 
-atp-strip : Prop → Prop
-atp-strip φ = φ
+
+
+strip : Prop → Prop
+strip (¬ ⊤) = ⊥
+strip (¬ ⊥) = ⊤
+strip (¬ φ) = ¬ φ
+strip φ = φ
+
+atp-strip : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ strip φ
+atp-strip {Γ} {Var x} = id
+atp-strip {Γ} {⊤} = id
+atp-strip {Γ} {⊥} = id
+atp-strip {Γ} {φ ∧ φ₁} = id
+atp-strip {Γ} {φ ∨ φ₁} = id
+
+atp-strip {Γ} {φ ⇒ φ₁} = id
+atp-strip {Γ} {¬ (φ ⇒ φ₁)} = id
+atp-strip {Γ} {¬ ⊤} = ¬-⊤
+atp-strip {Γ} {¬ ⊥} = ¬-⊥
+atp-strip {Γ} {φ} seq = id (atp-step (λ _ → strip φ) seq)
+
 
 atp-neg : Prop → Prop
 atp-neg φ = ¬ φ

@@ -2,7 +2,7 @@
 -- tstp2agda proof
 
 open import Data.FOL.Deep 1
-open import Data.FOL.Deep.ATP.Metis1
+open import Data.FOL.Deep.ATP.Metis 1
 
 -- Vars
 a : Prop
@@ -17,18 +17,20 @@ lm = a
 Γ = [ lm ]
 
 
--- Subgoal
-subgoal-0 : Prop
-subgoal-0 = a
-
 -- Conjecture
 goal : Prop
 goal = a
 
--- Proof
-proof : Γ ⊢ goal
-proof =
-  RAA {Γ = Γ , ¬ goal} $
+-- Subgoal
+subgoal₀ : Prop
+subgoal₀ = a
+
+-- Metis Proof.
+proof₀ : Γ ⊢ subgoal₀
+proof₀ =
+  RAA $
     atp-canonicalize $
       inference rule no supported yet $
 -- no supported yet
+
+

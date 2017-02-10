@@ -1,15 +1,12 @@
 
 -- tstp2agda proof
 
-open import Data.FOL.Deep 2
-open import Data.FOL.Deep.ATP.Metis 2
+open import Data.FOL.Deep 1
+open import Data.FOL.Deep.ATP.Metis 1
 
 -- Vars
-x : Prop
-x = Var (# 0)
-
-y : Prop
-y = Var (# 1)
+$true : Prop
+$true = ⊤
 
 -- Premise
 Γ : Ctxt
@@ -17,11 +14,11 @@ y = Var (# 1)
 
 -- Conjecture
 goal : Prop
-goal = (x ⇒ (y ⇒ x))
+goal = ¬ $false
 
 -- Subgoal
 subgoal₀ : Prop
-subgoal₀ = ((x ∧ y) ⇒ x)
+subgoal₀ = $true
 
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀

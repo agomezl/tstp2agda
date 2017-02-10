@@ -2,7 +2,7 @@
 -- tstp2agda proof
 
 open import Data.FOL.Deep 4
-open import Data.FOL.Deep.ATP.Metis4
+open import Data.FOL.Deep.ATP.Metis 4
 
 -- Vars
 a : Prop
@@ -18,41 +18,69 @@ d : Prop
 d = Var (# 3)
 
 -- Axioms
-a1 : Prop
-a1 = a
+a₁ : Prop
+a₁ = a
 
-a2 : Prop
-a2 = b
+a₂ : Prop
+a₂ = b
 
-a3 : Prop
-a3 = ((¬ a ∨ ¬ b) ∨ c)
+a₃ : Prop
+a₃ = ((¬ a ∨ ¬ b) ∨ c)
 
-a4 : Prop
-a4 = (¬ c ∨ d)
+a₄ : Prop
+a₄ = (¬ c ∨ d)
 
 -- Premises
 Γ : Ctxt
 Γ = ∅ , a1 , a2 , a3 , a4
 
--- Subgoals
-subgoal-0 : Prop
-subgoal-0 = d
-
-subgoal-1 : Prop
-subgoal-1 = (d ⇒ a)
-
-subgoal-2 : Prop
-subgoal-2 = ((d ∧ a) ⇒ b)
-
-subgoal-3 : Prop
-subgoal-3 = (((d ∧ a) ∧ b) ⇒ c)
-
 -- Conjecture
-a5 : Prop
-a5 = (((d ∧ a) ∧ b) ∧ c)
+a₅ : Prop
+a₅ = (((d ∧ a) ∧ b) ∧ c)
 
--- Proof
-proof : Γ ⊢ goal
-proof =
-  RAA {Γ = Γ , ¬ goal} $
+-- Subgoals
+subgoal₀ : Prop
+subgoal₀ = d
+
+subgoal₁ : Prop
+subgoal₁ = (d ⇒ a)
+
+subgoal₂ : Prop
+subgoal₂ = ((d ∧ a) ⇒ b)
+
+subgoal₃ : Prop
+subgoal₃ = (((d ∧ a) ∧ b) ⇒ c)
+
+-- Metis Proof.
+proof₀ : Γ ⊢ subgoal₀
+proof₀ =
+  RAA $
+    atp-canonicalize $
+      inference rule no supported yet $
 -- no supported yet
+
+
+proof₁ : Γ ⊢ subgoal₁
+proof₁ =
+  RAA $
+    atp-canonicalize $
+      inference rule no supported yet $
+-- no supported yet
+
+
+proof₂ : Γ ⊢ subgoal₂
+proof₂ =
+  RAA $
+    atp-canonicalize $
+      inference rule no supported yet $
+-- no supported yet
+
+
+proof₃ : Γ ⊢ subgoal₃
+proof₃ =
+  RAA $
+    atp-canonicalize $
+      inference rule no supported yet $
+-- no supported yet
+
+

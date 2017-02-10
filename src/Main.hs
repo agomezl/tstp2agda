@@ -22,7 +22,8 @@ import Options
     , processOptions
     )
 
-import Data.List (intercalate)
+import Data.List
+import Data.List.Split
 
 
 import           Data.Maybe         (fromJust, fromMaybe)
@@ -148,9 +149,11 @@ mainCore opts = do
 
       printPremises axioms
 
+      printConjecture conj
+
+
       printSubGoals' subgoals
 
-      printConjecture conj
 
       printProof axioms subgoals conj rulesMap rulesTrees
       return ()
@@ -161,7 +164,7 @@ printVar f n = intercalate "\n" $
   ,  show f ++ case show f of
        "$true" → " = ⊤"
        "$false"→ " = ⊥"
-       s → " Var (# " ++ show n ++ ")"
+       s → " = Var (# " ++ show n ++ ")"
   ]
 
 printVars ∷ [V] → Int → IO String
@@ -186,14 +189,18 @@ showDeepFormula (BinOp     f₁  op     f₂) = '(' <> sf₁ ▪ op ▪ sf₂ <>
     sf₂ = showDeepFormula f₂
 showDeepFormula (InfixPred t₁  r      t₂) = t₁ ▪ r  ▪ t₂
 showDeepFormula (PredApp   ρ          []) = show ρ
+showDeepFormula (PredApp   (AtomicWord "$false")          []) = "⊥"
+showDeepFormula (PredApp   (AtomicWord "$true")          []) = "⊤"
+showDeepFormula (PredApp   ρ          []) = show ρ
+
 showDeepFormula (PredApp   ρ          φ ) = '(' <> ρ ▪ ':' ▪ φ ▪ "⇒ ⊤" <> ')'
 
 showDeepFormula ((:~:)                f ) = '¬' ▪ (showDeepFormula f)
-showDeepFormula _ = "⊤"
+showDeepFormula _ = "RRR"
 
 printAxiom ∷ F → String
 printAxiom f = intercalate "\n" $
-  let axiom = name f
+  let axiom = stdName (name f)
   in [  axiom ++ " : Prop"
      ,  axiom ++ " = " ++ showDeepFormula (formula f)
      ]
@@ -218,6 +225,11 @@ printPremises premises = do
     ps  → putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name ps))
   putStrLn ""
 
+printConjecture ∷ F → IO ()
+printConjecture f = do
+  putStrLn "-- Conjecture"
+  putStrLn $ printAxiom f ++ "\n"
+
 printSubGoals' ∷ [F] → IO ()
 printSubGoals' [] = return ()
 printSubGoals' subgoals = do
@@ -225,34 +237,63 @@ printSubGoals' subgoals = do
   putStrLn $ intercalate "\n\n" $ map printAxiom subgoals
   putStrLn ""
 
-printConjecture ∷ F → IO ()
-printConjecture f = do
-  putStrLn "-- Conjecture"
-  putStrLn $ printAxiom f ++ "\n"
-
 printProof ∷ [F] → [F] → F → ProofMap → [ProofTree] → IO ()
+printProof _      _        _    _    [] = return ()
 printProof axioms subgoals goal rmap rtree = do
-  putStrLn "-- Proof"
-  putStrLn "proof : Γ ⊢ goal"
-  putStrLn "proof ="
+  putStrLn "-- Metis Proof."
+  printProofSubgoal 0 axioms subgoals goal rmap rtree
+
+printProofSubgoal ∷ Int → [F] → [F] → F → ProofMap → [ProofTree] → IO ()
+printProofSubgoal _ _ _ _ _ [] = return ()
+printProofSubgoal no axioms subgoals goal rmap (tree:strees) = do
+  let strNo = stdName (show no)
+  let proofName = stdName ( "proof" ++ strNo)
+  let subgoalName = "subgoal" ++ strNo
+  putStrLn $ proofName ++ " : Γ ⊢ " ++ subgoalName
+  putStrLn $ proofName ++ " ="
   putStrLn "  RAA $"
-  putStrLn $ printSteps 2 rtree rmap goal axioms
+  putStrLn $ printSteps subgoalName 2 [tree] rmap goal axioms
+  putStrLn "\n"
+  printProofSubgoal (no+1) axioms subgoals goal rmap strees
 
 type Ident = Int
 
 getIdent ∷ Ident → String
 getIdent n = concat $ replicate (2 * n) " "
 
-printSteps ∷ Ident → [ProofTree] → ProofMap → F → [F] → String
-printSteps n [(Root inf tag subtree)] dict goal axioms =
-  getIdent n ++ inferenceName ++ " $\n" ++ printSteps (n+1) subtree dict goal axioms
+printSteps ∷ String → Ident → [ProofTree] → ProofMap → F → [F] → String
+printSteps sname n [(Root Negate tag [(Root Strip subgoalname st)] )] dict goal axioms =
+  if sname == (stdName subgoalname) then
+    getIdent n ++ "atp-strip $\n" ++ getIdent (n+1) ++ "assume {Γ = Γ} $\n" ++ getIdent (n+2) ++ "atp-neg " ++ sname
+  else do
+    getIdent n ++ "atp-negate $" ++ printSteps sname (n+1) [(Root Strip subgoalname st)] dict goal axioms
+
+printSteps sname n [(Root inf tag subtree)] dict goal axioms =
+  getIdent n ++ inferenceName ++ " $\n" ++ printSteps sname (n+1) subtree dict goal axioms
   where
     inferenceName ∷ String
     inferenceName = case inf of
       Canonicalize → "atp-canonicalize"
-      Negate → "assume {Γ = Γ} $ atp-neg"
       Strip  → "atp-strip"
       _ → "inference rule no supported yet"
-printSteps n [Leaf Conjecture gname] dict goal axioms =
+
+printSteps sname n [Leaf Conjecture gname] dict goal axioms =
   getIdent n ++ gname ++ "\n"
-printSteps _ _ _ _ _ = "-- no supported yet"
+printSteps _ _ _ _ _ _ = "-- no supported yet"
+
+
+subIndex ∷ Char → Char
+subIndex '0' = '₀'
+subIndex '1' = '₁'
+subIndex '2' = '₂'
+subIndex '3' = '₃'
+subIndex '4' = '₄'
+subIndex '5' = '₅'
+subIndex '6' = '₆'
+subIndex '7' = '₇'
+subIndex '8' = '₈'
+subIndex '9' = '₉'
+subIndex s   = s
+
+stdName :: String → String
+stdName name = map subIndex $ concat $ splitOn "-" name
