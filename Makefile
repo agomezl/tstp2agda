@@ -46,17 +46,17 @@ bin :
 
 tests_path 		= test
 tests_deep 		= test/deep
-tests_shallow = test/shallow
+tests_shallow   = test/shallow
 
 
 .PHONY : basic-tests
 basic-test :
-	shelltest --color --execdir --precise  $(tests_path)/basic.test
+	shelltest --color --execdir --precise --debug $(tests_path)/basic.test
 	@echo "$@ succeeded!"
 
 .PHONY : deep-test
 deep-test :
-	shelltest --color --execdir --precise $(tests_path)/basic.test $(tests_deep)/ --include=.test
+	shelltest --color --execdir --precise --debug $(tests_path)/basic.test $(tests_deep)/
 	@echo "$@ succeeded!"
 
 

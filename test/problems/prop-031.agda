@@ -41,7 +41,27 @@ proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
     atp-canonicalize $
-      inference rule no supported yet $
--- no supported yet
+      atp-simplify $ ∧-intro
+        (
+        atp-canonicalize $
+          atp-strip $
+            assume {Γ = Γ} $
+              atp-neg subgoal₀        )
+        (
+        atp-simplify $ ∧-intro
+          (
+          atp-canonicalize $
+            weaken (atp-neg subgoal₀) (assume {Γ = ∅} a3)
+          )
+          (
+          atp-canonicalize $
+            weaken (atp-neg subgoal₀) (assume {Γ = ∅} a1)
+          )
+          (
+          atp-canonicalize $
+            weaken (atp-neg subgoal₀) (assume {Γ = ∅} a2)
+          )
+        )
+
 
 

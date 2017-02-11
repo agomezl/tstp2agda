@@ -44,7 +44,7 @@ isConjecture goal (f:fs)
   | formula goal == formula f = True
   | otherwise                 = isConjecture goal fs
 
-prop n ="/home/hotel/tstp2agda/test/problems/prop-" ++ num ++ ".tstp"
+prop n ="./../problems/prop-" ++ num ++ ".tstp"
   where
     num = if n < 9
       then "00" ++ show n
@@ -118,7 +118,7 @@ info n = do
   putStrLn $ "ProofTree"
   putStrLn $ Pr.ppShow rulesTrees
 
-  
+
   return ()
 
 type AgdaCode = String

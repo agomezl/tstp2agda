@@ -34,15 +34,66 @@ proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
     atp-canonicalize $
-      inference rule no supported yet $
--- no supported yet
+      atp-simplify $ ∧-intro
+        (
+        inference rule no supported yet $
+          atp-canonicalize $
+            atp-strip $
+              assume {Γ = Γ} $
+                atp-neg subgoal₀        )
+        (
+        inference rule no supported yet $
+          atp-canonicalize $
+            atp-strip $
+              assume {Γ = Γ} $
+                atp-neg subgoal₀        )
+        (
+        inference rule no supported yet $
+          atp-canonicalize $
+            atp-strip $
+              assume {Γ = Γ} $
+                atp-neg subgoal₀        )
+
 
 
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
   RAA $
     atp-canonicalize $
-      inference rule no supported yet $
--- no supported yet
+      atp-simplify $ ∧-intro
+        (
+        inference rule no supported yet $
+          atp-canonicalize $
+            atp-strip $
+              assume {Γ = Γ} $
+                atp-neg subgoal₁        )
+        (
+        atp-simplify $ ∧-intro
+          (
+          inference rule no supported yet $
+            atp-canonicalize $
+              atp-strip $
+                assume {Γ = Γ} $
+                  atp-neg subgoal₁          )
+          (
+          inference rule no supported yet $
+            atp-canonicalize $
+              atp-strip $
+                assume {Γ = Γ} $
+                  atp-neg subgoal₁          )
+        )
+        (
+        inference rule no supported yet $
+          atp-canonicalize $
+            atp-strip $
+              assume {Γ = Γ} $
+                atp-neg subgoal₁        )
+        (
+        inference rule no supported yet $
+          atp-canonicalize $
+            atp-strip $
+              assume {Γ = Γ} $
+                atp-neg subgoal₁        )
+
 
 

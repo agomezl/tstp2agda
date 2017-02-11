@@ -142,6 +142,7 @@ mainCore opts = do
 
       printPreamble embedding (length freevars)
 
+
       putStrLn "-- Vars"
       printVars freevars 0
 
@@ -151,9 +152,7 @@ mainCore opts = do
 
       printConjecture conj
 
-
       printSubGoals' subgoals
-
 
       printProof axioms subgoals conj rulesMap rulesTrees
       return ()
@@ -267,7 +266,15 @@ printSteps sname n [(Root Negate tag [(Root Strip subgoalname st)] )] dict goal 
     getIdent n ++ "atp-strip $\n" ++ getIdent (n+1) ++ "assume {Γ = Γ} $\n" ++ getIdent (n+2) ++ "atp-neg " ++ sname
   else do
     getIdent n ++ "atp-negate $" ++ printSteps sname (n+1) [(Root Strip subgoalname st)] dict goal axioms
-
+printSteps sname n [(Root Simplify tag subtree)] dict goal axioms =
+  concat [ getIdent n , "atp-simplify $ ∧-intro\n" ] ++ steps
+  where
+    inn step = concat $
+       [ getIdent (n+1) , "(\n"
+       , printSteps sname (n+1) [step] dict goal axioms
+       , getIdent (n+1) , ")\n"
+       ]
+    steps = concat (map inn subtree)
 printSteps sname n [(Root inf tag subtree)] dict goal axioms =
   getIdent n ++ inferenceName ++ " $\n" ++ printSteps sname (n+1) subtree dict goal axioms
   where
@@ -275,12 +282,14 @@ printSteps sname n [(Root inf tag subtree)] dict goal axioms =
     inferenceName = case inf of
       Canonicalize → "atp-canonicalize"
       Strip  → "atp-strip"
-      Simplify → "atp-simplify"
       _ → "inference rule no supported yet"
 
 printSteps sname n [Leaf Conjecture gname] dict goal axioms =
   getIdent n ++ gname ++ "\n"
-printSteps _ _ _ _ _ _ = "-- no supported yet"
+
+printSteps sname n [Leaf Axiom gname] dict goal axioms =
+  getIdent n ++ "weaken (atp-neg " ++ (stdName sname) ++ ") (assume {Γ = ∅} " ++ gname ++ ")" ++ "\n"
+printSteps _ n _ _ _ _ = (getIdent n) ++ "-- no supported yet\n"
 
 
 subIndex ∷ Char → Char

@@ -5,29 +5,51 @@ module Data.FOL.Deep.ATP.Metis (n : ℕ) where
 open import Data.FOL.Deep.Syntax n
 open import Data.FOL.Deep.Theorems n
 
+open import Data.FOL.Deep.Semantics n
+
+open import Relation.Binary.PropositionalEquality as PropEq
+  using (_≡_; refl)
+open import Data.Bool using (Bool ; if_then_else_ ; true ; false)
+  renaming (_∧_ to _&&_ ; _∨_ to _||_)
 open import Function using (_$_)
 
+open import Relation.Nullary.Decidable
+open import Data.Fin
+open import Data.Fin.Properties
+
 -- Inference Rules.
+
+equal-f : Prop → Prop → Bool
+equal-f (Var x) (Var y) = ⌊ x ≟ y ⌋
+equal-f ⊥ ⊥ = true
+equal-f ⊤ ⊤ = true
+equal-f (¬ φ) (¬ ψ) = equal-f φ ψ
+equal-f (φ₁ ∧ φ₂) (ψ₁ ∧ ψ₂) =
+  ((equal-f φ₁ ψ₁) && (equal-f φ₂ ψ₂)) || ((equal-f φ₁ ψ₂) && (equal-f φ₂ ψ₁))
+equal-f (φ₁ ∨ φ₂) (ψ₁ ∨ ψ₂) =
+  ((equal-f φ₁ ψ₁) && (equal-f φ₂ ψ₂)) || ((equal-f φ₁ ψ₂) && (equal-f φ₂ ψ₁))
+equal-f (φ₁ ⇒ φ₂) (ψ₁ ⇒ ψ₂) = (equal-f φ₁ ψ₁) && (equal-f φ₂ ψ₂)
+
+equal-f φ ψ = false
+
 
 $false : Prop
 $false = ⊥
 
-
-
 strip : Prop → Prop
+strip (Var x) = (Var x)
 strip (¬ ⊤) = ⊥
 strip (¬ ⊥) = ⊤
 strip (¬ φ) = ¬ φ
+strip (φ₁ ∨ φ₂ ∨ φ₃) = (¬ φ₁) ∧ (¬ φ₂) ⇒ φ₃
+strip (φ ∨ ψ) = (¬ φ) ⇒ ψ
+strip (φ₁ ⇒ (φ₂ ⇒ φ₃)) = φ₁ ∧ (strip (φ₂ ⇒ φ₃))
 strip φ = φ
 
 atp-strip : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ strip φ
 atp-strip {Γ} {Var x} = id
-atp-strip {Γ} {⊤} = id
-atp-strip {Γ} {⊥} = id
-atp-strip {Γ} {φ ∧ φ₁} = id
-atp-strip {Γ} {φ ∨ φ₁} = id
-
-atp-strip {Γ} {φ ⇒ φ₁} = id
+atp-strip {Γ} {(φ₁ ⇒ (φ₂ ⇒ φ₃))} =
+  atp-step (λ _ → φ₁ ∧ strip (φ₂ ⇒ φ₃))
 atp-strip {Γ} {¬ (φ ⇒ φ₁)} = id
 atp-strip {Γ} {¬ ⊤} = ¬-⊤
 atp-strip {Γ} {¬ ⊥} = ¬-⊥
@@ -57,8 +79,8 @@ atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥
 atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
 
 simplify : Prop → Prop
--- simplify (φ ∨ ¬ ψ) = ⊥
--- simplify (¬ φ ∨ ψ) = ⊥
+simplify (φ ∧ ¬ ψ) = if (equal-f φ ψ) then ⊥ else (φ ∧ ¬ ψ)
+simplify (¬ φ ∧ ψ) = if (equal-f φ ψ) then ⊥ else (¬ φ ∧ ψ)
 simplify φ = φ
 
 
@@ -66,8 +88,10 @@ atp-simplify : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ simplify φ
 atp-simplify {Γ} {Var x} = id
 atp-simplify {Γ} {⊤} = id
 atp-simplify {Γ} {⊥} = id
--- atp-simplify {Γ} {φ ∧ ¬ φ} = contra
--- atp-simplify {Γ} {¬ φ ∧ φ} = contra₂
+atp-simplify {Γ} {φ = φ₁ ∧ ¬ φ₂} seq =
+  atp-step (λ _ → simplify (φ₁ ∧ ¬ φ₂)) seq
+atp-simplify {Γ} {¬ φ ∧ ψ} =
+  atp-step (λ _ → simplify (¬ φ ∧ ψ))
 atp-simplify {Γ} {φ} seq = id (atp-step (λ _ → simplify φ) seq)
 
 
@@ -85,4 +109,3 @@ resolve {Γ} {L}{C}{D} seq₁ seq₂ =
            ∧-intro
             (weaken (¬ C ∧ ¬ D) seq₁)
              (∧-proj₁ $ assume {Γ = Γ} $ ¬ C ∧ ¬ D)))
-

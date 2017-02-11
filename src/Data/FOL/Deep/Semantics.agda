@@ -41,3 +41,4 @@ tautology φ = ∀ (v : Val) → satisfies φ v
 
 _≅_ : Prop → Prop → Set
 p ≅ q = tautology $ p ⇒ q ∧ q ⇒ p
+

@@ -155,15 +155,19 @@ lem1 {Γ} {φ}{ψ} seq =
 lem2 : ∀ {Γ} {φ ψ} → Γ ⊢ (φ ∨ ψ) ∧ ¬ ψ  → Γ ⊢ φ
 lem2 {Γ} {φ}{ψ} seq =
   ⇒-elim
-    (⇒-intro
+    (
+    ⇒-intro $
       (∨-elim {Γ = Γ}
         (assume {Γ = Γ} φ)
         (⊥-elim {Γ = Γ , ψ}
           φ
           (¬-elim {Γ = Γ , ψ}
             (weaken ψ (∧-proj₂ seq))
-            (assume {Γ = Γ} ψ)))))
-    (∧-proj₁ seq)
+            (assume {Γ = Γ} ψ))))
+     )
+    (
+     ∧-proj₁ seq
+    )
 
 
 postulate impl-pos : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ⇒ ψ → Γ ⊢  ¬ φ ∨ ψ
