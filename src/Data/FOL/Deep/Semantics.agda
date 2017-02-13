@@ -31,7 +31,7 @@ Val = Vec Bool n
 ⟦ p ∧ q ⟧  v = ⟦ p ⟧ v && ⟦ q ⟧ v
 ⟦ p ∨ q ⟧  v = ⟦ p ⟧ v || ⟦ q ⟧ v
 ⟦ p ⇒ q ⟧  v = not (⟦ p ⟧ v) || ⟦ q ⟧ v
-⟦ p ⇔ q ⟧ v = ? -- (⟦ p ⇒ q ⟧ v) && (⟦ q ⇒ p ⟧ v)
+⟦ p ⇔ q ⟧ v = {!!} -- (⟦ p ⇒ q ⟧ v) && (⟦ q ⇒ p ⟧ v)
 ⟦ ¬ p ⟧    v = not (⟦ p ⟧ v)
 
 satisfies : Prop → Val → Set
