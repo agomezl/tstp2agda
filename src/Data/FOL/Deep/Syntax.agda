@@ -18,15 +18,15 @@ Type = Set
 
 -- Propositions
 data Prop : Type where
-  Var         : Fin n → Prop
-  ⊤ ⊥         : Prop
-  _∧_ _∨_ _⇒_ : (φ ψ  : Prop) → Prop
-  ¬_          : (φ : Prop) → Prop
+  Var              : Fin n → Prop
+  ⊤ ⊥              : Prop
+  _∧_ _∨_ _⇒_ _⇔_ : (φ ψ  : Prop) → Prop
+  ¬_               : (φ : Prop) → Prop
 
 -- Precedence of operators
 infix  11 ¬_
 infixl 8  _∧_ _∨_
-infixr 7  _⇒_
+infixr 7  _⇒_ _⇔_
 
 -- Context: list (set) of premises
 Ctxt : Type
@@ -109,4 +109,5 @@ data _⊢_ : (Γ : Ctxt)(φ : Prop) → Type where
 
   ⇒-elim   : ∀ {Γ : Ctxt} {φ ψ}                  → Γ ⊢ φ ⇒ ψ → Γ ⊢ φ
                                                  → Γ ⊢ ψ
-  atp-step : ∀ {Γ : Ctxt} {φ : Prop} → (rule : Prop → Prop) → Γ ⊢ φ → Γ ⊢ (rule φ)
+
+  atp-step : ∀ {Γ : Ctxt} {φ} → (rule : Prop → Prop) → Γ ⊢ φ → Γ ⊢ rule φ

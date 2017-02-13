@@ -15,12 +15,12 @@ y = Var (# 1)
 a₁ : Prop
 a₁ = x
 
-a₁ : Prop
-a₁ = y
+a₂ : Prop
+a₂ = y
 
 -- Premises
 Γ : Ctxt
-Γ = ∅ , a1 , a1
+Γ = ∅ , a₁ , a₂
 
 -- Conjecture
 goal : Prop
@@ -43,11 +43,11 @@ proof₀ =
               atp-neg subgoal₀        )
         (
         atp-canonicalize $
-          weaken (atp-neg subgoal₀) (assume {Γ = ∅} a1)
+          weaken (atp-neg subgoal₀) (assume {Γ = ∅} a₁)
         )
         (
         atp-canonicalize $
-          weaken (atp-neg subgoal₀) (assume {Γ = ∅} a1)
+          weaken (atp-neg subgoal₀) (assume {Γ = ∅} a₂)
         )
 
 

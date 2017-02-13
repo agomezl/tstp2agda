@@ -16,7 +16,6 @@ lm = a
 Γ : Ctxt
 Γ = [ lm ]
 
-
 -- Conjecture
 goal : Prop
 goal = a
@@ -41,5 +40,11 @@ proof₀ =
           weaken (atp-neg subgoal₀) (assume {Γ = ∅} lm)
         )
 
+postulate target : Γ ⊢ subgoal₀ ⇒ goal
 
+proof : Γ ⊢ goal
+proof =
+  ⇒-elim
+    target
+    proof₀
 

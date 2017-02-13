@@ -179,6 +179,7 @@ postulate contra : ∀ {Γ : Ctxt} {φ} → Γ ⊢ φ ∧ ¬ φ → Γ ⊢ ⊥
 postulate contra₂ : ∀ {Γ : Ctxt} {φ} → Γ ⊢ ¬ φ ∧ φ → Γ ⊢ ⊥
 
 
+{-
 mutual
   positive : Prop → Prop
   positive (Var x) = Var x
@@ -188,6 +189,7 @@ mutual
   positive (φ ∧ ψ) = (positive φ) ∧ (positive ψ)
   positive (φ ∨ ψ) = (positive φ) ∨ (positive ψ)
   positive (φ ⇒ ψ) = (negative φ) ∨ (positive ψ)
+  positive (φ ⇔ ψ) = (positive (φ ⇒ ψ)) ∧ (positive (ψ ⇒ φ))
 
   negative : Prop → Prop
   negative (Var x) = ¬ (Var x)
@@ -197,15 +199,30 @@ mutual
   negative (φ ∧ ψ) = (negative φ) ∨ (negative ψ)
   negative (φ ∨ ψ) = (negative φ) ∧ (negative ψ)
   negative (φ ⇒ ψ) = (positive φ) ∧ (negative ψ)
+  negative (φ ⇔ ψ) = (negative (φ ⇒ ψ)) ∨ (negative (ψ ⇒ φ))
+
+-}
+
+⇔-free : Prop → Prop
+⇔-free (¬ φ)    = ¬ (⇔-free φ)
+⇔-free (φ ∧ ψ)  = ⇔-free φ ∧ ⇔-free ψ
+⇔-free (φ ∨ ψ)  = ⇔-free φ ∨ ⇔-free ψ
+⇔-free (φ ⇒ ψ)  = ⇔-free φ ⇒ ⇔-free ψ
+⇔-free (φ ⇔ ψ) = (φ₁ ⇒ ψ₁) ∧ (ψ₁ ⇒ φ₁)
+  where
+    φ₁ : Prop
+    ψ₁ : Prop
+    φ₁ = ⇔-free φ
+    ψ₁ = ⇔-free ψ
+⇔-free φ = φ
 
 ⇒-free : Prop → Prop
-⇒-free (Var x) = Var x
-⇒-free ⊤ = ⊤
-⇒-free ⊥ = ⊥
 ⇒-free (¬ φ) = ¬ ⇒-free φ
-⇒-free (φ ∧ ψ) = (⇒-free φ) ∧ (⇒-free ψ)
-⇒-free (φ ∨ ψ) = (⇒-free φ) ∨ (⇒-free ψ)
-⇒-free (φ ⇒ ψ) = (¬ ⇒-free φ) ∨ (⇒-free ψ)
+⇒-free (φ ∧ ψ) = ⇒-free φ ∧ ⇒-free ψ
+⇒-free (φ ∨ ψ) = ⇒-free φ ∨ ⇒-free ψ
+⇒-free (φ ⇒ ψ) = (¬ ⇒-free φ) ∨ ⇒-free ψ
+⇒-free (φ ⇔ ψ) = ⇒-free φ ⇔ ⇒-free ψ
+⇒-free φ = φ
 
 -- input φ: a logic formula without implication
 -- output: φ': only propositional atoms in φ' are negated and φ'≡ φ
@@ -232,4 +249,4 @@ cnf (φ ∨ ψ) = (cnf φ) ∨ (cnf ψ)
 cnf φ = φ
 
 clausify : Prop → Prop
-clausify φ = cnf (nnf (⇒-free φ))
+clausify φ = cnf $ nnf $ ⇒-free $ ⇔-free φ

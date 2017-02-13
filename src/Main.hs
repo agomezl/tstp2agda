@@ -220,7 +220,7 @@ printPremises premises = do
   putStrLn "Γ : Ctxt"
   case premises of
     []  → putStrLn "Γ = ∅"
-    [p] → putStrLn $ "Γ = [ " ++ name p ++ " ]\n"
+    [p] → putStrLn $ "Γ = [ " ++ name p ++ " ]"
     ps  → putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name ps))
   putStrLn ""
 
@@ -241,6 +241,7 @@ printProof _      _        _    _    [] = return ()
 printProof axioms subgoals goal rmap rtree = do
   putStrLn "-- Metis Proof."
   printProofSubgoal 0 axioms subgoals goal rmap rtree
+  printProofGoal subgoals goal rmap rtree
 
 printProofSubgoal ∷ Int → [F] → [F] → F → ProofMap → [ProofTree] → IO ()
 printProofSubgoal _ _ _ _ _ [] = return ()
@@ -263,8 +264,8 @@ getIdent n = concat $ replicate (2 * n) " "
 printSteps ∷ String → Ident → [ProofTree] → ProofMap → F → [F] → String
 printSteps sname n [(Root Negate tag [(Root Strip subgoalname st)] )] dict goal axioms =
   if sname == (stdName subgoalname) then
-    getIdent n ++ "atp-strip $\n" ++ getIdent (n+1) ++ "assume {Γ = Γ} $\n" ++ getIdent (n+2) ++ "atp-neg " ++ sname
-  else do
+    getIdent n ++ "atp-strip $\n" ++ getIdent (n+1) ++ "assume {Γ = Γ} $\n" ++ getIdent (n+2) ++ "atp-neg " ++ sname ++ "\n"
+  else
     getIdent n ++ "atp-negate $" ++ printSteps sname (n+1) [(Root Strip subgoalname st)] dict goal axioms
 printSteps sname n [(Root Simplify tag subtree)] dict goal axioms =
   concat [ getIdent n , "atp-simplify $ ∧-intro\n" ] ++ steps
@@ -274,7 +275,7 @@ printSteps sname n [(Root Simplify tag subtree)] dict goal axioms =
        , printSteps sname (n+1) [step] dict goal axioms
        , getIdent (n+1) , ")\n"
        ]
-    steps = concat (map inn subtree)
+    steps = concatMap inn subtree
 printSteps sname n [(Root inf tag subtree)] dict goal axioms =
   getIdent n ++ inferenceName ++ " $\n" ++ printSteps sname (n+1) subtree dict goal axioms
   where
@@ -282,14 +283,14 @@ printSteps sname n [(Root inf tag subtree)] dict goal axioms =
     inferenceName = case inf of
       Canonicalize → "atp-canonicalize"
       Strip  → "atp-strip"
-      _ → "inference rule no supported yet"
+      _ → "? -- inference rule no supported yet"
 
 printSteps sname n [Leaf Conjecture gname] dict goal axioms =
   getIdent n ++ gname ++ "\n"
 
 printSteps sname n [Leaf Axiom gname] dict goal axioms =
   getIdent n ++ "weaken (atp-neg " ++ (stdName sname) ++ ") (assume {Γ = ∅} " ++ gname ++ ")" ++ "\n"
-printSteps _ n _ _ _ _ = (getIdent n) ++ "-- no supported yet\n"
+printSteps _ n _ _ _ _ = (getIdent n) ++ "? -- no supported yet\n"
 
 
 subIndex ∷ Char → Char
@@ -307,3 +308,9 @@ subIndex s   = s
 
 stdName :: String → String
 stdName name = map subIndex $ concat $ splitOn "-" name
+
+
+printProofGoal :: [F] → F → ProofMap → [ProofTree] → IO ()
+printProofGoal subgoals goal rmap rtree = do
+  putStrLn "postulate proof : Γ ⊢ goal"
+

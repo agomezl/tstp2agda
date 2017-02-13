@@ -13,7 +13,7 @@ module Data.FOL.Deep (n : ℕ) where
 open import Data.FOL.Deep.Syntax n public
 
 -- Valuation and ⊨ relation.
-open import Data.FOL.Deep.Semantics n public
+-- open import Data.FOL.Deep.Semantics n public
 
 -- Some lemmas and common theorems.
 open import Data.FOL.Deep.Theorems n public
