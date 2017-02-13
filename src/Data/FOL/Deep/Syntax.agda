@@ -111,3 +111,4 @@ data _⊢_ : (Γ : Ctxt)(φ : Prop) → Type where
                                                  → Γ ⊢ ψ
 
   atp-step : ∀ {Γ : Ctxt} {φ} → (rule : Prop → Prop) → Γ ⊢ φ → Γ ⊢ rule φ
+

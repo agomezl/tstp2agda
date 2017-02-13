@@ -42,25 +42,26 @@ proof₀ =
     atp-canonicalize $
       atp-simplify $ ∧-intro
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₀        )
+                atp-neg subgoal₀
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₀        )
+                atp-neg subgoal₀
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₀        )
-
-
+                atp-neg subgoal₀
+        )
 
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
@@ -68,40 +69,43 @@ proof₁ =
     atp-canonicalize $
       atp-simplify $ ∧-intro
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₁        )
+                atp-neg subgoal₁
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₁        )
+                atp-neg subgoal₁
+        )
         (
         atp-simplify $ ∧-intro
           (
-          inference rule no supported yet $
+          ? -- inference rule no supported yet $
             atp-canonicalize $
               atp-strip $
                 assume {Γ = Γ} $
-                  atp-neg subgoal₁          )
+                  atp-neg subgoal₁
+          )
           (
-          inference rule no supported yet $
+          ? -- inference rule no supported yet $
             atp-canonicalize $
               atp-strip $
                 assume {Γ = Γ} $
-                  atp-neg subgoal₁          )
+                  atp-neg subgoal₁
+          )
         )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₁        )
-
-
+                atp-neg subgoal₁
+        )
 
 proof₂ : Γ ⊢ subgoal₂
 proof₂ =
@@ -109,25 +113,26 @@ proof₂ =
     atp-canonicalize $
       atp-simplify $ ∧-intro
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₂        )
+                atp-neg subgoal₂
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₂        )
+                atp-neg subgoal₂
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₂        )
-
-
+                atp-neg subgoal₂
+        )
 
 proof₃ : Γ ⊢ subgoal₃
 proof₃ =
@@ -135,23 +140,27 @@ proof₃ =
     atp-canonicalize $
       atp-simplify $ ∧-intro
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₃        )
+                atp-neg subgoal₃
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₃        )
+                atp-neg subgoal₃
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₃        )
+                atp-neg subgoal₃
+        )
 
-
+proof : Γ ⊢ goal
+proof = ? -- Not supported yet
 

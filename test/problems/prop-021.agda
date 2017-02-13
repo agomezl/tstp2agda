@@ -33,7 +33,6 @@ proof₀ =
           assume {Γ = Γ} $
             atp-neg subgoal₀
 
-
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
   RAA $
@@ -43,4 +42,6 @@ proof₁ =
           assume {Γ = Γ} $
             atp-neg subgoal₁
 
+proof : Γ ⊢ goal
+proof = ? -- Not supported yet
 

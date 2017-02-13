@@ -16,7 +16,7 @@ diff ./../problems/prop-000.agda check-prop-000.agda
 # ------------------------------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------------------------------
-agda check-prop-000.agda --include-path=./../../src --include-path=/Users/jonaprieto/agda-stdlib/src --verbose=0
+agda check-prop-000.agda --include-path=./../../src --include-path=/home/hotel/agda-stdlib/src --verbose=0
 <<<
 >>>
 >>>2

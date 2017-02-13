@@ -20,7 +20,7 @@ a₂ = y
 
 -- Premises
 Γ : Ctxt
-Γ = ∅ , a₁ , a₂
+Γ = ∅ , a1 , a2
 
 -- Conjecture
 goal : Prop
@@ -40,15 +40,19 @@ proof₀ =
         atp-canonicalize $
           atp-strip $
             assume {Γ = Γ} $
-              atp-neg subgoal₀        )
-        (
-        atp-canonicalize $
-          weaken (atp-neg subgoal₀) (assume {Γ = ∅} a₁)
+              atp-neg subgoal₀
         )
         (
         atp-canonicalize $
-          weaken (atp-neg subgoal₀) (assume {Γ = ∅} a₂)
+          weaken (atp-neg subgoal₀) (assume {Γ = ∅} a1)
+        )
+        (
+        atp-canonicalize $
+          weaken (atp-neg subgoal₀) (assume {Γ = ∅} a2)
         )
 
-
-
+proof : Γ ⊢ goal
+proof =
+  ⇒-elim
+    atp-splitGoal
+    proof₀

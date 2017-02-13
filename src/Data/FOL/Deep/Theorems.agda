@@ -179,6 +179,7 @@ postulate contra : ∀ {Γ : Ctxt} {φ} → Γ ⊢ φ ∧ ¬ φ → Γ ⊢ ⊥
 postulate contra₂ : ∀ {Γ : Ctxt} {φ} → Γ ⊢ ¬ φ ∧ φ → Γ ⊢ ⊥
 
 
+
 {-
 mutual
   positive : Prop → Prop
@@ -200,8 +201,8 @@ mutual
   negative (φ ∨ ψ) = (negative φ) ∧ (negative ψ)
   negative (φ ⇒ ψ) = (positive φ) ∧ (negative ψ)
   negative (φ ⇔ ψ) = (negative (φ ⇒ ψ)) ∨ (negative (ψ ⇒ φ))
-
 -}
+
 
 ⇔-free : Prop → Prop
 ⇔-free (¬ φ)    = ¬ (⇔-free φ)

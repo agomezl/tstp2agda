@@ -30,32 +30,39 @@ proof₀ =
     atp-canonicalize $
       atp-simplify $ ∧-intro
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₀        )
+                atp-neg subgoal₀
+        )
         (
         atp-simplify $ ∧-intro
           (
-          inference rule no supported yet $
+          ? -- inference rule no supported yet $
             atp-canonicalize $
               atp-strip $
                 assume {Γ = Γ} $
-                  atp-neg subgoal₀          )
+                  atp-neg subgoal₀
+          )
           (
-          inference rule no supported yet $
+          ? -- inference rule no supported yet $
             atp-canonicalize $
               atp-strip $
                 assume {Γ = Γ} $
-                  atp-neg subgoal₀          )
+                  atp-neg subgoal₀
+          )
         )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₀        )
+                atp-neg subgoal₀
+        )
 
-
-
+proof : Γ ⊢ goal
+proof =
+  ⇒-elim
+    atp-splitGoal
+    proof₀

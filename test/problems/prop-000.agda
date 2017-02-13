@@ -30,4 +30,8 @@ proof₀ =
           assume {Γ = Γ} $
             atp-neg subgoal₀
 
-
+proof : Γ ⊢ goal
+proof =
+  ⇒-elim
+    atp-splitGoal
+    proof₀

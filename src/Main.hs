@@ -253,7 +253,6 @@ printProofSubgoal no axioms subgoals goal rmap (tree:strees) = do
   putStrLn $ proofName ++ " ="
   putStrLn "  RAA $"
   putStrLn $ printSteps subgoalName 2 [tree] rmap goal axioms
-  putStrLn "\n"
   printProofSubgoal (no+1) axioms subgoals goal rmap strees
 
 type Ident = Int
@@ -292,7 +291,6 @@ printSteps sname n [Leaf Axiom gname] dict goal axioms =
   getIdent n ++ "weaken (atp-neg " ++ (stdName sname) ++ ") (assume {Γ = ∅} " ++ gname ++ ")" ++ "\n"
 printSteps _ n _ _ _ _ = (getIdent n) ++ "? -- no supported yet\n"
 
-
 subIndex ∷ Char → Char
 subIndex '0' = '₀'
 subIndex '1' = '₁'
@@ -311,6 +309,14 @@ stdName name = map subIndex $ concat $ splitOn "-" name
 
 
 printProofGoal :: [F] → F → ProofMap → [ProofTree] → IO ()
-printProofGoal subgoals goal rmap rtree = do
-  putStrLn "postulate proof : Γ ⊢ goal"
+printProofGoal [] _ _ _ = putStrLn "-- Proof not available.\n"
+printProofGoal [s] _ _ _ = do
+  putStrLn "proof : Γ ⊢ goal"
+  putStrLn "proof ="
+  putStrLn $ getIdent 1 ++ "⇒-elim"
+  putStrLn $ getIdent 2 ++ "atp-splitGoal"
+  putStrLn $ getIdent 2 ++ "proof₀"
 
+printProofGoal subgoals goal rmap rtree = do
+  putStrLn "proof : Γ ⊢ goal"
+  putStrLn "proof = ? -- Not supported yet\n"

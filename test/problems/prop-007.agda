@@ -36,25 +36,26 @@ proof₀ =
     atp-canonicalize $
       atp-simplify $ ∧-intro
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₀        )
+                atp-neg subgoal₀
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₀        )
+                atp-neg subgoal₀
+        )
         (
-        inference rule no supported yet $
+        ? -- inference rule no supported yet $
           atp-canonicalize $
             atp-strip $
               assume {Γ = Γ} $
-                atp-neg subgoal₀        )
-
-
+                atp-neg subgoal₀
+        )
 
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
@@ -65,4 +66,6 @@ proof₁ =
           assume {Γ = Γ} $
             atp-neg subgoal₁
 
+proof : Γ ⊢ goal
+proof = ? -- Not supported yet
 

@@ -34,17 +34,15 @@ proof₀ =
         atp-canonicalize $
           atp-strip $
             assume {Γ = Γ} $
-              atp-neg subgoal₀        )
+              atp-neg subgoal₀
+        )
         (
         atp-canonicalize $
           weaken (atp-neg subgoal₀) (assume {Γ = ∅} lm)
         )
 
-postulate target : Γ ⊢ subgoal₀ ⇒ goal
-
 proof : Γ ⊢ goal
 proof =
   ⇒-elim
-    target
+    atp-splitGoal
     proof₀
-

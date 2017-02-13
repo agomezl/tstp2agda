@@ -55,7 +55,8 @@ proof₀ =
         atp-canonicalize $
           atp-strip $
             assume {Γ = Γ} $
-              atp-neg subgoal₀        )
+              atp-neg subgoal₀
+        )
         (
         atp-simplify $ ∧-intro
           (
@@ -79,8 +80,6 @@ proof₀ =
           )
         )
 
-
-
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
   RAA $
@@ -90,7 +89,8 @@ proof₁ =
         atp-canonicalize $
           atp-strip $
             assume {Γ = Γ} $
-              atp-neg subgoal₁        )
+              atp-neg subgoal₁
+        )
         (
         atp-canonicalize $
           weaken (atp-neg subgoal₁) (assume {Γ = ∅} a1)
@@ -118,5 +118,6 @@ proof₁ =
           )
         )
 
-
+proof : Γ ⊢ goal
+proof = ? -- Not supported yet
 

@@ -46,7 +46,8 @@ proof₀ =
         atp-canonicalize $
           atp-strip $
             assume {Γ = Γ} $
-              atp-neg subgoal₀        )
+              atp-neg subgoal₀
+        )
         (
         atp-canonicalize $
           weaken (atp-neg subgoal₀) (assume {Γ = ∅} a1)
@@ -60,5 +61,8 @@ proof₀ =
           weaken (atp-neg subgoal₀) (assume {Γ = ∅} a1)
         )
 
-
-
+proof : Γ ⊢ goal
+proof =
+  ⇒-elim
+    atp-splitGoal
+    proof₀

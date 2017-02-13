@@ -52,7 +52,8 @@ proof₀ =
         atp-canonicalize $
           atp-strip $
             assume {Γ = Γ} $
-              atp-neg subgoal₀        )
+              atp-neg subgoal₀
+        )
         (
         atp-simplify $ ∧-intro
           (
@@ -76,5 +77,8 @@ proof₀ =
           )
         )
 
-
-
+proof : Γ ⊢ goal
+proof =
+  ⇒-elim
+    atp-splitGoal
+    proof₀

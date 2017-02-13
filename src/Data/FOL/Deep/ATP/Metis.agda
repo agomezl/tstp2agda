@@ -17,6 +17,7 @@ open import Data.Fin.Properties
 
 open import Data.List using (List; []; _∷_; _++_; [_] ; foldl)
 
+
 -- Inference Rules.
 
 equal-f : Prop → Prop → Bool
@@ -140,6 +141,8 @@ splitGoal fm = flat $ splitGoal₀ fm
     flat (φ ∷ []) = φ
     flat (fm ∷ fms) = foldl (_∧_) fm fms
 
+-- TODO
+postulate atp-splitGoal : {Γ : Ctxt} {φ : Prop} → Γ ⊢ (splitGoal φ ⇒ φ)
 
 -- -----------------------------------------------------------------------------
 
