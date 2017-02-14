@@ -1,8 +1,8 @@
 
 -- tstp2agda proof
 
-open import Data.FOL.Deep 3
-open import Data.FOL.Deep.ATP.Metis 3
+open import Data.FOL.Deep 3 public
+open import Data.FOL.Deep.ATP.Metis 3 public
 
 -- Vars
 s : Prop
@@ -29,7 +29,7 @@ subgoal₀ = ((((s ⇒ x) ∧ (s ⇒ (x ⇒ y))) ∧ s) ⇒ y)
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
-  RAA $
+ RAA $
     atp-canonicalize $
       atp-simplify $ ∧-intro
         (

@@ -44,19 +44,19 @@ bin :
 	mkdir -p bin
 
 
-tests_path 		= test
-tests_deep 		= test/deep
+tests_path 		 = test
+tests_deep 		 = test/deep
 tests_shallow   = test/shallow
 
 
 .PHONY : basic-tests
 basic-test :
-	shelltest --color --execdir --precise --debug $(tests_path)/basic.test
+	shelltest --color --execdir --precise $(tests_path)/basic.test
 	@echo "$@ succeeded!"
 
 .PHONY : deep-test
 deep-test :
-	shelltest --color --execdir --precise --debug $(tests_path)/basic.test $(tests_deep)/
+	shelltest --color --execdir --precise $(tests_path)/basic.test $(tests_deep)/
 	@echo "$@ succeeded!"
 
 
@@ -111,6 +111,8 @@ TODO :
 	| sort
 
 
+
+
 .PHONY : problems
 problems-metis:
 	$(shell find ${PROP_PROBLEMS} -type f -name "prop*.tptp" -exec sh -c 'metis --show proof {} > {}s' \;)
@@ -118,7 +120,7 @@ problems-metis:
 
 .PHONY : problems-agda
 problems-agda :
-	$(shell find ${PROP_PROBLEMS} -type f -name "prop*tstp" -exec sh -c "tstp2agda {} -e deep > {}a" \; -print0)
+	$(shell find ${PROP_PROBLEMS} -type f -name "prop*tstp" -exec sh -c "tstp2agda {} -e deep > {}a" \;)
 	$(shell rename .tstpa .agda ${PROP_PROBLEMS}*.tstpa)
 
 

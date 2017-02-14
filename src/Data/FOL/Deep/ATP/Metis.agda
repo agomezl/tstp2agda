@@ -188,6 +188,7 @@ atp-canonicalize {Γ} {¬ ⊤} = ¬-⊤
 atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥
 atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
 
+
 simplify : Prop → Prop
 simplify (φ ∧ ¬ ψ) = if (equal-f φ ψ) then ⊥ else (φ ∧ ¬ ψ)
 simplify (¬ φ ∧ ψ) = if (equal-f φ ψ) then ⊥ else (¬ φ ∧ ψ)

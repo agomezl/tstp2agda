@@ -18,7 +18,7 @@ diff ./../problems/prop-041.agda check-prop-041.agda
 
 
 # -----------------------------------------------------------------------------------------------------
-agda check-prop-041.agda --include-path=./../../src --include-path=/home/hotel/agda-stdlib/src --verbose=0
+agda check-prop-041.agda --verbose=0
 <<<
 >>>
 >>>2

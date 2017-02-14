@@ -158,7 +158,7 @@ mainCore opts = do
       return ()
 
 printVar ∷ V → Int → String
-printVar f n = intercalate "\n" $
+printVar f n = intercalate "\n"
   [  show f ++ " : Prop"
   ,  show f ++ case show f of
        "$true" → " = ⊤"
@@ -188,18 +188,16 @@ showDeepFormula (BinOp     f₁  op     f₂) = '(' <> sf₁ ▪ op ▪ sf₂ <>
     sf₂ = showDeepFormula f₂
 showDeepFormula (InfixPred t₁  r      t₂) = t₁ ▪ r  ▪ t₂
 showDeepFormula (PredApp   ρ          []) = show ρ
-showDeepFormula (PredApp   (AtomicWord "$false")          []) = "⊥"
-showDeepFormula (PredApp   (AtomicWord "$true")          []) = "⊤"
-showDeepFormula (PredApp   ρ          []) = show ρ
-
+showDeepFormula (PredApp   (AtomicWord "$false") []) = "⊥"
+showDeepFormula (PredApp   (AtomicWord "$true")  []) = "⊤"
 showDeepFormula (PredApp   ρ          φ ) = '(' <> ρ ▪ ':' ▪ φ ▪ "⇒ ⊤" <> ')'
 
-showDeepFormula ((:~:)                f ) = '¬' ▪ (showDeepFormula f)
+showDeepFormula ((:~:)                f ) = '¬' ▪ showDeepFormula f
 showDeepFormula _ = "RRR"
 
 printAxiom ∷ F → String
 printAxiom f = intercalate "\n" $
-  let axiom = stdName (name f)
+  let axiom = stdName $ name f
   in [  axiom ++ " : Prop"
      ,  axiom ++ " = " ++ showDeepFormula (formula f)
      ]
@@ -216,12 +214,12 @@ printAxioms as = do
 
 printPremises ∷ [F] → IO ()
 printPremises premises = do
-  putStrLn $ "-- Premise" ++ (if (length premises < 2) then "" else "s")
+  putStrLn $ "-- Premise" ++ (if length premises < 2 then "" else "s")
   putStrLn "Γ : Ctxt"
   case premises of
     []  → putStrLn "Γ = ∅"
     [p] → putStrLn $ "Γ = [ " ++ name p ++ " ]"
-    ps  → putStrLn $ "Γ = ∅ , " ++ (intercalate " , " (map name ps))
+    ps  → putStrLn $ "Γ = ∅ , " ++ intercalate " , " (map name ps)
   putStrLn ""
 
 printConjecture ∷ F → IO ()
@@ -249,10 +247,14 @@ printProofSubgoal no axioms subgoals goal rmap (tree:strees) = do
   let strNo = stdName (show no)
   let proofName = stdName ( "proof" ++ strNo)
   let subgoalName = "subgoal" ++ strNo
-  putStrLn $ proofName ++ " : Γ ⊢ " ++ subgoalName
-  putStrLn $ proofName ++ " ="
-  putStrLn "  RAA $"
-  putStrLn $ printSteps subgoalName 2 [tree] rmap goal axioms
+  let proof :: String
+      proof = concat
+        [ proofName , " : Γ ⊢ " , subgoalName , "\n"
+        , proofName , " =\n"
+        , " RAA $\n"
+        , printSteps subgoalName 2 [tree] rmap goal axioms
+        ]
+  putStrLn proof
   printProofSubgoal (no+1) axioms subgoals goal rmap strees
 
 type Ident = Int
@@ -261,22 +263,34 @@ getIdent ∷ Ident → String
 getIdent n = concat $ replicate (2 * n) " "
 
 printSteps ∷ String → Ident → [ProofTree] → ProofMap → F → [F] → String
-printSteps sname n [(Root Negate tag [(Root Strip subgoalname st)] )] dict goal axioms =
-  if sname == (stdName subgoalname) then
-    getIdent n ++ "atp-strip $\n" ++ getIdent (n+1) ++ "assume {Γ = Γ} $\n" ++ getIdent (n+2) ++ "atp-neg " ++ sname ++ "\n"
-  else
-    getIdent n ++ "atp-negate $" ++ printSteps sname (n+1) [(Root Strip subgoalname st)] dict goal axioms
-printSteps sname n [(Root Simplify tag subtree)] dict goal axioms =
-  concat [ getIdent n , "atp-simplify $ ∧-intro\n" ] ++ steps
+printSteps sname n [Root Negate tag [Root Strip subgoalname st]] dict goal axioms =
+  if sname == stdName subgoalname
+  then concat
+    [ getIdent n , "atp-strip $" , "\n"
+    , getIdent (n+1), "assume {Γ = Γ} $" , "\n"
+    , getIdent (n+2), "atp-neg " , sname , "\n"
+    ]
+  else concat
+    [ getIdent n , "atp-negate $"
+    , printSteps sname (n+1) [Root Strip subgoalname st] dict goal axioms
+    ]
+
+printSteps sname n [Root Simplify tag subtree] dict goal axioms =
+  getIdent n ++ "atp-simplify $ ∧-intro\n" ++ steps
   where
-    inn step = concat $
+  --  inn ∷  ProofTree → String
+    inn step = concat
        [ getIdent (n+1) , "(\n"
        , printSteps sname (n+1) [step] dict goal axioms
        , getIdent (n+1) , ")\n"
        ]
+--    steps ∷ [ProofTree] → String
     steps = concatMap inn subtree
-printSteps sname n [(Root inf tag subtree)] dict goal axioms =
-  getIdent n ++ inferenceName ++ " $\n" ++ printSteps sname (n+1) subtree dict goal axioms
+printSteps sname n [Root inf tag subtree] dict goal axioms =
+  concat
+    [ getIdent n , inferenceName , " $\n"
+    , printSteps sname (n+1) subtree dict goal axioms
+    ]
   where
     inferenceName ∷ String
     inferenceName = case inf of
@@ -285,11 +299,16 @@ printSteps sname n [(Root inf tag subtree)] dict goal axioms =
       _ → "? -- inference rule no supported yet"
 
 printSteps sname n [Leaf Conjecture gname] dict goal axioms =
-  getIdent n ++ gname ++ "\n"
+  concat
+    [ getIdent n , gname , "\n"
+    ]
 
 printSteps sname n [Leaf Axiom gname] dict goal axioms =
-  getIdent n ++ "weaken (atp-neg " ++ (stdName sname) ++ ") (assume {Γ = ∅} " ++ gname ++ ")" ++ "\n"
-printSteps _ n _ _ _ _ = (getIdent n) ++ "? -- no supported yet\n"
+  concat
+    [ getIdent n , "weaken (atp-neg " , stdName sname , ") $\n"
+    , getIdent (n+1) , "(assume {Γ = ∅} " , gname , ")\n"
+    ]
+printSteps _ n _ _ _ _ = getIdent n ++ "? -- no supported yet\n"
 
 subIndex ∷ Char → Char
 subIndex '0' = '₀'
@@ -310,12 +329,14 @@ stdName name = map subIndex $ concat $ splitOn "-" name
 
 printProofGoal :: [F] → F → ProofMap → [ProofTree] → IO ()
 printProofGoal [] _ _ _ = putStrLn "-- Proof not available.\n"
-printProofGoal [s] _ _ _ = do
-  putStrLn "proof : Γ ⊢ goal"
-  putStrLn "proof ="
-  putStrLn $ getIdent 1 ++ "⇒-elim"
-  putStrLn $ getIdent 2 ++ "atp-splitGoal"
-  putStrLn $ getIdent 2 ++ "proof₀"
+printProofGoal [s] _ _ _ = putStrLn $
+  concat
+    [ "proof : Γ ⊢ goal" , "\n"
+    , "proof =" , "\n"
+    , getIdent 1 , "⇒-elim", "\n"
+    , getIdent 2 , "atp-splitGoal" , "\n"
+    , getIdent 2 , "proof₀" , "\n"
+    ]
 
 printProofGoal subgoals goal rmap rtree = do
   putStrLn "proof : Γ ⊢ goal"

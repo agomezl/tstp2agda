@@ -1,8 +1,8 @@
 
 -- tstp2agda proof
 
-open import Data.FOL.Deep 1
-open import Data.FOL.Deep.ATP.Metis 1
+open import Data.FOL.Deep 1 public
+open import Data.FOL.Deep.ATP.Metis 1 public
 
 -- Vars
 p : Prop
@@ -26,7 +26,7 @@ subgoal₁ = (p ⇒ p)
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
-  RAA $
+ RAA $
     atp-canonicalize $
       atp-canonicalize $
         atp-strip $
@@ -35,7 +35,7 @@ proof₀ =
 
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
-  RAA $
+ RAA $
     atp-canonicalize $
       atp-canonicalize $
         atp-strip $
