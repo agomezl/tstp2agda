@@ -36,25 +36,30 @@ subgoal₀ = (¬ x ⇒ y)
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₀⊢ ⊥
     atp-canonicalize $
-      atp-simplify $ ∧-intro
-        (
-        atp-canonicalize $
-          atp-strip $
-            assume {Γ = Γ} $
-              atp-neg subgoal₀
-        )
-        (
-        atp-canonicalize $
-          weaken (atp-neg subgoal₀) $
-            (assume {Γ = ∅} a1)
-        )
-        (
-        atp-canonicalize $
-          weaken (atp-neg subgoal₀) $
-            (assume {Γ = ∅} a2)
-        )
+      atp-simplify $
+        ∧-intro
+          (
+          atp-canonicalize $
+            atp-strip $
+              assume {Γ = Γ} $
+                atp-neg subgoal₀
+          )
+          (
+          ∧-intro
+            (
+            atp-canonicalize $
+              weaken (atp-neg subgoal₀) $
+                (assume {Γ = ∅} a1)
+            )
+            (
+            atp-canonicalize $
+              weaken (atp-neg subgoal₀) $
+                (assume {Γ = ∅} a2)
+            )
+          )
 
 proof : Γ ⊢ goal
 proof =

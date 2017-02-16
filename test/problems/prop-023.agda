@@ -42,129 +42,168 @@ subgoal₃ = (((((p ∨ q) ∧ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₀⊢ ⊥
     atp-canonicalize $
-      atp-simplify $ ∧-intro
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₀
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₀
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₀
-        )
+      atp-simplify $
+        ∧-intro
+          (
+          atp-conjunct $
+            atp-canonicalize $
+              atp-strip $
+                assume {Γ = Γ} $
+                  atp-neg subgoal₀
+          )
+          (
+          ∧-intro
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₀
+            )
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₀
+            )
+          )
 
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₁⊢ ⊥
     atp-canonicalize $
-      atp-simplify $ ∧-intro
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₁
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₁
-        )
-        (
-        atp-simplify $ ∧-intro
+      atp-simplify $
+        ∧-intro
           (
-          ? -- inference rule no supported yet $
+          atp-conjunct $
             atp-canonicalize $
               atp-strip $
                 assume {Γ = Γ} $
                   atp-neg subgoal₁
           )
           (
-          ? -- inference rule no supported yet $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
-                  atp-neg subgoal₁
+          ∧-intro
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₁
+            )
+            (
+            ∧-intro
+              (
+              atp-simplify $
+                ∧-intro
+                  (
+                  atp-conjunct $
+                    atp-canonicalize $
+                      atp-strip $
+                        assume {Γ = Γ} $
+                          atp-neg subgoal₁
+                  )
+                  (
+                  atp-conjunct $
+                    atp-canonicalize $
+                      atp-strip $
+                        assume {Γ = Γ} $
+                          atp-neg subgoal₁
+                  )
+              )
+              (
+              atp-conjunct $
+                atp-canonicalize $
+                  atp-strip $
+                    assume {Γ = Γ} $
+                      atp-neg subgoal₁
+              )
+            )
           )
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₁
-        )
 
 proof₂ : Γ ⊢ subgoal₂
 proof₂ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₂⊢ ⊥
     atp-canonicalize $
-      atp-simplify $ ∧-intro
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₂
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₂
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₂
-        )
+      atp-simplify $
+        ∧-intro
+          (
+          atp-conjunct $
+            atp-canonicalize $
+              atp-strip $
+                assume {Γ = Γ} $
+                  atp-neg subgoal₂
+          )
+          (
+          ∧-intro
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₂
+            )
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₂
+            )
+          )
 
 proof₃ : Γ ⊢ subgoal₃
 proof₃ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₃⊢ ⊥
     atp-canonicalize $
-      atp-simplify $ ∧-intro
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₃
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₃
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₃
-        )
+      atp-simplify $
+        ∧-intro
+          (
+          atp-conjunct $
+            atp-canonicalize $
+              atp-strip $
+                assume {Γ = Γ} $
+                  atp-neg subgoal₃
+          )
+          (
+          ∧-intro
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₃
+            )
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₃
+            )
+          )
 
 proof : Γ ⊢ goal
-proof = ? -- Not supported yet
+proof =
+  ⇒-elim
+    atp-splitGoal
+    (
+    ∧-intro
+      subgoal₀
+      (
+      ∧-intro
+        subgoal₁
+        (
+        ∧-intro
+          subgoal₂
+          subgoal₃
+        )
+      )
+    )
 

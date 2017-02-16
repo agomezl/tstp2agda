@@ -33,40 +33,46 @@ subgoal₀ = (((((a ∨ ¬ k) ⇒ g) ∧ (g ⇒ q)) ∧ ¬ q) ⇒ k)
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₀⊢ ⊥
     atp-canonicalize $
-      atp-simplify $ ∧-intro
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₀
-        )
-        (
-        atp-simplify $ ∧-intro
+      atp-simplify $
+        ∧-intro
           (
-          ? -- inference rule no supported yet $
+          atp-conjunct $
             atp-canonicalize $
               atp-strip $
                 assume {Γ = Γ} $
                   atp-neg subgoal₀
           )
           (
-          ? -- inference rule no supported yet $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
-                  atp-neg subgoal₀
+          ∧-intro
+            (
+            atp-simplify $
+              ∧-intro
+                (
+                atp-conjunct $
+                  atp-canonicalize $
+                    atp-strip $
+                      assume {Γ = Γ} $
+                        atp-neg subgoal₀
+                )
+                (
+                atp-conjunct $
+                  atp-canonicalize $
+                    atp-strip $
+                      assume {Γ = Γ} $
+                        atp-neg subgoal₀
+                )
+            )
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₀
+            )
           )
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₀
-        )
 
 proof : Γ ⊢ goal
 proof =

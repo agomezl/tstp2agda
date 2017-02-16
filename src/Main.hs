@@ -298,8 +298,10 @@ printSteps sname n [Root Simplify tag subtree] dict goal axioms =
       andIntro m (x:y:[]) = concatMap (innerStep m) [x , y]
       andIntro m (x:xs) = concat
         [ innerStep m x
+        , getIdent m , "(\n"
         , getIdent m , "∧-intro\n"
         , andIntro (m+1) xs
+        , getIdent m , ")\n"
         ]
 
 printSteps sname n [Root inf tag subtree] dict goal axioms =

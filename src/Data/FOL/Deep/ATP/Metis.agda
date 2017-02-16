@@ -172,9 +172,10 @@ atp-neg φ = ¬ φ
 
 canonicalize : Prop → Prop
 canonicalize (φ ⇒ ψ) = ¬ φ ∨ ψ
-canonicalize (¬ (φ ⇒ ψ)) = if (equal-f φ ψ) then ⊥ else φ ∧ ¬ ψ
+canonicalize (¬ (φ ⇒ ψ)) = if (equal-f φ ψ) then ⊥ else ((canonicalize φ) ∧ (canonicalize (¬ ψ)))
 canonicalize (¬ ⊤) = ⊥
 canonicalize (¬ ⊥) = ⊤
+canonicalize (¬ (¬ φ)) = canonicalize φ
 canonicalize φ = φ
 
 atp-canonicalize : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ canonicalize φ

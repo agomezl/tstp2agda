@@ -27,7 +27,8 @@ subgoal₀ = ((x ∧ y) ⇒ x)
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₀⊢ ⊥
     atp-canonicalize $
       atp-canonicalize $
         atp-strip $

@@ -37,3 +37,4 @@ proof =
   ⇒-elim
     atp-splitGoal
     proof₀
+

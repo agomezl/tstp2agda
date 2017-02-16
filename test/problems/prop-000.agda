@@ -25,8 +25,8 @@ subgoal₀ = $true
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
+  -- Γ , ¬ subgoal₀⊢ ⊥
     atp-canonicalize $
-    -- Γ ⊢ φ
       atp-canonicalize $
         atp-strip $
           assume {Γ = Γ} $
@@ -37,3 +37,4 @@ proof =
   ⇒-elim
     atp-splitGoal
     proof₀
+

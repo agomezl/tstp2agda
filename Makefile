@@ -114,7 +114,7 @@ TODO :
 
 
 .PHONY : problems
-problems-metis:
+problems-metis :
 	$(shell find ${PROP_PROBLEMS} -type f -name "prop*.tptp" -exec sh -c 'metis --show proof {} > {}s' \;)
 	$(shell rename .tptps .tstp ${PROP_PROBLEMS}*.tptps)
 
@@ -156,4 +156,3 @@ tests :
 changed :
 	- cabal build
 	- make deep-test
-

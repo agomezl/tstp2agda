@@ -34,7 +34,8 @@ subgoal₁ = ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₀⊢ ⊥
     atp-canonicalize $
       atp-canonicalize $
         atp-strip $
@@ -43,41 +44,54 @@ proof₀ =
 
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₁⊢ ⊥
     atp-canonicalize $
-      atp-simplify $ ∧-intro
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₁
-        )
-        (
-        atp-simplify $ ∧-intro
+      atp-simplify $
+        ∧-intro
           (
-          ? -- inference rule no supported yet $
+          atp-conjunct $
             atp-canonicalize $
               atp-strip $
                 assume {Γ = Γ} $
                   atp-neg subgoal₁
           )
           (
-          ? -- inference rule no supported yet $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
-                  atp-neg subgoal₁
+          ∧-intro
+            (
+            atp-simplify $
+              ∧-intro
+                (
+                atp-conjunct $
+                  atp-canonicalize $
+                    atp-strip $
+                      assume {Γ = Γ} $
+                        atp-neg subgoal₁
+                )
+                (
+                atp-conjunct $
+                  atp-canonicalize $
+                    atp-strip $
+                      assume {Γ = Γ} $
+                        atp-neg subgoal₁
+                )
+            )
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₁
+            )
           )
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₁
-        )
 
 proof : Γ ⊢ goal
-proof = ? -- Not supported yet
+proof =
+  ⇒-elim
+    atp-splitGoal
+    (
+    ∧-intro
+      subgoal₀
+      subgoal₁
+    )
 

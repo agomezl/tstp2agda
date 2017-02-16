@@ -34,34 +34,40 @@ subgoal₁ = ((((x ⇒ y) ∧ ¬ (y ∨ z)) ∧ ¬ x) ⇒ ¬ z)
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₀⊢ ⊥
     atp-canonicalize $
-      atp-simplify $ ∧-intro
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₀
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₀
-        )
-        (
-        ? -- inference rule no supported yet $
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
-                atp-neg subgoal₀
-        )
+      atp-simplify $
+        ∧-intro
+          (
+          atp-conjunct $
+            atp-canonicalize $
+              atp-strip $
+                assume {Γ = Γ} $
+                  atp-neg subgoal₀
+          )
+          (
+          ∧-intro
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₀
+            )
+            (
+            atp-conjunct $
+              atp-canonicalize $
+                atp-strip $
+                  assume {Γ = Γ} $
+                    atp-neg subgoal₀
+            )
+          )
 
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
- RAA $
+  RAA $
+  -- Γ , ¬ subgoal₁⊢ ⊥
     atp-canonicalize $
       atp-canonicalize $
         atp-strip $
@@ -69,5 +75,12 @@ proof₁ =
             atp-neg subgoal₁
 
 proof : Γ ⊢ goal
-proof = ? -- Not supported yet
+proof =
+  ⇒-elim
+    atp-splitGoal
+    (
+    ∧-intro
+      subgoal₀
+      subgoal₁
+    )
 
