@@ -7,7 +7,7 @@ BIN_NAME_AGDA=Main
 BIN_NAME_GHC=tstp2agda
 GHC_FLAGS=-i${SRC_DIR}/
 AGDA_FLAGS= -c ${SRC_DIR}/${AGDA_MAIN} -i ${SRC_DIR}/ -i ${AGDA_STDLIB_DIR}/ \
-	   --compile-dir=${BIN_DIR}/ --ghc-flag=${GHC_FLAGS}
+		 --compile-dir=${BIN_DIR}/ --ghc-flag=${GHC_FLAGS}
 PROP_PROBLEMS=test/problems/
 
 .PONY : clean agda-bin haskell-bin
@@ -16,11 +16,11 @@ agda-bin : bin/Main
 
 
 bin/tstp2agda : bin \
-			     src/*.hs \
-			     src/TSTP/*.hs \
-			     src/Data/*.hs \
-			     src/TSTP/Lexer.hs \
-			     src/TSTP/Parser.hs
+					 src/*.hs \
+					 src/TSTP/*.hs \
+					 src/Data/*.hs \
+					 src/TSTP/Lexer.hs \
+					 src/TSTP/Parser.hs
 	ghc src/Main.hs -o bin/tstp2agda ${GHC_FLAGS}
 
 
@@ -33,10 +33,10 @@ src/TSTP/Parser.hs : src/TSTP/Parser.y
 
 
 bin/Main : bin \
-			      src/*.agda \
-			      src/TSTP/*.agda \
-			      src/TSTP/*.hs \
-			      src/Data/*.hs
+						src/*.agda \
+						src/TSTP/*.agda \
+						src/TSTP/*.hs \
+						src/Data/*.hs
 	agda ${AGDA_FLAGS}
 
 
@@ -44,9 +44,9 @@ bin :
 	mkdir -p bin
 
 
-tests_path 		 = test
-tests_deep 		 = test/deep
-tests_shallow   = test/shallow
+tests_path		= test
+tests_deep		= test/deep
+tests_shallow = test/shallow
 
 
 .PHONY : basic-tests
@@ -75,25 +75,25 @@ shallow-test :
 hlint :
 	hlint --color=never Setup.hs
 	hlint --color=never \
-              --cpp-file=dist/build/autogen/cabal_macros.h \
-              --cpp-include=src/ \
-              src/
+							--cpp-file=dist/build/autogen/cabal_macros.h \
+							--cpp-include=src/ \
+							src/
 	@echo "$@ succeeded!"
 
 .PHONY : haddock
 haddock :
 	cabal configure
 	cabal haddock --executables \
-	              --haddock-option=--use-unicode \
-	              --hyperlink-source
+								--haddock-option=--use-unicode \
+								--hyperlink-source
 	@echo "$@ succeeded!"
 
 .PHONY : install-bin
-install-bin :
-	cabal configure
-	cabal build
-	cabal install --disable-documentation
-	cabal sdist
+install-bin:
+	- cabal configure --enable-tests --enable-benchmarks -v2
+	- cabal build
+	- cabal install --disable-documentation
+	- cabal sdist
 
 .PHONY : install-fix-whitespace
 install-fix-whitespace :
@@ -111,18 +111,17 @@ TODO :
 	| sort
 
 
-
-
-.PHONY : problems
+.PHONY : problems-metis
 problems-metis :
 	$(shell find ${PROP_PROBLEMS} -type f -name "prop*.tptp" -exec sh -c 'metis --show proof {} > {}s' \;)
 	$(shell rename .tptps .tstp ${PROP_PROBLEMS}*.tptps)
+	$(shell rename "s/tptps/tstp/" ${PROP_PROBLEMS}*)
 
 .PHONY : problems-agda
 problems-agda :
 	$(shell find ${PROP_PROBLEMS} -type f -name "prop*tstp" -exec sh -c "tstp2agda {} -e deep > {}a" \;)
 	$(shell rename .tstpa .agda ${PROP_PROBLEMS}*.tstpa)
-
+	$(shell rename "s/tstpa/agda/" ${PROP_PROBLEMS}*)
 
 clean :
 	@rm -fr ${BIN_DIR}
@@ -135,6 +134,8 @@ clean :
 	@rm -f test/deep/*.agda
 	@rm -f test/deep/*.agdai
 	@rm -f cnf*
+	@rm -f test/problems/cnf*
+	@rm -f test/deep/cnf*
 	@rm -f saturation.tptp
 	@rm -rf dist
 

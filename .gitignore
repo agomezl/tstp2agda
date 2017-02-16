@@ -121,3 +121,5 @@ Temporary Items
 src/TSTP/Lexer.hs
 src/TSTP/Parser.hs
 test/deep/*.agda
+test/deep/cnf*
+cnf*
