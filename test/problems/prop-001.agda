@@ -30,18 +30,17 @@ subgoal₀ = a
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
+          atp-canonicalize $  -- Γ ⊢ ¬ a
+            atp-strip $  -- Γ ⊢ a
+              assume {Γ = Γ} $  -- Γ ⊢ ¬ a
                 atp-neg subgoal₀
           )
           (
-          atp-canonicalize $
+          atp-canonicalize $  -- Γ ⊢ a
             weaken (atp-neg subgoal₀) $
               (assume {Γ = ∅} lm)
           )

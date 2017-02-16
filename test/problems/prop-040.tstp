@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------
-SZS status Theorem for test/problems//prop-040.tptp
+SZS status Theorem for test/problems/prop-040.tptp
 
-SZS output start CNFRefutation for test/problems//prop-040.tptp
+SZS output start CNFRefutation for test/problems/prop-040.tptp
 fof(goal, conjecture,
     ((~ a & (a | b) & (c | d) & (~ b | e | f) & (~ c | ~ e) & (~ c | ~ f) &
       (~ b | g | h) & (~ d | ~ g) & (~ d | ~ h)) => $false)).
@@ -101,5 +101,5 @@ cnf(refute_0_13, plain, (~ c),
 
 cnf(refute_0_14, plain, ($false),
     inference(resolve, [$cnf(c)], [refute_0_11, refute_0_13])).
-SZS output end CNFRefutation for test/problems//prop-040.tptp
+SZS output end CNFRefutation for test/problems/prop-040.tptp
 

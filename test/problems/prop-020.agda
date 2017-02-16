@@ -35,31 +35,30 @@ subgoal₁ = (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) 
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
+          atp-conjunct $  -- Γ ⊢ (¬ p ∨ (q ∧ r))
+            atp-canonicalize $  -- Γ ⊢ ((((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
+              atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
+                assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
                   atp-neg subgoal₀
           )
           (
           ∧-intro
             (
-            atp-conjunct $
-              atp-canonicalize $
-                atp-strip $
-                  assume {Γ = Γ} $
+            atp-conjunct $  -- Γ ⊢ p
+              atp-canonicalize $  -- Γ ⊢ ((((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
+                atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
+                  assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
                     atp-neg subgoal₀
             )
             (
-            atp-conjunct $
-              atp-canonicalize $
-                atp-strip $
-                  assume {Γ = Γ} $
+            atp-conjunct $  -- Γ ⊢ ¬ q
+              atp-canonicalize $  -- Γ ⊢ ((((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
+                atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
+                  assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
                     atp-neg subgoal₀
             )
           )
@@ -67,51 +66,50 @@ proof₀ =
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
   RAA $
-  -- Γ , ¬ subgoal₁⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
+          atp-conjunct $  -- Γ ⊢ (¬ r ∨ (p ∧ q))
+            atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
+              atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
+                assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                   atp-neg subgoal₁
           )
           (
           ∧-intro
             (
-            atp-simplify $
+            atp-simplify $  -- Γ ⊢ r
               ∧-intro
                 (
-                atp-conjunct $
-                  atp-canonicalize $
-                    atp-strip $
-                      assume {Γ = Γ} $
+                atp-conjunct $  -- Γ ⊢ (¬ q ∨ r)
+                  atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
+                    atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
+                      assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                         atp-neg subgoal₁
                 )
                 (
-                atp-conjunct $
-                  atp-canonicalize $
-                    atp-strip $
-                      assume {Γ = Γ} $
+                atp-conjunct $  -- Γ ⊢ q
+                  atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
+                    atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
+                      assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                         atp-neg subgoal₁
                 )
             )
             (
             ∧-intro
               (
-              atp-conjunct $
-                atp-canonicalize $
-                  atp-strip $
-                    assume {Γ = Γ} $
+              atp-conjunct $  -- Γ ⊢ ¬ p
+                atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
+                  atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
+                    assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                       atp-neg subgoal₁
               )
               (
-              atp-conjunct $
-                atp-canonicalize $
-                  atp-strip $
-                    assume {Γ = Γ} $
+              atp-conjunct $  -- Γ ⊢ q
+                atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
+                  atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
+                    assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                       atp-neg subgoal₁
               )
             )

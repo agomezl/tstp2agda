@@ -29,21 +29,19 @@ subgoal₁ = (p ⇒ p)
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-canonicalize $
-        atp-strip $
-          assume {Γ = Γ} $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-canonicalize $  -- Γ ⊢ ⊥
+        atp-strip $  -- Γ ⊢ (¬ ¬ p ⇒ p)
+          assume {Γ = Γ} $  -- Γ ⊢ ¬ (¬ ¬ p ⇒ p)
             atp-neg subgoal₀
 
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
   RAA $
-  -- Γ , ¬ subgoal₁⊢ ⊥
-    atp-canonicalize $
-      atp-canonicalize $
-        atp-strip $
-          assume {Γ = Γ} $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-canonicalize $  -- Γ ⊢ ⊥
+        atp-strip $  -- Γ ⊢ (p ⇒ p)
+          assume {Γ = Γ} $  -- Γ ⊢ ¬ (p ⇒ p)
             atp-neg subgoal₁
 
 proof : Γ ⊢ goal

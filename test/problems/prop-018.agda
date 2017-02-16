@@ -28,31 +28,30 @@ subgoal₀ = (((p ⇒ q) ⇒ p) ⇒ p)
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
+          atp-conjunct $  -- Γ ⊢ (p ∨ (¬ q ∧ p))
+            atp-canonicalize $  -- Γ ⊢ (¬ p ∧ (p ∨ (¬ q ∧ p)))
+              atp-strip $  -- Γ ⊢ (((p ⇒ q) ⇒ p) ⇒ p)
+                assume {Γ = Γ} $  -- Γ ⊢ ¬ (((p ⇒ q) ⇒ p) ⇒ p)
                   atp-neg subgoal₀
           )
           (
           ∧-intro
             (
-            atp-conjunct $
-              atp-canonicalize $
-                atp-strip $
-                  assume {Γ = Γ} $
+            atp-conjunct $  -- Γ ⊢ ¬ p
+              atp-canonicalize $  -- Γ ⊢ (¬ p ∧ (p ∨ (¬ q ∧ p)))
+                atp-strip $  -- Γ ⊢ (((p ⇒ q) ⇒ p) ⇒ p)
+                  assume {Γ = Γ} $  -- Γ ⊢ ¬ (((p ⇒ q) ⇒ p) ⇒ p)
                     atp-neg subgoal₀
             )
             (
-            atp-conjunct $
-              atp-canonicalize $
-                atp-strip $
-                  assume {Γ = Γ} $
+            atp-conjunct $  -- Γ ⊢ ¬ p
+              atp-canonicalize $  -- Γ ⊢ (¬ p ∧ (p ∨ (¬ q ∧ p)))
+                atp-strip $  -- Γ ⊢ (((p ⇒ q) ⇒ p) ⇒ p)
+                  assume {Γ = Γ} $  -- Γ ⊢ ¬ (((p ⇒ q) ⇒ p) ⇒ p)
                     atp-neg subgoal₀
             )
           )

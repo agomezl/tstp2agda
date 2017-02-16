@@ -26,7 +26,6 @@ import Data.List
 import Data.List.Split
 
 
-import           Data.Maybe         (fromJust, fromMaybe)
 
 import           Data.TSTP            (F (..), Formula (..), Rule (..), Role (..) )
 import           Data.TSTP.Formula    (getFreeVars)
@@ -60,6 +59,9 @@ import T2A
   )
 
 import Data.Proof (ProofTree (..), ProofMap (..), ProofTreeGen(..) )
+import qualified Data.Map as Map
+
+import Data.Maybe (fromJust, Maybe, fromMaybe)
 
 main ∷ IO ()
 main = do
@@ -195,13 +197,13 @@ showDeepFormula (PredApp (AtomicWord "$false") []) = "⊥"
 showDeepFormula (PredApp (AtomicWord "$true")  []) = "⊤"
 showDeepFormula (PredApp ρ          φ ) = '(' <> ρ ▪ ':' ▪ φ ▪ "⇒ ⊤" <> ')'
 showDeepFormula ((:~:)              f ) = '¬' ▪ showDeepFormula f
-showDeepFormula _ = "RRR"
+showDeepFormula φ = show φ
 
 printAxiom ∷ F → String
 printAxiom f =
   let axiom = stdName $ name f
   in concat
-    [  axiom ,  " : Prop\n"
+    [  axiom , " : Prop\n"
     ,  axiom , " = " ,  showDeepFormula (formula f) , "\n"
     ]
 
@@ -257,8 +259,7 @@ printProofSubgoal no axioms subgoals goal rmap (tree:strees) = do
       proof = concat
         [ proofName , " : Γ ⊢ " , subgoalName , "\n"
         , proofName , " =\n"
-        , "  RAA $\n"
-        , if debug then ("  -- Γ , ¬ " ++ subgoalName ++ "⊢ ⊥\n") else ""
+        , "  RAA $" , "\n"
         , printSteps subgoalName 2 [tree] rmap goal axioms
         ]
   putStrLn proof
@@ -269,18 +270,28 @@ type Ident = Int
 getIdent ∷ Ident → String
 getIdent n = concat $ replicate (2 * n) " "
 
+printInnerFormula ∷ Ident → ProofMap → String → String -> String
+printInnerFormula n dict tag ctxt =
+  if debug
+    then do
+      let fm ∷ Maybe F
+          fm = Map.lookup tag dict
+      let strFm ∷ String
+          strFm = showDeepFormula $ formula $ fromJust fm
+      concat [ getIdent n , "-- " , ctxt , " ⊢ " , strFm ]
+    else ""
 
 printSteps ∷ String → Ident → [ProofTree] → ProofMap → F → [F] → String
 printSteps sname n [Root Negate tag [Root Strip subgoalname st]] dict goal axioms =
   concat
-    [ getIdent n , "atp-strip $" , "\n"
-    , getIdent (n+1) , "assume {Γ = Γ} $" , "\n"
+    [ getIdent n , "atp-strip $" , printInnerFormula 1 dict subgoalname "Γ" , "\n"
+    , getIdent (n+1) , "assume {Γ = Γ} $" ,  printInnerFormula 1 dict tag "Γ" , "\n"
     , getIdent (n+2) , "atp-neg " , sname , "\n"
     ]
 
 printSteps sname n [Root Simplify tag subtree] dict goal axioms =
   concat
-    [ getIdent n , "atp-simplify $\n"
+    [ getIdent n , "atp-simplify $" , printInnerFormula 1 dict tag "Γ" , "\n"
     , getIdent (n+1) , "∧-intro\n"
     , andIntro (n+2) subtree
     ]
@@ -304,9 +315,21 @@ printSteps sname n [Root Simplify tag subtree] dict goal axioms =
         , getIdent m , ")\n"
         ]
 
+printSteps sname n [Root Resolve tag subtree] dict goal axioms =
+  concat
+    [ getIdent n , "atp-resolve {Γ = Γ}"
+    , getIdent (n+1) , "{L = " , literalL , "}\n"
+    , getIdent (n+1) , "{C =" , literalC , "}\n"
+    , getIdent (n+1) , "{D =" , literalD , "}\n"
+    ]
+  where
+    literalL = "L" -- TODO
+    literalC = "C" -- TODO
+    literalD = "D" -- TODO
+
 printSteps sname n [Root inf tag subtree] dict goal axioms =
   concat
-    [ getIdent n , inferenceName , " $\n"
+    [ getIdent n , inferenceName , " $" , printInnerFormula 1 dict tag "Γ" , "\n"
     , printSteps sname (n+1) subtree dict goal axioms
     ]
   where
@@ -317,6 +340,8 @@ printSteps sname n [Root inf tag subtree] dict goal axioms =
       Conjunct     → "atp-conjunct"
       _            → "? -- inference rule no supported yet"
 
+-- TODO: check the output formula, and use atp-conjuct with this output and the
+-- original formula, the atp-conjuct is a specific implemention of projections of ∧.
 printSteps sname n [Leaf Conjecture gname] dict goal axioms =
   concat
     [ getIdent n , gname , "\n"

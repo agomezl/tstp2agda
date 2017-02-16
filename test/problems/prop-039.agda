@@ -32,41 +32,40 @@ subgoal₁ = ((((lit ⇒ clause) ∧ clause) ∧ ¬ lit) ⇒ clause)
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
+          atp-conjunct $  -- Γ ⊢ (clause ∨ lit)
+            atp-canonicalize $  -- Γ ⊢ ((¬ clause ∧ (¬ lit ∨ clause)) ∧ (clause ∨ lit))
+              atp-strip $  -- Γ ⊢ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
+                assume {Γ = Γ} $  -- Γ ⊢ ¬ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                   atp-neg subgoal₀
           )
           (
           ∧-intro
             (
-            atp-conjunct $
-              atp-canonicalize $
-                atp-strip $
-                  assume {Γ = Γ} $
+            atp-conjunct $  -- Γ ⊢ ¬ clause
+              atp-canonicalize $  -- Γ ⊢ ((¬ clause ∧ (¬ lit ∨ clause)) ∧ (clause ∨ lit))
+                atp-strip $  -- Γ ⊢ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
+                  assume {Γ = Γ} $  -- Γ ⊢ ¬ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                     atp-neg subgoal₀
             )
             (
-            atp-simplify $
+            atp-simplify $  -- Γ ⊢ ¬ lit
               ∧-intro
                 (
-                atp-conjunct $
-                  atp-canonicalize $
-                    atp-strip $
-                      assume {Γ = Γ} $
+                atp-conjunct $  -- Γ ⊢ (¬ lit ∨ clause)
+                  atp-canonicalize $  -- Γ ⊢ ((¬ clause ∧ (¬ lit ∨ clause)) ∧ (clause ∨ lit))
+                    atp-strip $  -- Γ ⊢ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
+                      assume {Γ = Γ} $  -- Γ ⊢ ¬ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                         atp-neg subgoal₀
                 )
                 (
-                atp-conjunct $
-                  atp-canonicalize $
-                    atp-strip $
-                      assume {Γ = Γ} $
+                atp-conjunct $  -- Γ ⊢ ¬ clause
+                  atp-canonicalize $  -- Γ ⊢ ((¬ clause ∧ (¬ lit ∨ clause)) ∧ (clause ∨ lit))
+                    atp-strip $  -- Γ ⊢ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
+                      assume {Γ = Γ} $  -- Γ ⊢ ¬ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                         atp-neg subgoal₀
                 )
             )
@@ -75,11 +74,10 @@ proof₀ =
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
   RAA $
-  -- Γ , ¬ subgoal₁⊢ ⊥
-    atp-canonicalize $
-      atp-canonicalize $
-        atp-strip $
-          assume {Γ = Γ} $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-canonicalize $  -- Γ ⊢ ⊥
+        atp-strip $  -- Γ ⊢ ((((lit ⇒ clause) ∧ clause) ∧ ¬ lit) ⇒ clause)
+          assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((lit ⇒ clause) ∧ clause) ∧ ¬ lit) ⇒ clause)
             atp-neg subgoal₁
 
 proof : Γ ⊢ goal

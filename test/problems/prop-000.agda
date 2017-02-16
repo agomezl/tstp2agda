@@ -25,11 +25,10 @@ subgoal₀ = $true
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-canonicalize $
-        atp-strip $
-          assume {Γ = Γ} $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-canonicalize $  -- Γ ⊢ ⊥
+        atp-strip $  -- Γ ⊢ $true
+          assume {Γ = Γ} $  -- Γ ⊢ ¬ $true
             atp-neg subgoal₀
 
 proof : Γ ⊢ goal

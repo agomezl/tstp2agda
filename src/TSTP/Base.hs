@@ -45,6 +45,7 @@ import Data.TSTP
     , Conjunct
     , Negate
     , NewRule
+    , Resolve
     , Simplify
     , Skolemize
     , Specialize
@@ -86,6 +87,7 @@ readRule ∷ String → Rule
 readRule "canonicalize" = Canonicalize
 readRule "conjunct"     = Conjunct
 readRule "negate"       = Negate
+readRule "resolve"      = Resolve
 readRule "simplify"     = Simplify
 readRule "skolemize"    = Skolemize
 readRule "specialize"   = Specialize

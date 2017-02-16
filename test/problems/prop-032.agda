@@ -51,41 +51,40 @@ subgoal₀ = d
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
+          atp-canonicalize $  -- Γ ⊢ ¬ d
+            atp-strip $  -- Γ ⊢ d
+              assume {Γ = Γ} $  -- Γ ⊢ ¬ d
                 atp-neg subgoal₀
           )
           (
-          atp-simplify $
+          atp-simplify $  -- Γ ⊢ d
             ∧-intro
               (
-              atp-canonicalize $
+              atp-canonicalize $  -- Γ ⊢ (¬ c ∨ d)
                 weaken (atp-neg subgoal₀) $
                   (assume {Γ = ∅} a4)
               )
               (
-              atp-simplify $
+              atp-simplify $  -- Γ ⊢ c
                 ∧-intro
                   (
-                  atp-canonicalize $
+                  atp-canonicalize $  -- Γ ⊢ ((¬ a ∨ ¬ b) ∨ c)
                     weaken (atp-neg subgoal₀) $
                       (assume {Γ = ∅} a3)
                   )
                   (
                   ∧-intro
                     (
-                    atp-canonicalize $
+                    atp-canonicalize $  -- Γ ⊢ a
                       weaken (atp-neg subgoal₀) $
                         (assume {Γ = ∅} a1)
                     )
                     (
-                    atp-canonicalize $
+                    atp-canonicalize $  -- Γ ⊢ b
                       weaken (atp-neg subgoal₀) $
                         (assume {Γ = ∅} a2)
                     )

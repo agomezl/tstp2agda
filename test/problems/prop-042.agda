@@ -37,25 +37,24 @@ subgoal₀ = (¬ x ⇒ y)
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
+          atp-canonicalize $  -- Γ ⊢ (¬ x ∧ ¬ y)
+            atp-strip $  -- Γ ⊢ (¬ x ⇒ y)
+              assume {Γ = Γ} $  -- Γ ⊢ ¬ (¬ x ⇒ y)
                 atp-neg subgoal₀
           )
           (
           ∧-intro
             (
-            atp-canonicalize $
+            atp-canonicalize $  -- Γ ⊢ x
               weaken (atp-neg subgoal₀) $
                 (assume {Γ = ∅} a1)
             )
             (
-            atp-canonicalize $
+            atp-canonicalize $  -- Γ ⊢ y
               weaken (atp-neg subgoal₀) $
                 (assume {Γ = ∅} a2)
             )

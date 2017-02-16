@@ -28,42 +28,41 @@ subgoal₀ = (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
+          atp-conjunct $  -- Γ ⊢ (x ∨ y)
+            atp-canonicalize $  -- Γ ⊢ ((¬ y ∧ (¬ x ∨ y)) ∧ (x ∨ y))
+              atp-strip $  -- Γ ⊢ (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
+                assume {Γ = Γ} $  -- Γ ⊢ ¬ (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
                   atp-neg subgoal₀
           )
           (
           ∧-intro
             (
-            atp-simplify $
+            atp-simplify $  -- Γ ⊢ ¬ x
               ∧-intro
                 (
-                atp-conjunct $
-                  atp-canonicalize $
-                    atp-strip $
-                      assume {Γ = Γ} $
+                atp-conjunct $  -- Γ ⊢ (¬ x ∨ y)
+                  atp-canonicalize $  -- Γ ⊢ ((¬ y ∧ (¬ x ∨ y)) ∧ (x ∨ y))
+                    atp-strip $  -- Γ ⊢ (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
+                      assume {Γ = Γ} $  -- Γ ⊢ ¬ (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
                         atp-neg subgoal₀
                 )
                 (
-                atp-conjunct $
-                  atp-canonicalize $
-                    atp-strip $
-                      assume {Γ = Γ} $
+                atp-conjunct $  -- Γ ⊢ ¬ y
+                  atp-canonicalize $  -- Γ ⊢ ((¬ y ∧ (¬ x ∨ y)) ∧ (x ∨ y))
+                    atp-strip $  -- Γ ⊢ (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
+                      assume {Γ = Γ} $  -- Γ ⊢ ¬ (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
                         atp-neg subgoal₀
                 )
             )
             (
-            atp-conjunct $
-              atp-canonicalize $
-                atp-strip $
-                  assume {Γ = Γ} $
+            atp-conjunct $  -- Γ ⊢ ¬ y
+              atp-canonicalize $  -- Γ ⊢ ((¬ y ∧ (¬ x ∨ y)) ∧ (x ∨ y))
+                atp-strip $  -- Γ ⊢ (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
+                  assume {Γ = Γ} $  -- Γ ⊢ ¬ (((¬ y ⇒ ¬ x) ∧ (¬ y ⇒ x)) ⇒ y)
                     atp-neg subgoal₀
             )
           )

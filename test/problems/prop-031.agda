@@ -44,33 +44,32 @@ subgoal₀ = z
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
+          atp-canonicalize $  -- Γ ⊢ ¬ z
+            atp-strip $  -- Γ ⊢ z
+              assume {Γ = Γ} $  -- Γ ⊢ ¬ z
                 atp-neg subgoal₀
           )
           (
-          atp-simplify $
+          atp-simplify $  -- Γ ⊢ z
             ∧-intro
               (
-              atp-canonicalize $
+              atp-canonicalize $  -- Γ ⊢ ((¬ a ∨ ¬ b) ∨ z)
                 weaken (atp-neg subgoal₀) $
                   (assume {Γ = ∅} a3)
               )
               (
               ∧-intro
                 (
-                atp-canonicalize $
+                atp-canonicalize $  -- Γ ⊢ a
                   weaken (atp-neg subgoal₀) $
                     (assume {Γ = ∅} a1)
                 )
                 (
-                atp-canonicalize $
+                atp-canonicalize $  -- Γ ⊢ b
                   weaken (atp-neg subgoal₀) $
                     (assume {Γ = ∅} a2)
                 )

@@ -10,6 +10,7 @@ data Rule = Canonicalize
           | Conjunct
           | Negate
           | NewRule String
+          | Resolve
           | Simplify
           | Skolemize
           | Specialize

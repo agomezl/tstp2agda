@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------
-SZS status Theorem for test/problems//prop-019.tptp
+SZS status Theorem for test/problems/prop-019.tptp
 
-SZS output start CNFRefutation for test/problems//prop-019.tptp
+SZS output start CNFRefutation for test/problems/prop-019.tptp
 fof(goal, conjecture,
     (((p | q) & (~ p | q) & (p | ~ q)) => ~ (~ q | ~ q))).
 
@@ -44,5 +44,5 @@ fof(normalize_1_0, plain, ($false),
 
 cnf(refute_1_0, plain, ($false),
     inference(canonicalize, [], [normalize_1_0])).
-SZS output end CNFRefutation for test/problems//prop-019.tptp
+SZS output end CNFRefutation for test/problems/prop-019.tptp
 

@@ -28,11 +28,10 @@ subgoal₀ = ((x ∧ y) ⇒ x)
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-canonicalize $
-        atp-strip $
-          assume {Γ = Γ} $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-canonicalize $  -- Γ ⊢ ⊥
+        atp-strip $  -- Γ ⊢ ((x ∧ y) ⇒ x)
+          assume {Γ = Γ} $  -- Γ ⊢ ¬ ((x ∧ y) ⇒ x)
             atp-neg subgoal₀
 
 proof : Γ ⊢ goal

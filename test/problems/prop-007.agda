@@ -35,31 +35,30 @@ subgoal₁ = ((((x ⇒ y) ∧ ¬ (y ∨ z)) ∧ ¬ x) ⇒ ¬ z)
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $
-            atp-canonicalize $
-              atp-strip $
-                assume {Γ = Γ} $
+          atp-conjunct $  -- Γ ⊢ (¬ x ∨ y)
+            atp-canonicalize $  -- Γ ⊢ (((¬ y ∧ ¬ z) ∧ x) ∧ (¬ x ∨ y))
+              atp-strip $  -- Γ ⊢ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
+                assume {Γ = Γ} $  -- Γ ⊢ ¬ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
                   atp-neg subgoal₀
           )
           (
           ∧-intro
             (
-            atp-conjunct $
-              atp-canonicalize $
-                atp-strip $
-                  assume {Γ = Γ} $
+            atp-conjunct $  -- Γ ⊢ x
+              atp-canonicalize $  -- Γ ⊢ (((¬ y ∧ ¬ z) ∧ x) ∧ (¬ x ∨ y))
+                atp-strip $  -- Γ ⊢ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
+                  assume {Γ = Γ} $  -- Γ ⊢ ¬ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
                     atp-neg subgoal₀
             )
             (
-            atp-conjunct $
-              atp-canonicalize $
-                atp-strip $
-                  assume {Γ = Γ} $
+            atp-conjunct $  -- Γ ⊢ ¬ y
+              atp-canonicalize $  -- Γ ⊢ (((¬ y ∧ ¬ z) ∧ x) ∧ (¬ x ∨ y))
+                atp-strip $  -- Γ ⊢ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
+                  assume {Γ = Γ} $  -- Γ ⊢ ¬ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
                     atp-neg subgoal₀
             )
           )
@@ -67,11 +66,10 @@ proof₀ =
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
   RAA $
-  -- Γ , ¬ subgoal₁⊢ ⊥
-    atp-canonicalize $
-      atp-canonicalize $
-        atp-strip $
-          assume {Γ = Γ} $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-canonicalize $  -- Γ ⊢ ⊥
+        atp-strip $  -- Γ ⊢ ((((x ⇒ y) ∧ ¬ (y ∨ z)) ∧ ¬ x) ⇒ ¬ z)
+          assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ⇒ y) ∧ ¬ (y ∨ z)) ∧ ¬ x) ⇒ ¬ z)
             atp-neg subgoal₁
 
 proof : Γ ⊢ goal

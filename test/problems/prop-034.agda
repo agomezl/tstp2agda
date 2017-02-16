@@ -59,41 +59,40 @@ subgoal₂ = ((d ∧ a) ⇒ b)
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
   RAA $
-  -- Γ , ¬ subgoal₀⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
+          atp-canonicalize $  -- Γ ⊢ ¬ d
+            atp-strip $  -- Γ ⊢ d
+              assume {Γ = Γ} $  -- Γ ⊢ ¬ d
                 atp-neg subgoal₀
           )
           (
-          atp-simplify $
+          atp-simplify $  -- Γ ⊢ d
             ∧-intro
               (
-              atp-canonicalize $
+              atp-canonicalize $  -- Γ ⊢ (¬ c ∨ d)
                 weaken (atp-neg subgoal₀) $
                   (assume {Γ = ∅} a4)
               )
               (
-              atp-simplify $
+              atp-simplify $  -- Γ ⊢ c
                 ∧-intro
                   (
-                  atp-canonicalize $
+                  atp-canonicalize $  -- Γ ⊢ ((¬ a ∨ ¬ b) ∨ c)
                     weaken (atp-neg subgoal₀) $
                       (assume {Γ = ∅} a3)
                   )
                   (
                   ∧-intro
                     (
-                    atp-canonicalize $
+                    atp-canonicalize $  -- Γ ⊢ a
                       weaken (atp-neg subgoal₀) $
                         (assume {Γ = ∅} a1)
                     )
                     (
-                    atp-canonicalize $
+                    atp-canonicalize $  -- Γ ⊢ b
                       weaken (atp-neg subgoal₀) $
                         (assume {Γ = ∅} a2)
                     )
@@ -104,48 +103,47 @@ proof₀ =
 proof₁ : Γ ⊢ subgoal₁
 proof₁ =
   RAA $
-  -- Γ , ¬ subgoal₁⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
+          atp-canonicalize $  -- Γ ⊢ (¬ a ∧ d)
+            atp-strip $  -- Γ ⊢ (d ⇒ a)
+              assume {Γ = Γ} $  -- Γ ⊢ ¬ (d ⇒ a)
                 atp-neg subgoal₁
           )
           (
           ∧-intro
             (
-            atp-canonicalize $
+            atp-canonicalize $  -- Γ ⊢ a
               weaken (atp-neg subgoal₁) $
                 (assume {Γ = ∅} a1)
             )
             (
-            atp-simplify $
+            atp-simplify $  -- Γ ⊢ d
               ∧-intro
                 (
-                atp-canonicalize $
+                atp-canonicalize $  -- Γ ⊢ (¬ c ∨ d)
                   weaken (atp-neg subgoal₁) $
                     (assume {Γ = ∅} a4)
                 )
                 (
-                atp-simplify $
+                atp-simplify $  -- Γ ⊢ c
                   ∧-intro
                     (
-                    atp-canonicalize $
+                    atp-canonicalize $  -- Γ ⊢ ((¬ a ∨ ¬ b) ∨ c)
                       weaken (atp-neg subgoal₁) $
                         (assume {Γ = ∅} a3)
                     )
                     (
                     ∧-intro
                       (
-                      atp-canonicalize $
+                      atp-canonicalize $  -- Γ ⊢ a
                         weaken (atp-neg subgoal₁) $
                           (assume {Γ = ∅} a1)
                       )
                       (
-                      atp-canonicalize $
+                      atp-canonicalize $  -- Γ ⊢ b
                         weaken (atp-neg subgoal₁) $
                           (assume {Γ = ∅} a2)
                       )
@@ -157,55 +155,54 @@ proof₁ =
 proof₂ : Γ ⊢ subgoal₂
 proof₂ =
   RAA $
-  -- Γ , ¬ subgoal₂⊢ ⊥
-    atp-canonicalize $
-      atp-simplify $
+    atp-canonicalize $  -- Γ ⊢ ⊥
+      atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-canonicalize $
-            atp-strip $
-              assume {Γ = Γ} $
+          atp-canonicalize $  -- Γ ⊢ ((¬ b ∧ a) ∧ d)
+            atp-strip $  -- Γ ⊢ ((d ∧ a) ⇒ b)
+              assume {Γ = Γ} $  -- Γ ⊢ ¬ ((d ∧ a) ⇒ b)
                 atp-neg subgoal₂
           )
           (
           ∧-intro
             (
-            atp-canonicalize $
+            atp-canonicalize $  -- Γ ⊢ b
               weaken (atp-neg subgoal₂) $
                 (assume {Γ = ∅} a2)
             )
             (
             ∧-intro
               (
-              atp-canonicalize $
+              atp-canonicalize $  -- Γ ⊢ a
                 weaken (atp-neg subgoal₂) $
                   (assume {Γ = ∅} a1)
               )
               (
-              atp-simplify $
+              atp-simplify $  -- Γ ⊢ d
                 ∧-intro
                   (
-                  atp-canonicalize $
+                  atp-canonicalize $  -- Γ ⊢ (¬ c ∨ d)
                     weaken (atp-neg subgoal₂) $
                       (assume {Γ = ∅} a4)
                   )
                   (
-                  atp-simplify $
+                  atp-simplify $  -- Γ ⊢ c
                     ∧-intro
                       (
-                      atp-canonicalize $
+                      atp-canonicalize $  -- Γ ⊢ ((¬ a ∨ ¬ b) ∨ c)
                         weaken (atp-neg subgoal₂) $
                           (assume {Γ = ∅} a3)
                       )
                       (
                       ∧-intro
                         (
-                        atp-canonicalize $
+                        atp-canonicalize $  -- Γ ⊢ a
                           weaken (atp-neg subgoal₂) $
                             (assume {Γ = ∅} a1)
                         )
                         (
-                        atp-canonicalize $
+                        atp-canonicalize $  -- Γ ⊢ b
                           weaken (atp-neg subgoal₂) $
                             (assume {Γ = ∅} a2)
                         )
