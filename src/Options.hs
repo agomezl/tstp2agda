@@ -48,7 +48,7 @@ data Options = Options
 
 defaultOptions ∷ Options
 defaultOptions = Options
-  { optEmbedding      = 's'
+  { optEmbedding      = 'd'
   , optHelp           = False
   , optInputFile      = Nothing
   , optOutputFile     = Nothing
@@ -64,7 +64,6 @@ embeddingOpt "deep" opts    = Right opts { optEmbedding = 'd'}
 embeddingOpt "shallow" opts = Right opts { optEmbedding = 's'}
 embeddingOpt _ _ = Left $
   pretty "option " <> squotes "--embedding" <> pretty " requires an argument NAME"
-
 
 helpOpt ∷ OM
 helpOpt opts = Right opts { optHelp = True }
@@ -93,7 +92,7 @@ versionOpt opts = Right opts { optVersion = True }
 options ∷ [OptDescr OM]
 options =
   [ Option ['e'] ["embedding"] (ReqArg embeddingOpt "NAME")
-      "shallow or deep (default: shallow)"
+      "shallow or deep (default: deep)"
   , Option ['h'] ["help"] (NoArg helpOpt)
       "Prints help message"
   , Option ['o'] ["output"] (ReqArg outputFileOpt "FILE")

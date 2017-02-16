@@ -22,9 +22,11 @@ r = Var (# 2)
 goal : Prop
 goal = ((((p ⇒ r) ∧ (¬ p ⇒ ¬ q)) ∧ (p ∨ q)) ⇒ (p ∧ r))
 
+
 -- Subgoals
 subgoal₀ : Prop
 subgoal₀ = ((((p ⇒ r) ∧ (¬ p ⇒ ¬ q)) ∧ (p ∨ q)) ⇒ p)
+
 
 subgoal₁ : Prop
 subgoal₁ = (((((p ⇒ r) ∧ (¬ p ⇒ ¬ q)) ∧ (p ∨ q)) ∧ p) ⇒ r)

@@ -16,6 +16,7 @@ $true = ⊤
 goal : Prop
 goal = $true
 
+
 -- Subgoal
 subgoal₀ : Prop
 subgoal₀ = $true
@@ -23,8 +24,9 @@ subgoal₀ = $true
 -- Metis Proof.
 proof₀ : Γ ⊢ subgoal₀
 proof₀ =
- RAA $
+  RAA $
     atp-canonicalize $
+    -- Γ ⊢ φ
       atp-canonicalize $
         atp-strip $
           assume {Γ = Γ} $

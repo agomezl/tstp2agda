@@ -12,6 +12,7 @@ open import Data.Bool using (Bool ; if_then_else_ ; true ; false)
 open import Function using (_$_)
 
 open import Relation.Nullary.Decidable
+
 open import Data.Fin
 open import Data.Fin.Properties
 

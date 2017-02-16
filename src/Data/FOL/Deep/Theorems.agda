@@ -251,3 +251,4 @@ cnf φ = φ
 
 clausify : Prop → Prop
 clausify φ = cnf $ nnf $ ⇒-free $ ⇔-free φ
+
