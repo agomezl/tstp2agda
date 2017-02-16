@@ -172,7 +172,7 @@ atp-neg φ = ¬ φ
 
 canonicalize : Prop → Prop
 canonicalize (φ ⇒ ψ) = ¬ φ ∨ ψ
-canonicalize (¬ (φ ⇒ ψ)) = φ ∧ ¬ ψ
+canonicalize (¬ (φ ⇒ ψ)) = if (equal-f φ ψ) then ⊥ else φ ∧ ¬ ψ
 canonicalize (¬ ⊤) = ⊥
 canonicalize (¬ ⊥) = ⊤
 canonicalize φ = φ
@@ -184,7 +184,8 @@ atp-canonicalize {Γ} {⊥} = id
 atp-canonicalize {Γ} {φ ∧ φ₁} = id
 atp-canonicalize {Γ} {φ ∨ φ₁} = id
 atp-canonicalize {Γ} {φ ⇒ φ₁} = impl-pos
-atp-canonicalize {Γ} {¬ (φ ⇒ φ₁)} = impl-neg
+atp-canonicalize {Γ} {¬ (φ ⇒ φ₁)} = atp-step (λ _ → canonicalize (¬ (φ ⇒ φ₁)))
+-- impl-neg
 atp-canonicalize {Γ} {¬ ⊤} = ¬-⊤
 atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥
 atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
