@@ -161,17 +161,24 @@ atp-canonicalize {Γ} {φ ∧ φ₁} = id
 atp-canonicalize {Γ} {φ ∨ φ₁} = id
 atp-canonicalize {Γ} {φ ⇒ φ₁} = impl-pos
 atp-canonicalize {Γ} {¬ (φ ⇒ φ₁)} = atp-step (λ _ → canonicalize (¬ (φ ⇒ φ₁)))
+
 -- impl-neg
 atp-canonicalize {Γ} {¬ ⊤} = ¬-⊤
 atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥
 atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
 
--- Conjuct inference.
-conjunct : Prop → Prop
-conjunct φ = φ
 
-atp-conjunct : {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ conjunct φ
-atp-conjunct {Γ} {φ} = id
+-- Conjuct inference.
+intro-equal : {Γ : Ctxt} {φ ψ : Prop} → Γ ⊢ φ → (equal-f φ ψ) ≡ true → Γ ⊢ ψ
+intro-equal {Γ} {φ} {ψ} x = λ _ → atp-step (λ _ → ψ) x
+
+atp-conjunct : {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → (ψ : Prop) → Γ ⊢ ψ
+atp-conjunct {Γ} {φ = (φ₁ ∧ φ₂)} seq ψ =
+  if (equal-f φ₁ ψ)
+    then ∧-proj₁ {Γ = Γ} {ψ = φ₂}
+      (atp-step (λ _ → ψ ∧ φ₂) seq)
+    else atp-conjunct (∧-proj₂ seq) ψ
+atp-conjunct {Γ} {φ} seq ψ = atp-step (λ _ → ψ) seq
 
 -- Negate inference.
 atp-neg : Prop → Prop
