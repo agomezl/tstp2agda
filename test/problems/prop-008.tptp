@@ -1,6 +1,2 @@
-% exercise 4.2.2 from Melvin, First-Order Logic and Automated
-% Theorem Proving, Pag. 91, Ed 2.
-
-
 fof(goal, conjecture,
           ( (s => x) & (s => (x => y)) ) => (s => y) ).
