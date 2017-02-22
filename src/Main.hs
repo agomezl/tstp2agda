@@ -327,6 +327,10 @@ printSteps sname n [Root Resolve tag subtree] dict goal axioms =
     literalC = "C" -- TODO
     literalD = "D" -- TODO
 
+printSteps sname n [Root Conjunct tag subtree] dict goal axioms =
+ concat
+   [ getIdent n , "atp-conjunct" , " $\n" ]
+
 printSteps sname n [Root inf tag subtree] dict goal axioms =
   concat
     [ getIdent n , inferenceName , " $" , printInnerFormula 1 dict tag "Γ" , "\n"
@@ -337,7 +341,6 @@ printSteps sname n [Root inf tag subtree] dict goal axioms =
     inferenceName = case inf of
       Canonicalize → "atp-canonicalize"
       Strip        → "atp-strip"
-      Conjunct     → "atp-conjunct"
       _            → "? -- inference rule no supported yet"
 
 -- TODO: check the output formula, and use atp-conjuct with this output and the
@@ -409,3 +412,17 @@ printProofGoal subgoals goal rmap rtree = putStrLn $
     , andIntroSubgoals 3 0 subgoals
     , getIdent 2 , ")\n"
     ]
+
+atpConjunct ∷ String → Formula → Formula → String
+atpConjunct name (BinOp f₁ (:&:) f₂) φ
+  | f₁ /= φ = "∧-proj₂ $ " ++ atpConjunct name f₂ φ
+  | otherwise = name
+atpConjunt name _ _ = "?" -- TODO
+
+orComm ∷ String → Formula → Formula → String
+orComm name (BinOp f₁ (:|:) f₂) ((:~:) φ)
+  | f₁ /= φ = "∨-comm $" ++ orComm name f₂ φ
+  | otherwise = name
+orComm name (BinOp ((:~:) f₁) (:|:) f₂) φ
+  | f₁ /= φ = "∨-comm $" ++ orComm name f₂ φ
+  | otherwise = name

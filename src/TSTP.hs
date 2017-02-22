@@ -1,4 +1,3 @@
-
 -- | TSTP module
 
 {-# LANGUAGE CPP           #-}
@@ -17,8 +16,8 @@ module TSTP
   ) where
 
 
-import           Data.TSTP           (F (..))
-import           System.IO           (getContents)
+import           Data.TSTP.F
+
 import           TSTP.Lexer          (alexScanTokens)
 import           TSTP.Parser         (parseTSTP)
 
@@ -54,4 +53,4 @@ parse = parseTSTP . map snd . alexScanTokens
 
 
 parseFile ∷ FilePath → IO [F]
-parseFile path = parse <$>  readFile path
+parseFile path = parse <$> readFile path
