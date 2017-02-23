@@ -27,7 +27,7 @@ import Data.List.Split
 
 
 
-import           Data.TSTP            (F (..), Formula (..), Rule (..), Role (..) )
+import           Data.TSTP            (F (..), Formula (..), Rule (..), Role (..), Info(Function), GData(..), GTerm(..) )
 import           Data.TSTP.Formula    (getFreeVars)
 import           Data.TSTP.AtomicWord (AtomicWord (..))
 import           Data.TSTP.BinOp      (BinOp (..))
@@ -174,6 +174,22 @@ printVars (f : fs) n = do
   putStrLn $ printVar f n ++ "\n"
   printVars fs (n+1)
 
+subIndex ∷ Char → Char
+subIndex '0' = '₀'
+subIndex '1' = '₁'
+subIndex '2' = '₂'
+subIndex '3' = '₃'
+subIndex '4' = '₄'
+subIndex '5' = '₅'
+subIndex '6' = '₆'
+subIndex '7' = '₇'
+subIndex '8' = '₈'
+subIndex '9' = '₉'
+subIndex s   = s
+
+stdName :: String → String
+stdName nm = map subIndex $ concat $ splitOn "-" nm
+
 showDeepFormula ∷ Formula → String
 showDeepFormula (BinOp f₁ (:=>:) f₂) = '(' <> sf₁ ▪ '⇒' ▪ sf₂ <> ')'
   where
@@ -296,14 +312,12 @@ printSteps sname n [Root Simplify tag subtree] dict goal axioms =
     , andIntro (n+2) subtree
     ]
     where
---      innerStep ∷ Ident → [ProofTree] → String
       innerStep m step = concat
         [ getIdent m , "(\n"
         , printSteps sname m [step] dict goal axioms
         , getIdent m , ")\n"
         ]
 
---      andIntro :: Ident → [ProofTree] → String
       andIntro m []       = ""
       andIntro m [x]      = printSteps sname m [x] dict goal axioms
       andIntro m (x:y:[]) = concatMap (innerStep m) [x , y]
@@ -315,17 +329,35 @@ printSteps sname n [Root Simplify tag subtree] dict goal axioms =
         , getIdent m , ")\n"
         ]
 
-printSteps sname n [Root Resolve tag subtree] dict goal axioms =
+printSteps sname n [Root Resolve tag ((left@(Root _ tagφ _)):(right@(Root _ tagψ _)):_)] dict goal axioms =
   concat
-    [ getIdent n , "atp-resolve {Γ = Γ}"
-    , getIdent (n+1) , "{L = " , literalL , "}\n"
-    , getIdent (n+1) , "{C =" , literalC , "}\n"
-    , getIdent (n+1) , "{D =" , literalD , "}\n"
+    [ getIdent n , resolveCase
+    , getIdent (n+1)
+    , getIdent (n+1) , atpRosolve ψ φ
     ]
-  where
-    literalL = "L" -- TODO
-    literalC = "C" -- TODO
-    literalD = "D" -- TODO
+    where
+      φ ∷ Formula
+      φ = formula $ fromJust $ Map.lookup tag dict
+--      ψ = formula $ resolveLiteral $ Map.lookup tag
+
+      getResolveLiteral (Resolve (Function _ (GTerm (GWord x):_):_) ) = x
+
+      -- $ source $ fromJust $ Map.lookup tag dict
+--      getResolveLiteral =
+
+
+      atpResolve ∷ Formula → Formula → String
+      atpResolve (BinOp f₁ (:&:) f₂) φ
+        | f₂ /= φ = "∧-proj₁ $" ++ if null next then "\n" else " " ++ next
+        | otherwise = "∧-proj₂ $ -- (" ++ showDeepFormula f₂ ++" ≟ " ++ showDeepFormula φ ++ ")\n"
+        where
+          next ∷ String
+          next = atpResolve f₁ φ
+          atpResolve fm@(BinOp f₁ _ f₂) φ = "-- 1: "++showDeepFormula fm ++ "\n"
+          atpResolve fm@(InfixPred _ _ _) _ ="-- 2: " ++ showDeepFormula fm ++ "\n"
+          atpResolve fm@(PredApp _ _) _ = "-- 3: " ++ showDeepFormula fm++ "\n"
+          atpResolve fm@(Quant _ _ _) _ = "-- 4: " ++ showDeepFormula fm++ "\n"
+          atpResolve fm@((:~:) _) _ = "-- 5: " ++ showDeepFormula fm++ "\n"
 
 printSteps sname n [Root Conjunct tag subtree@([Root _ fms _])] dict goal axioms =
  concat
@@ -336,6 +368,20 @@ printSteps sname n [Root Conjunct tag subtree@([Root _ fms _])] dict goal axioms
      φ , ψ∷ Formula
      φ = formula $ fromJust $ Map.lookup tag dict
      ψ = formula $ fromJust $ Map.lookup fms dict
+
+     atpConjunct ∷ Formula → Formula → String
+     atpConjunct (BinOp f₁ (:&:) f₂) φ
+       | f₂ /= φ = "∧-proj₁ $" ++ if null next then "\n" else " " ++ next
+       | otherwise = "∧-proj₂ $ -- (" ++ showDeepFormula f₂ ++" ≟ " ++ showDeepFormula φ ++ ")\n"
+       where
+         next ∷ String
+         next = atpConjunct f₁ φ
+         atpConjunct fm@(BinOp f₁ _ f₂) φ = "-- 1: "++showDeepFormula fm ++ "\n"
+         atpConjunct fm@(InfixPred _ _ _) _ ="-- 2: " ++ showDeepFormula fm ++ "\n"
+         atpConjunct fm@(PredApp _ _) _ = "-- 3: " ++ showDeepFormula fm++ "\n"
+         atpConjunct fm@(Quant _ _ _) _ = "-- 4: " ++ showDeepFormula fm++ "\n"
+         atpConjunct fm@((:~:) _) _ = "-- 5: " ++ showDeepFormula fm++ "\n"
+
 
 printSteps sname n [Root inf tag subtree] dict goal axioms =
   concat
@@ -363,21 +409,6 @@ printSteps sname n [Leaf Axiom gname] dict goal axioms =
     ]
 printSteps _ n _ _ _ _ = getIdent n ++ "? -- no supported yet\n"
 
-subIndex ∷ Char → Char
-subIndex '0' = '₀'
-subIndex '1' = '₁'
-subIndex '2' = '₂'
-subIndex '3' = '₃'
-subIndex '4' = '₄'
-subIndex '5' = '₅'
-subIndex '6' = '₆'
-subIndex '7' = '₇'
-subIndex '8' = '₈'
-subIndex '9' = '₉'
-subIndex s   = s
-
-stdName :: String → String
-stdName nm = map subIndex $ concat $ splitOn "-" nm
 
 andIntroSubgoals :: Ident → Int → [F] → String
 andIntroSubgoals m n []       = ""
@@ -418,19 +449,6 @@ printProofGoal subgoals goal rmap rtree = putStrLn $
     , andIntroSubgoals 3 0 subgoals
     , getIdent 2 , ")\n"
     ]
-
-atpConjunct ∷ Formula → Formula → String
-atpConjunct (BinOp f₁ (:&:) f₂) φ
-  | f₂ /= φ = "∧-proj₁ $" ++ if null next then "\n" else " " ++ next
-  | otherwise = "∧-proj₂ $ -- (" ++ showDeepFormula f₂ ++" ≟ " ++ showDeepFormula φ ++ ")\n"
-  where
-    next ∷ String
-    next = atpConjunct f₁ φ
-atpConjunct fm@(BinOp f₁ _ f₂) φ = "-- 1: "++showDeepFormula fm ++ "\n"
-atpConjunct fm@(InfixPred _ _ _) _ ="-- 2: " ++ showDeepFormula fm ++ "\n"
-atpConjunct fm@(PredApp _ _) _ = "-- 3: " ++ showDeepFormula fm++ "\n"
-atpConjunct fm@(Quant _ _ _) _ = "-- 4: " ++ showDeepFormula fm++ "\n"
-atpConjunct fm@((:~:) _) _ = "-- 5: " ++ showDeepFormula fm++ "\n"
 
 {-
 orComm ∷ String → Formula → Formula → String
