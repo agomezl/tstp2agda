@@ -327,9 +327,15 @@ printSteps sname n [Root Resolve tag subtree] dict goal axioms =
     literalC = "C" -- TODO
     literalD = "D" -- TODO
 
-printSteps sname n [Root Conjunct tag subtree] dict goal axioms =
+printSteps sname n [Root Conjunct tag subtree@([Root _ fms _])] dict goal axioms =
  concat
-   [ getIdent n , "atp-conjunct" , " $\n" ]
+   [ getIdent n , atpConjunct ψ φ
+   , printSteps sname (n+1) subtree dict goal axioms
+   ]
+   where
+     φ , ψ∷ Formula
+     φ = formula $ fromJust $ Map.lookup tag dict
+     ψ = formula $ fromJust $ Map.lookup fms dict
 
 printSteps sname n [Root inf tag subtree] dict goal axioms =
   concat
@@ -413,12 +419,20 @@ printProofGoal subgoals goal rmap rtree = putStrLn $
     , getIdent 2 , ")\n"
     ]
 
-atpConjunct ∷ String → Formula → Formula → String
-atpConjunct name (BinOp f₁ (:&:) f₂) φ
-  | f₁ /= φ = "∧-proj₂ $ " ++ atpConjunct name f₂ φ
-  | otherwise = name
-atpConjunt name _ _ = "?" -- TODO
+atpConjunct ∷ Formula → Formula → String
+atpConjunct (BinOp f₁ (:&:) f₂) φ
+  | f₂ /= φ = "∧-proj₁ $" ++ if null next then "\n" else " " ++ next
+  | otherwise = "∧-proj₂ $ -- (" ++ showDeepFormula f₂ ++" ≟ " ++ showDeepFormula φ ++ ")\n"
+  where
+    next ∷ String
+    next = atpConjunct f₁ φ
+atpConjunct fm@(BinOp f₁ _ f₂) φ = "-- 1: "++showDeepFormula fm ++ "\n"
+atpConjunct fm@(InfixPred _ _ _) _ ="-- 2: " ++ showDeepFormula fm ++ "\n"
+atpConjunct fm@(PredApp _ _) _ = "-- 3: " ++ showDeepFormula fm++ "\n"
+atpConjunct fm@(Quant _ _ _) _ = "-- 4: " ++ showDeepFormula fm++ "\n"
+atpConjunct fm@((:~:) _) _ = "-- 5: " ++ showDeepFormula fm++ "\n"
 
+{-
 orComm ∷ String → Formula → Formula → String
 orComm name (BinOp f₁ (:|:) f₂) ((:~:) φ)
   | f₁ /= φ = "∨-comm $" ++ orComm name f₂ φ
@@ -426,3 +440,4 @@ orComm name (BinOp f₁ (:|:) f₂) ((:~:) φ)
 orComm name (BinOp ((:~:) f₁) (:|:) f₂) φ
   | f₁ /= φ = "∨-comm $" ++ orComm name f₂ φ
   | otherwise = name
+-}

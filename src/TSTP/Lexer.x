@@ -112,14 +112,12 @@ stripPlus :: String -> String
 stripPlus ('+':xs) = xs
 stripPlus xs = xs
 
-
 readDecimalFraction :: String -> Rational
 readDecimalFraction ('-':cs) = -(readUnsignedDecimalFraction cs)
 readDecimalFraction cs = readUnsignedDecimalFraction cs
 
 readInteger :: String -> Integer
 readInteger = read
-
 
 readUnsignedDecimalFraction :: String -> Rational
 readUnsignedDecimalFraction cs =
