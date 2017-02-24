@@ -145,9 +145,7 @@ tests :
 	- make clean
 	- make problems-metis
 	- make problems-agda
-	- make basic-test
 	- make deep-test
-	- make shallow-test
 	- make hlint
 	- make check-whitespace
 	- make haddock

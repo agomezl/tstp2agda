@@ -237,8 +237,11 @@ atp-resolve₆ {Γ} {L} {C} seq₁ seq₂ =
 atp-resolve₇ : {Γ : Ctxt} {L C : Prop} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L → Γ ⊢ C
 atp-resolve₇ {Γ} {L} {C} seq₁ seq₂ = atp-resolve₆ (∨-comm seq₁) seq₂
 
-atp-resolve₈ : {Γ : Ctxt} {φ : Prop} → Γ ⊢ ¬ φ → Γ ⊢ φ → Γ ⊢ ⊥
-atp-resolve₈ = ¬-elim
+atp-resolve₈ : {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ ¬ φ → Γ ⊢ ⊥
+atp-resolve₈ seq₁ seq₂ = ¬-elim seq₂ seq₁
+
+atp-resolve₉ : {Γ : Ctxt} {φ : Prop} → Γ ⊢ ¬ φ → Γ ⊢ φ → Γ ⊢ ⊥
+atp-resolve₉ = ¬-elim
 
 -- Simplify inference.
 
