@@ -183,6 +183,89 @@ atp-conjunct {Γ} {φ} seq ψ = atp-step (λ _ → ψ) seq
 atp-neg : Prop → Prop
 atp-neg φ = ¬ φ
 
+remove₀ : Prop → Prop → Prop
+{-
+remove₀ φ@(((a ∨ b) ∨ c) ∨ d) e with (equal-f d e)
+... | true  = d ∨ ((a ∨ b) ∨ c)
+... | false with (equal-f c e)
+...         | true  = c ∨ ((a ∨ b) ∨ d)
+...         | false with (equal-f b e)
+...                  | true  = b ∨ ((a ∨ c) ∨ d)
+...                  | false with (equal-f a e)
+...                           | true  = a ∨ ((b ∨ c) ∨ d)
+...                           | false = φ
+-}
+remove₀ φ@((a ∨ b) ∨ c) d with (equal-f c d)
+... | true = c ∨ (a ∨ b)
+... | false with (equal-f b d)
+...          | true  = b ∨ (a ∨ c)
+...          | false with (equal-f a d)
+...                   | true  = a ∨ (b ∨ c)
+...                   | false = φ
+remove₀ (a ∨ b) e with (equal-f b e)
+... | true = b ∨ a
+... | false = (remove₀ a e) ∨ b
+remove₀ φ _ = φ
+
+
+proof-remove₀ : ∀ {Γ} {φ ψ} → Γ ⊢ (φ ∨ ψ) → (e : Prop) → Γ ⊢ (remove₀ (φ ∨ ψ) e)
+proof-remove₀ {Γ} {((φ₁ ∨ φ₂) ∨ φ₃)} {ψ} seq e with (equal-f ψ e)
+... | true = ∨-comm seq
+... | false with (equal-f φ₃ e)
+...         | true = ∨-pick seq
+...         | false with (equal-f φ₂ e)
+...                 | true  = {!!}
+...                 | false = {!!}
+proof-remove₀ {Γ} {(φ₁@(Var _) ∨ φ₂)}{ψ} seq e with (equal-f ψ e)
+... | true = ∨-comm seq
+... | false with (equal-f φ₂ e)
+...         | true  = ∨-pick seq
+...         | false with (equal-f φ₁ e)
+...                 | true = ∨-assoc₁ seq
+...                 | false = id seq
+proof-remove₀ {Γ} {(Var _)}{ψ} seq e  with (equal-f ψ e)
+... | true  = ∨-comm seq
+... | false = id seq
+proof-remove₀ {Γ} {φ}{ψ} seq e = {!!}
+
+
+{-
+remove : Prop → Prop → Prop
+remove φ@(((a ∨ b) ∨ c) ∨ d) e with (equal-f d e)
+... | true  = d ∨ ((a ∨ b) ∨ c)
+... | false with (equal-f c e)
+...         | true  = c ∨ ((a ∨ b) ∨ d)
+...         | false with (equal-f b e)
+...                  | true  = b ∨ ((a ∨ c) ∨ d)
+...                  | false with (equal-f a e)
+...                           | true  = a ∨ ((b ∨ c) ∨ d)
+...                           | false = φ
+remove φ@((a ∨ b) ∨ c) d with (equal-f c d)
+... | true = c ∨ (a ∨ b)
+... | false with (equal-f b d)
+...          | true  = b ∨ (a ∨ c)
+...          | false with (equal-f a d)
+...                   | true  = a ∨ (b ∨ c)
+...                   | false = φ
+remove (a ∨ b@(Var x)) c with (equal-f b c)
+... | true = b ∨ a
+... | false = (remove a c) ∨ b
+remove φ h = φ
+-}
+
+{-
+pre : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∨ ψ → (ρ : Prop) → Γ ⊢ (remove (φ ∨ ψ) ρ)
+pre {Γ}{φ}{Var x} seq ρ with (equal-f (Var x) ρ)
+... | true with (remove (φ ∨ (Var x)) ρ)
+...         | .(φ ∨ (Var x)) = ?
+...         | (.(Var x) ∨ .φ) = ?
+... | false =  {!!}
+pre {Γ}{φ}{ψ} seq ρ with (equal-f ψ ρ)
+... | true = {!!}
+... | false =  {!!}
+-}
+
+
 -- Resolve theorems.
 
 atp-resolve₀ : {Γ : Ctxt} {L C D : Prop} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D

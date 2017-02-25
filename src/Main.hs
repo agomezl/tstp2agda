@@ -339,32 +339,28 @@ printSteps sname n [Root Resolve tag ((left@(Root _ fTag _)):(right@(Root _ gTag
       ϕ  ∷ Formula
       ϕ = formula $ fromJust $ Map.lookup tag dict
 
-      --  (f1)     (f2)
+      --  (f)       (g)
       -- /----\   /-----\
-      -- ϕ₁ ∨ ψ   ϕ₂ ∨ ~ψ
-      -- ---------------- resolve ψ
+      -- ϕ₁ ∨ ℓ   ϕ₂ ∨ ¬ ℓ
+      -- ---------------- resolve ℓ
       --     ϕ₁ ∨ ϕ₂
 
       f , g∷ Formula
       f = formula $ fromJust $ Map.lookup fTag dict
       g = formula $ fromJust $ Map.lookup gTag dict
 
+      ℓ ∷ Formula
+      ℓ = let sourceInfo ∷ Source
+              sourceInfo = source $ fromJust $ Map.lookup tag dict
+          in getResolveLiteral $ sourceInfo
 
-      resolveThis' :: Formula → Formula → Formula → String
-      resolveThis' f g  (PredApp (AtomicWord "$false") [])
+
+      resolveThis :: Formula → Formula → Formula → String
+      resolveThis f g  (PredApp (AtomicWord "$false") [])
         | f == ((:~:) g) = "atp-resolve₈"
         | ((:~:) f) == g = "atp-resolve₉"
-      resolveThis' _ _ (BinOp ϕ₁ (:|:) ϕ₂) = ""
-
-      ψ ∷ Formula
-      ψ = getResolveLiteral $ sourceInfo
-
-
-      negψ ∷ Formula
-      negψ = ((:~:) ψ)
-
-      sourceInfo ∷ Source
-      sourceInfo = source $ fromJust $ Map.lookup tag dict
+      resolveThis f g (BinOp ϕ₁ (:|:) ϕ₂) = ""
+      resolveThis _ _ (BinOp ϕ₁ _ ϕ₂) = ""
 
       getResolveLiteral ∷ Source → Formula
       getResolveLiteral

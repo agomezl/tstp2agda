@@ -7,20 +7,37 @@ open import Function using (_$_)
 
 -- Equivalences.
 
-postulate id : ∀ {Γ : Ctxt} {φ} → Γ ⊢ φ → Γ ⊢ φ
+postulate id : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ φ
 
-postulate ¬-⊤ : ∀ {Γ : Ctxt} → Γ ⊢ ¬ ⊤ → Γ ⊢ ⊥
-postulate ¬-⊤₂ : ∀ {Γ : Ctxt} → Γ ⊢ ⊤ → Γ ⊢ ¬ ⊥
+postulate ¬-⊤ : ∀ {Γ} → Γ ⊢ ¬ ⊤ → Γ ⊢ ⊥
+postulate ¬-⊤₂ : ∀ {Γ} → Γ ⊢ ⊤ → Γ ⊢ ¬ ⊥
 
-postulate ¬-⊥ : ∀ {Γ : Ctxt} → Γ ⊢ ¬ ⊥ → Γ ⊢ ⊤
-postulate ¬-⊥₂ : ∀ {Γ : Ctxt} → Γ ⊢ ⊥ → Γ ⊢ ¬ ⊤
+postulate ¬-⊥ : ∀ {Γ} → Γ ⊢ ¬ ⊥ → Γ ⊢ ⊤
+postulate ¬-⊥₂ : ∀ {Γ} → Γ ⊢ ⊥ → Γ ⊢ ¬ ⊤
 
 
 ∧-comm  : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ∧ ψ → Γ ⊢ ψ ∧ φ
 ∧-comm {Γ} {φ}{ψ} seq = ∧-intro (∧-proj₂ seq) (∧-proj₁ seq)
 
-postulate ∨-equiv : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ∨ ψ → Γ ⊢ ¬ (¬ φ ∧ ¬ ψ)
-postulate ∨-comm  : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ∨ ψ → Γ ⊢ ψ ∨ φ
+postulate ∨-equiv : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∨ ψ → Γ ⊢ ¬ (¬ φ ∧ ¬ ψ)
+postulate ∨-comm  : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∨ ψ → Γ ⊢ ψ ∨ φ
+
+postulate ∨-assoc₁ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ ((φ ∨ ψ) ∨ ρ) → Γ ⊢ (φ ∨ (ψ ∨ ρ))
+postulate ∨-assoc₂ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ (ψ ∨ ρ)) → Γ ⊢ ((φ ∨ ψ) ∨ ρ)
+
+postulate ∨-pick : ∀ {Γ} {φ ψ ρ} → Γ ⊢ ((φ ∨ ψ) ∨ ρ) → Γ ⊢ (ψ ∨ (φ ∨ ρ))
+postulate ∨-pick₀ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ (ψ ∨ ρ)) → Γ ⊢ (ψ ∨ (φ ∨ ρ))
+
+{- TODO
+∨-pick {Γ} {φ}{ψ}{ρ} seq =
+  ⇒-elim
+  (⇒-intro
+    (∨-elim
+      (∨-intro₁ {!!} {!!} ) -- ρ of assume φ and take care of the context
+      (assume ((ψ ∨ (φ ∨ ρ)))))
+    )
+    seq
+-}
 
 postulate ¬-equiv : ∀ {Γ : Ctxt} {φ} → Γ ⊢ ¬ φ → Γ ⊢ φ ⇒ ⊥
 
