@@ -32,7 +32,7 @@ proof₀ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ (p ∨ (¬ q ∧ p))
+          ∧-proj₂ $ -- ((p ∨ (¬ q ∧ p)) ≟ (p ∨ (¬ q ∧ p)))
             atp-canonicalize $  -- Γ ⊢ (¬ p ∧ (p ∨ (¬ q ∧ p)))
               atp-strip $  -- Γ ⊢ (((p ⇒ q) ⇒ p) ⇒ p)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ (((p ⇒ q) ⇒ p) ⇒ p)
@@ -41,14 +41,14 @@ proof₀ =
           (
           ∧-intro
             (
-            atp-conjunct $  -- Γ ⊢ ¬ p
+            ∧-proj₁ $ -- 5: ¬ p
               atp-canonicalize $  -- Γ ⊢ (¬ p ∧ (p ∨ (¬ q ∧ p)))
                 atp-strip $  -- Γ ⊢ (((p ⇒ q) ⇒ p) ⇒ p)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ (((p ⇒ q) ⇒ p) ⇒ p)
                     atp-neg subgoal₀
             )
             (
-            atp-conjunct $  -- Γ ⊢ ¬ p
+            ∧-proj₁ $ -- 5: ¬ p
               atp-canonicalize $  -- Γ ⊢ (¬ p ∧ (p ∨ (¬ q ∧ p)))
                 atp-strip $  -- Γ ⊢ (((p ⇒ q) ⇒ p) ⇒ p)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ (((p ⇒ q) ⇒ p) ⇒ p)

@@ -36,7 +36,7 @@ proof₀ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ (clause ∨ lit)
+          ∧-proj₂ $ -- ((clause ∨ lit) ≟ (clause ∨ lit))
             atp-canonicalize $  -- Γ ⊢ ((¬ clause ∧ (¬ lit ∨ clause)) ∧ (clause ∨ lit))
               atp-strip $  -- Γ ⊢ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
@@ -45,7 +45,7 @@ proof₀ =
           (
           ∧-intro
             (
-            atp-conjunct $  -- Γ ⊢ ¬ clause
+            ∧-proj₁ $ -- 1: (¬ clause ∧ (¬ lit ∨ clause))
               atp-canonicalize $  -- Γ ⊢ ((¬ clause ∧ (¬ lit ∨ clause)) ∧ (clause ∨ lit))
                 atp-strip $  -- Γ ⊢ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
@@ -55,14 +55,14 @@ proof₀ =
             atp-simplify $  -- Γ ⊢ ¬ lit
               ∧-intro
                 (
-                atp-conjunct $  -- Γ ⊢ (¬ lit ∨ clause)
+                ∧-proj₁ $ -- 1: (¬ clause ∧ (¬ lit ∨ clause))
                   atp-canonicalize $  -- Γ ⊢ ((¬ clause ∧ (¬ lit ∨ clause)) ∧ (clause ∨ lit))
                     atp-strip $  -- Γ ⊢ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                         atp-neg subgoal₀
                 )
                 (
-                atp-conjunct $  -- Γ ⊢ ¬ clause
+                ∧-proj₁ $ -- 1: (¬ clause ∧ (¬ lit ∨ clause))
                   atp-canonicalize $  -- Γ ⊢ ((¬ clause ∧ (¬ lit ∨ clause)) ∧ (clause ∨ lit))
                     atp-strip $  -- Γ ⊢ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ (((lit ⇒ clause) ∧ (lit ∨ clause)) ⇒ clause)

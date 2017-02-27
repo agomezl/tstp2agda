@@ -167,7 +167,7 @@ atp-canonicalize {Γ} {¬ (φ ⇒ φ₁)} = atp-step (λ _ → canonicalize (¬ 
 
 -- impl-neg
 atp-canonicalize {Γ} {¬ ⊤} = ¬-⊤
-atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥
+atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥₁
 atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
 
 -- Negate inference.
@@ -234,6 +234,7 @@ atp-pick {Γ} {φ ⇒ φ₁} ω seq = id seq
 atp-pick {Γ} {φ ⇔ φ₁} ω seq = id seq
 atp-pick {Γ} {¬ φ} ω seq = id seq
 
+--
 
 atp-resolve₀ : {Γ : Ctxt} {L C D : Prop} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D
 atp-resolve₀ {Γ} {L}{C}{D} seq₁ seq₂ =
@@ -293,6 +294,10 @@ atp-resolve₈ seq₁ seq₂ = ¬-elim seq₂ seq₁
 atp-resolve₉ : {Γ : Ctxt} {φ : Prop} → Γ ⊢ ¬ φ → Γ ⊢ φ → Γ ⊢ ⊥
 atp-resolve₉ = ¬-elim
 
+
+swap-seq : ∀ {Γ} {φ ψ} → Γ ⊢ φ → Γ ⊢ ψ → Γ ⊢ ψ → Γ ⊢ φ
+swap-seq seq₁ seq₂ = λ _ → seq₁
+
 -- Simplify inference.
 
 simplify : Prop → Prop
@@ -327,5 +332,5 @@ atp-strip {Γ} {(φ₁ ⇒ (φ₂ ⇒ φ₃))} =
   atp-step (λ _ → φ₁ ∧ strip (φ₂ ⇒ φ₃))
 -- atp-strip {Γ} {¬ (φ ⇒ φ₁)} = id
 atp-strip {Γ} {¬ ⊤} = ¬-⊤
-atp-strip {Γ} {¬ ⊥} = ¬-⊥
+atp-strip {Γ} {¬ ⊥} = ¬-⊥₁
 atp-strip {Γ} {φ} seq = id (atp-step (λ _ → strip φ) seq)

@@ -39,7 +39,7 @@ proof₀ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ (¬ x ∨ y)
+          ∧-proj₂ $ -- ((¬ x ∨ y) ≟ (¬ x ∨ y))
             atp-canonicalize $  -- Γ ⊢ (((¬ y ∧ ¬ z) ∧ x) ∧ (¬ x ∨ y))
               atp-strip $  -- Γ ⊢ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
@@ -48,14 +48,14 @@ proof₀ =
           (
           ∧-intro
             (
-            atp-conjunct $  -- Γ ⊢ x
+            ∧-proj₁ $ -- 1: ((¬ y ∧ ¬ z) ∧ x)
               atp-canonicalize $  -- Γ ⊢ (((¬ y ∧ ¬ z) ∧ x) ∧ (¬ x ∨ y))
                 atp-strip $  -- Γ ⊢ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
                     atp-neg subgoal₀
             )
             (
-            atp-conjunct $  -- Γ ⊢ ¬ y
+            ∧-proj₁ $ -- 1: ((¬ y ∧ ¬ z) ∧ x)
               atp-canonicalize $  -- Γ ⊢ (((¬ y ∧ ¬ z) ∧ x) ∧ (¬ x ∨ y))
                 atp-strip $  -- Γ ⊢ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ (((x ⇒ y) ∧ ¬ (y ∨ z)) ⇒ ¬ x)

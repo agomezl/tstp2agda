@@ -39,7 +39,7 @@ proof₀ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ (¬ p ∨ (q ∧ r))
+          ∧-proj₁ $ -- 1: (((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r))
             atp-canonicalize $  -- Γ ⊢ ((((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
               atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
@@ -48,14 +48,14 @@ proof₀ =
           (
           ∧-intro
             (
-            atp-conjunct $  -- Γ ⊢ p
+            ∧-proj₁ $ -- 1: (((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r))
               atp-canonicalize $  -- Γ ⊢ ((((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
                 atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
                     atp-neg subgoal₀
             )
             (
-            atp-conjunct $  -- Γ ⊢ ¬ q
+            ∧-proj₁ $ -- 1: (((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r))
               atp-canonicalize $  -- Γ ⊢ ((((¬ q ∧ p) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
                 atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ p) ⇒ q)
@@ -70,7 +70,7 @@ proof₁ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ (¬ r ∨ (p ∧ q))
+          ∧-proj₂ $ -- ((¬ r ∨ (p ∧ q)) ≟ (¬ r ∨ (p ∧ q)))
             atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
               atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
@@ -82,14 +82,14 @@ proof₁ =
             atp-simplify $  -- Γ ⊢ r
               ∧-intro
                 (
-                atp-conjunct $  -- Γ ⊢ (¬ q ∨ r)
+                ∧-proj₁ $ -- 1: (((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r))
                   atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
                     atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                         atp-neg subgoal₁
                 )
                 (
-                atp-conjunct $  -- Γ ⊢ q
+                ∧-proj₁ $ -- 1: (((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r))
                   atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
                     atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
@@ -99,14 +99,14 @@ proof₁ =
             (
             ∧-intro
               (
-              atp-conjunct $  -- Γ ⊢ ¬ p
+              ∧-proj₁ $ -- 1: (((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r))
                 atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
                   atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                     assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                       atp-neg subgoal₁
               )
               (
-              atp-conjunct $  -- Γ ⊢ q
+              ∧-proj₁ $ -- 1: (((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r))
                 atp-canonicalize $  -- Γ ⊢ ((((¬ p ∧ q) ∧ (¬ p ∨ (q ∧ r))) ∧ (¬ q ∨ r)) ∧ (¬ r ∨ (p ∧ q)))
                   atp-strip $  -- Γ ⊢ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)
                     assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((q ⇒ r) ∧ (r ⇒ (p ∧ q))) ∧ (p ⇒ (q ∧ r))) ∧ q) ⇒ p)

@@ -1,3 +1,4 @@
+
 open import Data.Nat using (ℕ)
 
 module Data.FOL.Deep.Theorems (n : ℕ) where
@@ -12,7 +13,7 @@ postulate id : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ φ
 postulate ¬-⊤ : ∀ {Γ} → Γ ⊢ ¬ ⊤ → Γ ⊢ ⊥
 postulate ¬-⊤₂ : ∀ {Γ} → Γ ⊢ ⊤ → Γ ⊢ ¬ ⊥
 
-postulate ¬-⊥ : ∀ {Γ} → Γ ⊢ ¬ ⊥ → Γ ⊢ ⊤
+postulate ¬-⊥₁ : ∀ {Γ} → Γ ⊢ ¬ ⊥ → Γ ⊢ ⊤
 postulate ¬-⊥₂ : ∀ {Γ} → Γ ⊢ ⊥ → Γ ⊢ ¬ ⊤
 
 
@@ -189,6 +190,7 @@ lem2 {Γ} {φ}{ψ} seq =
 
 
 postulate impl-pos : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ⇒ ψ → Γ ⊢  ¬ φ ∨ ψ
+postulate impl-equiv : ∀ {Γ} {φ ψ} → Γ ⊢ (φ ⇒ ψ) ⇔ (¬ φ ∨ ψ)
 postulate impl-neg : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ (φ ⇒ ψ) → Γ ⊢ φ ∧ ¬ ψ
 
 -- Translation of Formulas to Negation Normal Form.

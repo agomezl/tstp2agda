@@ -1,3 +1,4 @@
+-- Syntax.agda module
 
 open import Data.Nat using (ℕ; zero; suc)
 
@@ -5,8 +6,8 @@ open import Data.Nat using (ℕ; zero; suc)
 --                              ↓
 module Data.FOL.Deep.Syntax (n : ℕ) where
 
-open import Data.Bool using (Bool; true; false; not)
 open import Data.Bool renaming (_∧_ to _&&_; _∨_ to _||_)
+open import Data.Bool using (Bool; true; false; not)
 open import Data.Fin  using (Fin; zero; suc; #_)
 open import Data.List using (List; []; _∷_; _++_; [_])
 open import Data.Vec  using (Vec; lookup)
@@ -17,18 +18,20 @@ open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 Type = Set
 
 -- Propositions
+
 data Prop : Type where
   Var              : Fin n → Prop
   ⊤ ⊥              : Prop
-  _∧_ _∨_ _⇒_ _⇔_ : (φ ψ  : Prop) → Prop
+  _∧_ _∨_ _⇒_ _⇔_ : (φ ψ : Prop) → Prop
   ¬_               : (φ : Prop) → Prop
 
 -- Precedence of operators
 infix  11 ¬_
-infixl 8  _∧_ _∨_
-infixr 7  _⇒_ _⇔_
+infixl 8 _∧_ _∨_
+infixr 7 _⇒_ _⇔_
 
 -- Context: list (set) of premises
+
 Ctxt : Type
 Ctxt = List Prop
 
@@ -45,12 +48,12 @@ _⨆_ : Ctxt → Ctxt → Ctxt
 
 infix 4 _∈_
 data _∈_ (φ : Prop) : Ctxt → Type where
-  here    : ∀ {Γ} → φ ∈ Γ , φ
-  there   : ∀ {Γ} → (ψ : Prop) → φ ∈ Γ → φ ∈ Γ , ψ
-  ⨆-ext   : ∀ {Γ} → (Δ : Ctxt) → φ ∈ Γ → φ ∈ Γ ⨆ Δ
+  here  : ∀ {Γ} → φ ∈ Γ , φ
+  there : ∀ {Γ} → (ψ : Prop) → φ ∈ Γ → φ ∈ Γ , ψ
+  ⨆-ext : ∀ {Γ} → (Δ : Ctxt) → φ ∈ Γ → φ ∈ Γ ⨆ Δ
 
 _⊆_ : Ctxt → Ctxt → Type
-Γ ⊆ Η = ∀ {φ : Prop} → φ ∈ Γ → φ ∈ Η
+Γ ⊆ Η = ∀ {φ} → φ ∈ Γ → φ ∈ Η
 
 infix 3 _⊢_
 data _⊢_ : (Γ : Ctxt)(φ : Prop) → Type where
@@ -91,9 +94,6 @@ data _⊢_ : (Γ : Ctxt)(φ : Prop) → Type where
   ∧-proj₂  : ∀ {Γ} {φ ψ}                  → Γ ⊢ φ ∧ ψ
                                           → Γ ⊢ ψ
 
-  PEM      : ∀ {Γ} {φ}                    → Γ ⊢ φ ∨ ¬ φ
-
-
   ∨-intro₁ : ∀ {Γ} {φ} → (ψ : Prop)       → Γ ⊢ φ
                                           → Γ ⊢ φ ∨ ψ
 
@@ -104,16 +104,22 @@ data _⊢_ : (Γ : Ctxt)(φ : Prop) → Type where
                                           → Γ , ψ ⊢ χ
                                           → Γ , φ ∨ ψ ⊢ χ
 
+  PEM      : ∀ {Γ} {φ}                    → Γ ⊢ φ ∨ ¬ φ
+
   ⇒-intro  : ∀ {Γ} {φ ψ}                  → Γ , φ ⊢ ψ
                                           → Γ ⊢ φ ⇒ ψ
 
   ⇒-elim   : ∀ {Γ} {φ ψ}                  → Γ ⊢ φ ⇒ ψ → Γ ⊢ φ
                                           → Γ ⊢ ψ
+
   ⇔-intro  : ∀ {Γ} {φ ψ}                  → Γ , φ ⊢ ψ
                                           → Γ , ψ ⊢ φ
                                           → Γ ⊢ φ ⇔ ψ
+
   ⇔-elim₁ : ∀ {Γ} {φ ψ}                  → Γ ⊢ φ → Γ ⊢ φ ⇔ ψ
                                          → Γ ⊢ ψ
+
   ⇔-elim₂ : ∀ {Γ} {φ ψ}                  → Γ ⊢ ψ → Γ ⊢ φ ⇔ ψ
                                          → Γ ⊢ φ
 
+  atp-step : ∀ {Γ} {φ} → (f : Prop → Prop) → Γ ⊢ φ → Γ ⊢ f φ

@@ -48,7 +48,7 @@ proof₁ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ (y ∨ z)
+          ∧-proj₂ $ -- ((y ∨ z) ≟ (y ∨ z))
             atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ ¬ y)) ∧ (y ∨ z))
               atp-strip $  -- Γ ⊢ ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)
@@ -60,14 +60,14 @@ proof₁ =
             atp-simplify $  -- Γ ⊢ ¬ y
               ∧-intro
                 (
-                atp-conjunct $  -- Γ ⊢ (¬ x ∨ ¬ y)
+                ∧-proj₁ $ -- 1: ((¬ z ∧ x) ∧ (¬ x ∨ ¬ y))
                   atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ ¬ y)) ∧ (y ∨ z))
                     atp-strip $  -- Γ ⊢ ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)
                         atp-neg subgoal₁
                 )
                 (
-                atp-conjunct $  -- Γ ⊢ x
+                ∧-proj₁ $ -- 1: ((¬ z ∧ x) ∧ (¬ x ∨ ¬ y))
                   atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ ¬ y)) ∧ (y ∨ z))
                     atp-strip $  -- Γ ⊢ ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)
@@ -75,7 +75,7 @@ proof₁ =
                 )
             )
             (
-            atp-conjunct $  -- Γ ⊢ ¬ z
+            ∧-proj₁ $ -- 1: ((¬ z ∧ x) ∧ (¬ x ∨ ¬ y))
               atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ ¬ y)) ∧ (y ∨ z))
                 atp-strip $  -- Γ ⊢ ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ∧ (y ∨ z)) ∧ ¬ (x ∧ y)) ∧ x) ⇒ z)

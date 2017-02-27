@@ -35,7 +35,7 @@ proof₀ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ ((¬ x ∨ ¬ y) ∨ z)
+          ∧-proj₂ $ -- (((¬ x ∨ ¬ y) ∨ z) ≟ ((¬ x ∨ ¬ y) ∨ z))
             atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ y)) ∧ ((¬ x ∨ ¬ y) ∨ z))
               atp-strip $  -- Γ ⊢ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
@@ -44,7 +44,7 @@ proof₀ =
           (
           ∧-intro
             (
-            atp-conjunct $  -- Γ ⊢ x
+            ∧-proj₁ $ -- 1: ((¬ z ∧ x) ∧ (¬ x ∨ y))
               atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ y)) ∧ ((¬ x ∨ ¬ y) ∨ z))
                 atp-strip $  -- Γ ⊢ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
@@ -56,14 +56,14 @@ proof₀ =
               atp-simplify $  -- Γ ⊢ y
                 ∧-intro
                   (
-                  atp-conjunct $  -- Γ ⊢ (¬ x ∨ y)
+                  ∧-proj₁ $ -- 1: ((¬ z ∧ x) ∧ (¬ x ∨ y))
                     atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ y)) ∧ ((¬ x ∨ ¬ y) ∨ z))
                       atp-strip $  -- Γ ⊢ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
                         assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
                           atp-neg subgoal₀
                   )
                   (
-                  atp-conjunct $  -- Γ ⊢ x
+                  ∧-proj₁ $ -- 1: ((¬ z ∧ x) ∧ (¬ x ∨ y))
                     atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ y)) ∧ ((¬ x ∨ ¬ y) ∨ z))
                       atp-strip $  -- Γ ⊢ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
                         assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
@@ -71,7 +71,7 @@ proof₀ =
                   )
               )
               (
-              atp-conjunct $  -- Γ ⊢ ¬ z
+              ∧-proj₁ $ -- 1: ((¬ z ∧ x) ∧ (¬ x ∨ y))
                 atp-canonicalize $  -- Γ ⊢ (((¬ z ∧ x) ∧ (¬ x ∨ y)) ∧ ((¬ x ∨ ¬ y) ∨ z))
                   atp-strip $  -- Γ ⊢ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)
                     assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((x ⇒ (y ⇒ z)) ∧ (x ⇒ y)) ∧ x) ⇒ z)

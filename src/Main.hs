@@ -187,7 +187,7 @@ subIndex '8' = '₈'
 subIndex '9' = '₉'
 subIndex s   = s
 
-stdName :: String → String
+stdName ∷ String → String
 stdName nm = map subIndex $ concat $ splitOn "-" nm
 
 showDeepFormula ∷ Formula → String
@@ -271,7 +271,7 @@ printProofSubgoal no axioms subgoals goal rmap (tree:strees) = do
   let strNo       = stdName $ show no
   let proofName   = stdName $ "proof" ++ strNo
   let subgoalName = "subgoal" ++ strNo
-  let proof :: String
+  let proof ∷ String
       proof = concat
         [ proofName , " : Γ ⊢ " , subgoalName , "\n"
         , proofName , " =\n"
@@ -330,22 +330,41 @@ printSteps sname n [Root Simplify tag subtree] dict goal axioms =
         ]
 
 printSteps sname n [Root Resolve tag ((left@(Root _ fTag _)):(right@(Root _ gTag _)):_)] dict goal axioms =
-  concat
-    [ getIdent n , resolveCase
-    , getIdent (n+1)
-    , getIdent (n+1) , resolveThis f g ϕ
-    ]
+  (concat
+    [ getIdent n , resolveCase , "\n" ]) ++
+    if not swap
+      then concat
+          [ getIdent (n+1) , "(\n"
+          , getIdent (n+1) , printSteps sname (n+2) [left] dict goal axioms
+          , getIdent (n+1) , ")\n"
+          , getIdent (n+1) , "(\n"
+          , getIdent (n+1) , printSteps sname (n+2) [right] dict goal axioms
+          , getIdent (n+1) , ")\n"
+          ]
+      else concat
+          [ getIdent (n+1) , "(\n"
+          , getIdent (n+1) , printSteps sname (n+2) [right] dict goal axioms
+          , getIdent (n+1) , ")\n"
+          , getIdent (n+1) , "(\n"
+          , getIdent (n+1) , printSteps sname (n+2) [left] dict goal axioms
+          , getIdent (n+1) , ")\n"
+          ]
+
     where
       ϕ  ∷ Formula
       ϕ = formula $ fromJust $ Map.lookup tag dict
 
-      --  (f)       (g)
-      -- /----\   /-----\
-      -- ϕ₁ ∨ ℓ   ϕ₂ ∨ ¬ ℓ
+      --  (f)      (g)
+      --  _|_      _|_
+      -- /   \    /    \
+      -- ϕ₁ ∨ ℓ  ϕ₂ ∨ ¬ ℓ
       -- ---------------- resolve ℓ
       --     ϕ₁ ∨ ϕ₂
+      --     \____/
+      --        |
+      ---       ϕ
 
-      f , g∷ Formula
+      f , g ∷ Formula
       f = formula $ fromJust $ Map.lookup fTag dict
       g = formula $ fromJust $ Map.lookup gTag dict
 
@@ -354,13 +373,34 @@ printSteps sname n [Root Resolve tag ((left@(Root _ fTag _)):(right@(Root _ gTag
               sourceInfo = source $ fromJust $ Map.lookup tag dict
           in getResolveLiteral $ sourceInfo
 
+      resolveCase ∷ String
+      swap ∷ Bool
+      (resolveCase, swap) = atpResolve f g ϕ
 
-      resolveThis :: Formula → Formula → Formula → String
-      resolveThis f g  (PredApp (AtomicWord "$false") [])
-        | f == ((:~:) g) = "atp-resolve₈"
-        | ((:~:) f) == g = "atp-resolve₉"
-      resolveThis f g (BinOp ϕ₁ (:|:) ϕ₂) = ""
-      resolveThis _ _ (BinOp ϕ₁ _ ϕ₂) = ""
+      atpResolve ∷ Formula → Formula → Formula → (String, Bool)
+      atpResolve f g  (PredApp (AtomicWord "$false") [])
+        | f == ((:~:) g) = ("atp-resolve₈", False)
+        | ((:~:) f) == g = ("atp-resolve₈", True)
+      -- I guess l literal is always positive.
+      atpResolve (BinOp f₁ (:|:) f₂) (BinOp g₁ (:|:) g₂) l
+        | f₁ == l && g₁ == ((:~:) l) = ("atp-resolve₀", False)
+        | f₂ == l && g₂ == ((:~:) l) = ("atp-resolve₁", False)
+        | f₁ == l && g₂ == ((:~:) l) = ("atp-resolve₂", False)
+        | f₂ == l && g₁ == ((:~:) l) = ("atp-resolve₃", False)
+        | otherwise = ("id -- resolve 1.", False)
+      atpResolve (BinOp f₁ (:|:) f₂) g l
+        | f₁ == ((:~:) l) && g == l = ("atp-resolve₄", False)
+        | f₂ == ((:~:) l) && g == l = ("atp-resolve₅", False)
+        | f₂ == l && g == ((:~:) l) = ("atp-resolve₆", False)
+        | f₁ == l && g == ((:~:) l) = ("atp-resolve₇", False)
+        | otherwise = ("id -- resolve 2.", False)
+      atpResolve f (BinOp g₁ (:|:) g₂) l
+        | f == l && g₁ == ((:~:) l) = ("atp-resolve₄", True)
+        | f == l && g₂ == ((:~:) l) = ("atp-resolve₅", True)
+        | f == ((:~:) l) && g₂ == l = ("atp-resolve₆", True)
+        | f == ((:~:) l) && g₁ == l = ("atp-resolve₇", True)
+        | otherwise = ("id -- resolve 3.", False)
+      atpResolve _ _ _ = ("id -- resolve 4.", False)
 
       getResolveLiteral ∷ Source → Formula
       getResolveLiteral
@@ -368,22 +408,7 @@ printSteps sname n [Root Resolve tag ((left@(Root _ fTag _)):(right@(Root _ gTag
           PredApp l []
       getResolveLiteral _ = (PredApp (AtomicWord "$false") [])
 
-      resolveCase ∷ String
-      resolveCase = ""
 
-
-      atpResolve ∷ Formula → Formula → String
-      atpResolve (BinOp f₁ (:|:) f₂) ϕ
-        | f₂ /= ϕ = "∧-proj₁ $" ++ if null next then "\n" else " " ++ next
-        | otherwise = "∧-proj₂ $ -- (" ++ showDeepFormula f₂ ++" ≟ " ++ showDeepFormula ϕ ++ ")\n"
-        where
-          next ∷ String
-          next = atpResolve f₁ ϕ
-          atpResolve fm@(BinOp f₁ _ f₂) ϕ = "-- 1: "++showDeepFormula fm ++ "\n"
-          atpResolve fm@(InfixPred _ _ _) _ ="-- 2: " ++ showDeepFormula fm ++ "\n"
-          atpResolve fm@(PredApp _ _) _ = "-- 3: " ++ showDeepFormula fm++ "\n"
-          atpResolve fm@(Quant _ _ _) _ = "-- 4: " ++ showDeepFormula fm++ "\n"
-          atpResolve fm@((:~:) _) _ = "-- 5: " ++ showDeepFormula fm++ "\n"
 
 printSteps sname n [Root Conjunct tag subtree@[Root _ fms _]] dict goal axioms =
  concat
@@ -436,7 +461,7 @@ printSteps sname n [Leaf Axiom gname] dict goal axioms =
 printSteps _ n _ _ _ _ = getIdent n ++ "? -- no supported yet\n"
 
 
-andIntroSubgoals :: Ident → Int → [F] → String
+andIntroSubgoals ∷ Ident → Int → [F] → String
 andIntroSubgoals m n []       = ""
 andIntroSubgoals m n [x]      = getIdent m ++ "subgoal" ++ stdName (show n)
 andIntroSubgoals m n (x:y:[]) =
@@ -453,7 +478,7 @@ andIntroSubgoals m n (x:xs) =
     , getIdent m, ")\n"
     ]
 
-printProofGoal :: [F] → F → ProofMap → [ProofTree] → IO ()
+printProofGoal ∷ [F] → F → ProofMap → [ProofTree] → IO ()
 printProofGoal [] _ _ _  = putStrLn "-- Proof not available.\n"
 printProofGoal [s] _ _ _ = putStrLn $
   concat

@@ -36,7 +36,7 @@ proof₀ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ (p ∨ q)
+          ∧-proj₂ $ -- ((p ∨ q) ≟ (p ∨ q))
             atp-canonicalize $  -- Γ ⊢ (((¬ q ∧ (¬ p ∨ q)) ∧ (¬ q ∨ p)) ∧ (p ∨ q))
               atp-strip $  -- Γ ⊢ ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
@@ -48,14 +48,14 @@ proof₀ =
             atp-simplify $  -- Γ ⊢ ¬ p
               ∧-intro
                 (
-                atp-conjunct $  -- Γ ⊢ (¬ p ∨ q)
+                ∧-proj₁ $ -- 1: ((¬ q ∧ (¬ p ∨ q)) ∧ (¬ q ∨ p))
                   atp-canonicalize $  -- Γ ⊢ (((¬ q ∧ (¬ p ∨ q)) ∧ (¬ q ∨ p)) ∧ (p ∨ q))
                     atp-strip $  -- Γ ⊢ ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
                         atp-neg subgoal₀
                 )
                 (
-                atp-conjunct $  -- Γ ⊢ ¬ q
+                ∧-proj₁ $ -- 1: ((¬ q ∧ (¬ p ∨ q)) ∧ (¬ q ∨ p))
                   atp-canonicalize $  -- Γ ⊢ (((¬ q ∧ (¬ p ∨ q)) ∧ (¬ q ∨ p)) ∧ (p ∨ q))
                     atp-strip $  -- Γ ⊢ ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
@@ -63,7 +63,7 @@ proof₀ =
                 )
             )
             (
-            atp-conjunct $  -- Γ ⊢ ¬ q
+            ∧-proj₁ $ -- 1: ((¬ q ∧ (¬ p ∨ q)) ∧ (¬ q ∨ p))
               atp-canonicalize $  -- Γ ⊢ (((¬ q ∧ (¬ p ∨ q)) ∧ (¬ q ∨ p)) ∧ (p ∨ q))
                 atp-strip $  -- Γ ⊢ ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ ((((p ∨ q) ∧ (¬ p ∨ q)) ∧ (p ∨ ¬ q)) ⇒ q)

@@ -35,7 +35,7 @@ proof₀ =
       atp-simplify $  -- Γ ⊢ ⊥
         ∧-intro
           (
-          atp-conjunct $  -- Γ ⊢ ((p ∨ r) ∨ (¬ p ∧ ¬ q))
+          ∧-proj₂ $ -- (((p ∨ r) ∨ (¬ p ∧ ¬ q)) ≟ ((p ∨ r) ∨ (¬ p ∧ ¬ q)))
             atp-canonicalize $  -- Γ ⊢ (((¬ p ∧ ¬ r) ∧ q) ∧ ((p ∨ r) ∨ (¬ p ∧ ¬ q)))
               atp-strip $  -- Γ ⊢ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
                 assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
@@ -44,7 +44,7 @@ proof₀ =
           (
           ∧-intro
             (
-            atp-conjunct $  -- Γ ⊢ ¬ p
+            ∧-proj₁ $ -- 1: ((¬ p ∧ ¬ r) ∧ q)
               atp-canonicalize $  -- Γ ⊢ (((¬ p ∧ ¬ r) ∧ q) ∧ ((p ∨ r) ∨ (¬ p ∧ ¬ q)))
                 atp-strip $  -- Γ ⊢ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
                   assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
@@ -53,7 +53,7 @@ proof₀ =
             (
             ∧-intro
               (
-              atp-conjunct $  -- Γ ⊢ ¬ r
+              ∧-proj₁ $ -- 1: ((¬ p ∧ ¬ r) ∧ q)
                 atp-canonicalize $  -- Γ ⊢ (((¬ p ∧ ¬ r) ∧ q) ∧ ((p ∨ r) ∨ (¬ p ∧ ¬ q)))
                   atp-strip $  -- Γ ⊢ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
                     assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
@@ -62,14 +62,14 @@ proof₀ =
               (
               ∧-intro
                 (
-                atp-conjunct $  -- Γ ⊢ ¬ p
+                ∧-proj₁ $ -- 1: ((¬ p ∧ ¬ r) ∧ q)
                   atp-canonicalize $  -- Γ ⊢ (((¬ p ∧ ¬ r) ∧ q) ∧ ((p ∨ r) ∨ (¬ p ∧ ¬ q)))
                     atp-strip $  -- Γ ⊢ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
                         atp-neg subgoal₀
                 )
                 (
-                atp-conjunct $  -- Γ ⊢ q
+                ∧-proj₁ $ -- 1: ((¬ p ∧ ¬ r) ∧ q)
                   atp-canonicalize $  -- Γ ⊢ (((¬ p ∧ ¬ r) ∧ q) ∧ ((p ∨ r) ∨ (¬ p ∧ ¬ q)))
                     atp-strip $  -- Γ ⊢ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
                       assume {Γ = Γ} $  -- Γ ⊢ ¬ (((((p ∨ q) ⇒ (p ∨ r)) ∧ ¬ p) ∧ q) ⇒ r)
