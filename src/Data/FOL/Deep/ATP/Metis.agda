@@ -6,7 +6,7 @@ open import Data.FOL.Deep.Syntax n
 open import Data.FOL.Deep.Theorems n
 
 open import Data.Fin
-open import Data.Fin.Properties
+open import Data.Fin.Properties using (_≟_)
 open import Data.List using (List; []; _∷_; _++_; [_] ; foldl)
 open import Data.Bool
   using (Bool ; if_then_else_ ; true ; false)
@@ -16,7 +16,8 @@ open import Function using (_$_)
 
 open import Relation.Binary.PropositionalEquality as PropEq
   using (_≡_; refl)
-open import Relation.Nullary.Decidable
+
+open import Relation.Nullary.Decidable using (⌊_⌋)
 
 
 $false : Prop
@@ -36,6 +37,9 @@ equal-f (φ₁ ∨ φ₂) (ψ₁ ∨ ψ₂) =
   ((equal-f φ₁ ψ₁) && (equal-f φ₂ ψ₂)) || ((equal-f φ₁ ψ₂) && (equal-f φ₂ ψ₁))
 equal-f (φ₁ ⇒ φ₂) (ψ₁ ⇒ ψ₂) = (equal-f φ₁ ψ₁) && (equal-f φ₂ ψ₂)
 equal-f φ ψ = false
+
+
+postulate thm-equal : ∀ {Γ} {φ ψ} → Γ ⊢ φ → Γ ⊢ ψ
 
 
 -- -----------------------------------------------------------------------------
@@ -100,7 +104,6 @@ flatEquiv fm = flat [] [ fm ]
 
 strip-⇔ : Prop → Prop
 strip-⇔ fm = listMkEquiv $ stripEquiv fm
-
 
 -- split goal.
 
@@ -167,106 +170,70 @@ atp-canonicalize {Γ} {¬ ⊤} = ¬-⊤
 atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥
 atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
 
--- Conjuct inference.
-intro-equal : {Γ : Ctxt} {φ ψ : Prop} → Γ ⊢ φ → (equal-f φ ψ) ≡ true → Γ ⊢ ψ
-intro-equal {Γ} {φ} {ψ} x = λ _ → atp-step (λ _ → ψ) x
-
-atp-conjunct : {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → (ψ : Prop) → Γ ⊢ ψ
-atp-conjunct {Γ} {φ = (φ₁ ∧ φ₂)} seq ψ =
-  if (equal-f φ₁ ψ)
-    then ∧-proj₁ {Γ = Γ} {ψ = φ₂}
-      (atp-step (λ _ → ψ ∧ φ₂) seq)
-    else atp-conjunct (∧-proj₂ seq) ψ
-atp-conjunct {Γ} {φ} seq ψ = atp-step (λ _ → ψ) seq
-
 -- Negate inference.
 atp-neg : Prop → Prop
 atp-neg φ = ¬ φ
 
-remove₀ : Prop → Prop → Prop
-{-
-remove₀ φ@(((a ∨ b) ∨ c) ∨ d) e with (equal-f d e)
-... | true  = d ∨ ((a ∨ b) ∨ c)
-... | false with (equal-f c e)
-...         | true  = c ∨ ((a ∨ b) ∨ d)
-...         | false with (equal-f b e)
-...                  | true  = b ∨ ((a ∨ c) ∨ d)
-...                  | false with (equal-f a e)
-...                           | true  = a ∨ ((b ∨ c) ∨ d)
-...                           | false = φ
--}
-remove₀ φ@((a ∨ b) ∨ c) d with (equal-f c d)
-... | true = c ∨ (a ∨ b)
-... | false with (equal-f b d)
-...          | true  = b ∨ (a ∨ c)
-...          | false with (equal-f a d)
-...                   | true  = a ∨ (b ∨ c)
-...                   | false = φ
-remove₀ (a ∨ b) e with (equal-f b e)
-... | true = b ∨ a
-... | false = (remove₀ a e) ∨ b
-remove₀ φ _ = φ
 
+conjunct : Prop → Prop → Prop
+conjunct (φ ∧ ψ) ω with (equal-f φ ω) | (equal-f ψ ω)
+... | true | _ = φ
+... | false | true = ψ
+... | false | false = conjunct φ ω
+conjunct φ ω = φ
 
-proof-remove₀ : ∀ {Γ} {φ ψ} → Γ ⊢ (φ ∨ ψ) → (e : Prop) → Γ ⊢ (remove₀ (φ ∨ ψ) e)
-proof-remove₀ {Γ} {((φ₁ ∨ φ₂) ∨ φ₃)} {ψ} seq e with (equal-f ψ e)
-... | true = ∨-comm seq
-... | false with (equal-f φ₃ e)
-...         | true = ∨-pick seq
-...         | false with (equal-f φ₂ e)
-...                 | true  = {!!}
-...                 | false = {!!}
-proof-remove₀ {Γ} {(φ₁@(Var _) ∨ φ₂)}{ψ} seq e with (equal-f ψ e)
-... | true = ∨-comm seq
-... | false with (equal-f φ₂ e)
-...         | true  = ∨-pick seq
-...         | false with (equal-f φ₁ e)
-...                 | true = ∨-assoc₁ seq
-...                 | false = id seq
-proof-remove₀ {Γ} {(Var _)}{ψ} seq e  with (equal-f ψ e)
-... | true  = ∨-comm seq
-... | false = id seq
-proof-remove₀ {Γ} {φ}{ψ} seq e = {!!}
-
-
-{-
-remove : Prop → Prop → Prop
-remove φ@(((a ∨ b) ∨ c) ∨ d) e with (equal-f d e)
-... | true  = d ∨ ((a ∨ b) ∨ c)
-... | false with (equal-f c e)
-...         | true  = c ∨ ((a ∨ b) ∨ d)
-...         | false with (equal-f b e)
-...                  | true  = b ∨ ((a ∨ c) ∨ d)
-...                  | false with (equal-f a e)
-...                           | true  = a ∨ ((b ∨ c) ∨ d)
-...                           | false = φ
-remove φ@((a ∨ b) ∨ c) d with (equal-f c d)
-... | true = c ∨ (a ∨ b)
-... | false with (equal-f b d)
-...          | true  = b ∨ (a ∨ c)
-...          | false with (equal-f a d)
-...                   | true  = a ∨ (b ∨ c)
-...                   | false = φ
-remove (a ∨ b@(Var x)) c with (equal-f b c)
-... | true = b ∨ a
-... | false = (remove a c) ∨ b
-remove φ h = φ
--}
-
-{-
-pre : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∨ ψ → (ρ : Prop) → Γ ⊢ (remove (φ ∨ ψ) ρ)
-pre {Γ}{φ}{Var x} seq ρ with (equal-f (Var x) ρ)
-... | true with (remove (φ ∨ (Var x)) ρ)
-...         | .(φ ∨ (Var x)) = ?
-...         | (.(Var x) ∨ .φ) = ?
-... | false =  {!!}
-pre {Γ}{φ}{ψ} seq ρ with (equal-f ψ ρ)
-... | true = {!!}
-... | false =  {!!}
--}
+atp-conjunct : ∀ {Γ} {φ} → (ω : Prop) → Γ ⊢ φ → Γ ⊢ conjunct φ ω
+atp-conjunct {Γ} {φ ∧ ψ} ω seq with (equal-f φ ω) | (equal-f ψ ω)
+... | true  | _ = ∧-proj₁ seq
+... | false | true  = ∧-proj₂ seq
+... | false | false = atp-conjunct {Γ = Γ} {φ = φ} ω (∧-proj₁ seq)
+atp-conjunct {Γ} {Var x} ω = id
+atp-conjunct {Γ} {⊤} ω = id
+atp-conjunct {Γ} {⊥} ω = id
+atp-conjunct {Γ} {φ ∨ φ₁} ω = id
+atp-conjunct {Γ} {φ ⇒ φ₁} ω = id
+atp-conjunct {Γ} {φ ⇔ φ₁} ω = id
+atp-conjunct {Γ} {¬ φ} ω = id
 
 
 -- Resolve theorems.
+
+
+assoc : Prop → Prop
+assoc ((φ ∨ ψ) ∨ ω) = φ ∨ (ψ ∨ ω)
+assoc φ = φ
+
+pick : Prop → Prop → Prop
+pick (φ ∨ ψ) ω with (equal-f φ ω) | (equal-f ψ ω)
+... | true | _ = φ ∨ ψ
+... | false | true = ψ ∨ φ
+... | false | false = (assoc (pick φ ω) ∨ ψ)
+pick φ ω = φ
+
+atp-pick : ∀ {Γ} {φ} → (ω : Prop) → Γ ⊢ φ → Γ ⊢ pick φ ω
+atp-pick {Γ} {φ ∨ ψ} ω with (equal-f φ ω) | (equal-f ψ ω)
+... | true | _ = id
+... | false | true = ∨-comm
+... | false | false with (pick φ ω)
+... | (φ₁ ∨ φ₂) = atp-step (λ _ → assoc (φ₁ ∨ φ₂) ∨ ψ)
+... | ρ = atp-step (λ _ → assoc ρ ∨ ψ)
+{-
+atp-pick {Γ} {φ ∨ ψ} ω seq =
+  (⇒-elim
+    (⇒-intro
+      (∨-elim {Γ = Γ}
+        (atp-pick {Γ = Γ , φ} {φ = φ ∨ ψ} ω (∨-intro₁ ψ (assume {Γ = Γ} φ)))
+        (atp-pick {Γ = Γ , ψ} {φ = φ ∨ ψ} ω (∨-intro₂ φ (assume {Γ = Γ} ψ)))))
+    seq)
+-}
+atp-pick {Γ} {Var x} ω seq = id seq
+atp-pick {Γ} {⊤} ω seq = id seq
+atp-pick {Γ} {⊥} ω seq = id seq
+atp-pick {Γ} {φ ∧ φ₁} ω seq = id seq
+atp-pick {Γ} {φ ⇒ φ₁} ω seq = id seq
+atp-pick {Γ} {φ ⇔ φ₁} ω seq = id seq
+atp-pick {Γ} {¬ φ} ω seq = id seq
+
 
 atp-resolve₀ : {Γ : Ctxt} {L C D : Prop} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D
 atp-resolve₀ {Γ} {L}{C}{D} seq₁ seq₂ =
