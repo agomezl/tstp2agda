@@ -10,47 +10,41 @@ open import Function using (_$_)
 
 postulate id : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ φ
 
-postulate ¬-⊤ : ∀ {Γ} → Γ ⊢ ¬ ⊤ → Γ ⊢ ⊥
-postulate ¬-⊤₂ : ∀ {Γ} → Γ ⊢ ⊤ → Γ ⊢ ¬ ⊥
+postulate ¬-⊤  : ∀ {Γ} → Γ ⊢ ¬ ⊤ → Γ ⊢ ⊥
+postulate ¬-⊤₂ : ∀ {Γ} → Γ ⊢ ⊤   → Γ ⊢ ¬ ⊥
 
 postulate ¬-⊥₁ : ∀ {Γ} → Γ ⊢ ¬ ⊥ → Γ ⊢ ⊤
-postulate ¬-⊥₂ : ∀ {Γ} → Γ ⊢ ⊥ → Γ ⊢ ¬ ⊤
+postulate ¬-⊥₂ : ∀ {Γ} → Γ ⊢ ⊥   → Γ ⊢ ¬ ⊤
 
 
-∧-comm  : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ∧ ψ → Γ ⊢ ψ ∧ φ
+∧-comm  : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∧ ψ → Γ ⊢ ψ ∧ φ
 ∧-comm {Γ} {φ}{ψ} seq = ∧-intro (∧-proj₂ seq) (∧-proj₁ seq)
 
 postulate ∨-equiv : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∨ ψ → Γ ⊢ ¬ (¬ φ ∧ ¬ ψ)
 postulate ∨-comm  : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∨ ψ → Γ ⊢ ψ ∨ φ
 
-postulate ∨-assoc₁ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ ((φ ∨ ψ) ∨ ρ) → Γ ⊢ (φ ∨ (ψ ∨ ρ))
-postulate ∨-assoc₂ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ (ψ ∨ ρ)) → Γ ⊢ ((φ ∨ ψ) ∨ ρ)
+postulate ∨-assoc₁ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ ψ) ∨ ρ → Γ ⊢ φ ∨ (ψ ∨ ρ)
+postulate ∨-assoc₂ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ φ ∨ (ψ ∨ ρ) → Γ ⊢ (φ ∨ ψ) ∨ ρ
 
-postulate ∨-pick : ∀ {Γ} {φ ψ ρ} → Γ ⊢ ((φ ∨ ψ) ∨ ρ) → Γ ⊢ (ψ ∨ (φ ∨ ρ))
-postulate ∨-pick₀ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ (ψ ∨ ρ)) → Γ ⊢ (ψ ∨ (φ ∨ ρ))
+postulate ∨-pick  : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ ψ) ∨ ρ → Γ ⊢ ψ ∨ (φ ∨ ρ)
 
-{- TODO
-∨-pick {Γ} {φ}{ψ}{ρ} seq =
-  ⇒-elim
-  (⇒-intro
-    (∨-elim
-      (∨-intro₁ {!!} {!!} ) -- ρ of assume φ and take care of the context
-      (assume ((ψ ∨ (φ ∨ ρ)))))
-    )
-    seq
--}
-
-postulate ¬-equiv : ∀ {Γ : Ctxt} {φ} → Γ ⊢ ¬ φ → Γ ⊢ φ ⇒ ⊥
+postulate ¬-equiv : ∀ {Γ} {φ} → Γ ⊢ ¬ φ → Γ ⊢ φ ⇒ ⊥
 
 -- Distribute Laws.
-postulate ∧-dist₁ : ∀ {Γ : Ctxt} {φ ψ σ} → Γ ⊢ (φ ∨ ψ) ∧ σ → Γ ⊢ (φ ∧ σ) ∨ (ψ ∧ σ)
-postulate ∧-dist₂ : ∀ {Γ : Ctxt} {φ ψ σ} → Γ ⊢ (φ ∧ σ) ∨ (ψ ∧ σ) → Γ ⊢ (φ ∨ ψ) ∧ σ
+postulate ∧-dist₁ : ∀ {Γ} {φ ψ σ} → Γ ⊢ (φ ∨ ψ) ∧ σ
+                                  → Γ ⊢ (φ ∧ σ) ∨ (ψ ∧ σ)
 
-postulate ∨-dist₁ : ∀ {Γ : Ctxt} {φ ψ σ} → Γ ⊢ (φ ∧ ψ) ∨ σ → Γ ⊢ (φ ∨ σ) ∧ (ψ ∨ σ)
-postulate ∨-dist₂ : ∀ {Γ : Ctxt} {φ ψ σ} → Γ ⊢ (φ ∨ σ) ∧ (ψ ∨ σ) → Γ ⊢ (φ ∧ ψ) ∨ σ
+postulate ∧-dist₂ : ∀ {Γ} {φ ψ σ} → Γ ⊢ (φ ∧ σ) ∨ (ψ ∧ σ)
+                                  → Γ ⊢ (φ ∨ ψ) ∧ σ
+
+postulate ∨-dist₁ : ∀ {Γ} {φ ψ σ} → Γ ⊢ (φ ∧ ψ) ∨ σ
+                                  → Γ ⊢ (φ ∨ σ) ∧ (ψ ∨ σ)
+
+postulate ∨-dist₂ : ∀ {Γ} {φ ψ σ} → Γ ⊢ (φ ∨ σ) ∧ (ψ ∨ σ)
+                                  → Γ ⊢ (φ ∧ ψ) ∨ σ
 
 -- An example using a proof of x ∈ Γ
-swap : ∀ {Γ : Ctxt} {φ ψ γ} → (Γ , φ , ψ) ⊢ γ → Γ , ψ , φ ⊢ ψ
+swap : ∀ {Γ} {φ ψ γ} → (Γ , φ , ψ) ⊢ γ → Γ , ψ , φ ⊢ ψ
 swap {Γ} {φ = φ}{ψ} x =
   axiom {Γ = (Γ , ψ , φ)} ψ $
     there {Γ = Γ , ψ} φ $
@@ -59,14 +53,14 @@ swap {Γ} {φ = φ}{ψ} x =
 -- van Dalen 4th Edition. Chapter 2. Section 2.4.
 -- Theorem 2.4.4
 
-th244a : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ⇒ (ψ ⇒ φ)
+th244a : ∀ {Γ} {φ ψ} → Γ ⊢ φ ⇒ (ψ ⇒ φ)
 th244a {Γ}{φ}{ψ = ψ} =
   ⇒-intro $
     ⇒-intro $
       weaken {φ = φ} ψ $
         assume {Γ = Γ} φ
 
-th244b : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ⇒ (¬ φ ⇒ ψ)
+th244b : ∀ {Γ} {φ ψ} → Γ ⊢ φ ⇒ (¬ φ ⇒ ψ)
 th244b {Γ}{φ = φ}{ψ = ψ} =
   ⇒-intro $
     ⇒-intro $
@@ -75,7 +69,7 @@ th244b {Γ}{φ = φ}{ψ = ψ} =
           (assume  {Γ = (Γ , φ)} (¬ φ))
           (weaken (¬ φ) (assume {Γ = Γ} φ))
 
-th244c : ∀ {Γ : Ctxt} {φ ψ σ} → Γ ⊢ (φ ⇒ ψ) ⇒ ((ψ ⇒ σ) ⇒ (φ ⇒ σ))
+th244c : ∀ {Γ} {φ ψ σ} → Γ ⊢ (φ ⇒ ψ) ⇒ ((ψ ⇒ σ) ⇒ (φ ⇒ σ))
 th244c {Γ}{φ = φ}{ψ}{σ} =
   ⇒-intro $
      ⇒-intro $
@@ -89,7 +83,7 @@ th244c {Γ}{φ = φ}{ψ}{σ} =
                  assume {Γ = Γ} $ φ ⇒ ψ)
              (assume {Γ = Γ , φ ⇒ ψ , ψ ⇒ σ} φ))
 
-th244d : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ (¬ ψ ⇒ ¬ φ) ⇒ (φ ⇒ ψ)
+th244d : ∀ {Γ} {φ ψ} → Γ ⊢ (¬ ψ ⇒ ¬ φ) ⇒ (φ ⇒ ψ)
 th244d {Γ} {φ = φ}{ψ} =
   ⇒-intro $
     ⇒-intro $
@@ -103,7 +97,7 @@ th244d {Γ} {φ = φ}{ψ} =
           (weaken (¬ ψ) $
             assume {Γ = Γ , ¬ ψ ⇒ ¬ φ} φ)
 
-th244e : ∀ {Γ : Ctxt} {φ} → Γ ⊢ ¬ (¬ φ) ⇒ φ
+th244e : ∀ {Γ} {φ} → Γ ⊢ ¬ (¬ φ) ⇒ φ
 th244e {Γ} {φ} =
   ⇒-intro $ RAA
     (¬-elim {Γ = Γ , ¬ (¬ φ) , ¬ φ}
@@ -118,7 +112,7 @@ e245b {Γ}{Δ = Δ} seq₁ seq₂ =
     (weaken-Δ₁ Δ seq₁)
 
 
-eComm⋀₁ : ∀ {Γ : Ctxt}{φ ψ : Prop} → Γ ⊢ φ ∧ ψ ⇒ ψ ∧ φ
+eComm⋀₁ : ∀ {Γ}{φ ψ : Prop} → Γ ⊢ φ ∧ ψ ⇒ ψ ∧ φ
 eComm⋀₁ {Γ} {φ = φ}{ψ} =
   ⇒-intro $
     ∧-intro
@@ -127,7 +121,7 @@ eComm⋀₁ {Γ} {φ = φ}{ψ} =
 
 --- De Morgan's Law
 
-∧-morgan₁ : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ (φ ∧ ψ) ⇒ (¬ φ ∨ ¬ ψ)
+∧-morgan₁ : ∀ {Γ} {φ ψ} → Γ ⊢ ¬ (φ ∧ ψ) ⇒ (¬ φ ∨ ¬ ψ)
 ∧-morgan₁ {Γ} {φ}{ψ} =
   ⇒-intro {Γ = Γ} $
     RAA {Γ = Γ , ¬ (φ ∧ ψ)} {φ = ¬ φ ∨ ¬ ψ} $
@@ -150,11 +144,10 @@ eComm⋀₁ {Γ} {φ = φ}{ψ} =
                 (¬ φ)
                 (assume {Γ = Γ , ¬ (φ ∧ ψ) , ¬ (¬ φ ∨ ¬ ψ)} $ ¬ ψ )))))
 
-postulate ∧-morgan₂ : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ φ ∨ ¬ ψ → Γ ⊢ ¬ (φ ∧ ψ)
+postulate ∧-morgan₂ : ∀ {Γ} {φ ψ} → Γ ⊢ ¬ φ ∨ ¬ ψ → Γ ⊢ ¬ (φ ∧ ψ)
 
-postulate ∨-morgan₁ : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ (φ ∨ ψ) ⇒ ¬ φ ∧ ¬ ψ
-postulate ∨-morgan₂ : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ φ ∧ ¬ ψ → Γ ⊢ ¬ (φ ∨ ψ)
-
+postulate ∨-morgan₁ : ∀ {Γ} {φ ψ} → Γ ⊢ ¬ (φ ∨ ψ) ⇒ ¬ φ ∧ ¬ ψ
+postulate ∨-morgan₂ : ∀ {Γ} {φ ψ} → Γ ⊢ ¬ φ ∧ ¬ ψ → Γ ⊢ ¬ (φ ∨ ψ)
 
 -- auxiliar lemmas
 lem1 : ∀ {Γ} {φ ψ} → Γ ⊢ ¬ ¬ φ ∨ ¬ ¬ ψ → Γ ⊢ φ ∨ ψ
@@ -184,19 +177,16 @@ lem2 {Γ} {φ}{ψ} seq =
             (weaken ψ (∧-proj₂ seq))
             (assume {Γ = Γ} ψ))))
      )
-    (
-     ∧-proj₁ seq
-    )
+    (∧-proj₁ seq)
 
-
-postulate impl-pos : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ φ ⇒ ψ → Γ ⊢  ¬ φ ∨ ψ
+postulate impl-pos   : ∀ {Γ} {φ ψ} → Γ ⊢ φ ⇒ ψ → Γ ⊢  ¬ φ ∨ ψ
 postulate impl-equiv : ∀ {Γ} {φ ψ} → Γ ⊢ (φ ⇒ ψ) ⇔ (¬ φ ∨ ψ)
-postulate impl-neg : ∀ {Γ : Ctxt} {φ ψ} → Γ ⊢ ¬ (φ ⇒ ψ) → Γ ⊢ φ ∧ ¬ ψ
+postulate impl-neg   : ∀ {Γ} {φ ψ} → Γ ⊢ ¬ (φ ⇒ ψ) → Γ ⊢ φ ∧ ¬ ψ
 
 -- Translation of Formulas to Negation Normal Form.
 
-postulate contra : ∀ {Γ : Ctxt} {φ} → Γ ⊢ φ ∧ ¬ φ → Γ ⊢ ⊥
-postulate contra₂ : ∀ {Γ : Ctxt} {φ} → Γ ⊢ ¬ φ ∧ φ → Γ ⊢ ⊥
+postulate contra  : ∀ {Γ} {φ} → Γ ⊢ φ ∧ ¬ φ → Γ ⊢ ⊥
+postulate contra₂ : ∀ {Γ} {φ} → Γ ⊢ ¬ φ ∧ φ → Γ ⊢ ⊥
 
 {-
 mutual
@@ -253,6 +243,29 @@ nnf (¬ (φ ∧ ψ)) = (nnf (¬ φ)) ∨ (nnf (¬ ψ))
 nnf (¬ (φ ∨ ψ)) = (nnf (¬ φ)) ∧ (nnf (¬ ψ))
 nnf φ = φ
 
+thm-nnf : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ nnf φ
+thm-nnf {Γ} {¬ (¬ φ)} seq = thm-nnf (⇒-elim (th244e) seq)
+thm-nnf {Γ} {φ ∧ ψ} seq =
+  ∧-intro
+    (thm-nnf (∧-proj₁ seq))
+    (thm-nnf (∧-proj₂ seq))
+thm-nnf {Γ} {φ ∨ ψ} seq = {!   !} -- TODO
+thm-nnf {Γ} {¬ (φ ∧ ψ)} seq =
+  (⇒-elim
+    (⇒-intro
+      (∨-elim {Γ = Γ}
+        (∨-intro₁ (nnf (¬ ψ)) (thm-nnf (assume {Γ = Γ} (¬ φ))))
+        (∨-intro₂ (nnf (¬ φ)) (thm-nnf (assume {Γ = Γ} (¬ ψ))))
+        )
+    )
+    (⇒-elim {Γ = Γ} ∧-morgan₁ seq)
+    )
+thm-nnf {Γ} {¬ (φ ∨ ψ)} seq =
+  (∧-intro
+    (thm-nnf (∧-proj₁ (⇒-elim ∨-morgan₁ seq)))
+    (thm-nnf (∧-proj₂ (⇒-elim ∨-morgan₁ seq)))
+    )
+thm-nnf {Γ} {φ} = {!   !}
 -- input η₁ η₂ : η₁, η₂ are in CNF
 -- output φ': φ' is in CNF and φ' ≡ η₁ ∨ η₂
 distr : Prop → Prop → Prop
