@@ -1,4 +1,3 @@
-
 open import Data.Nat using (ℕ)
 
 module Data.FOL.Deep.Theorems (n : ℕ) where
@@ -8,7 +7,8 @@ open import Function using (_$_)
 
 -- Equivalences.
 
-postulate id : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ φ
+id : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ φ
+id x = x
 
 postulate ¬-⊤  : ∀ {Γ} → Γ ⊢ ¬ ⊤ → Γ ⊢ ⊥
 postulate ¬-⊤₂ : ∀ {Γ} → Γ ⊢ ⊤   → Γ ⊢ ¬ ⊥
@@ -230,10 +230,10 @@ mutual
 
 
 ⇔-free : Prop → Prop
-⇔-free (¬ φ)    = ¬ (⇔-free φ)
-⇔-free (φ ∧ ψ)  = ⇔-free φ ∧ ⇔-free ψ
-⇔-free (φ ∨ ψ)  = ⇔-free φ ∨ ⇔-free ψ
-⇔-free (φ ⇒ ψ)  = ⇔-free φ ⇒ ⇔-free ψ
+⇔-free (¬ φ)   = ¬ (⇔-free φ)
+⇔-free (φ ∧ ψ) = ⇔-free φ ∧ ⇔-free ψ
+⇔-free (φ ∨ ψ) = ⇔-free φ ∨ ⇔-free ψ
+⇔-free (φ ⇒ ψ) = ⇔-free φ ⇒ ⇔-free ψ
 ⇔-free (φ ⇔ ψ) = (φ₁ ⇒ ψ₁) ∧ (ψ₁ ⇒ φ₁)
   where
     φ₁ : Prop

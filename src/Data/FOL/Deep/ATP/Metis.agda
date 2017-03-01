@@ -149,25 +149,25 @@ postulate atp-splitGoal : {Γ : Ctxt} {φ : Prop} → Γ ⊢ (splitGoal φ ⇒ �
 
 -- Canonicalize inference.
 canonicalize : Prop → Prop
-canonicalize (φ ⇒ ψ) = ¬ φ ∨ ψ
+canonicalize (φ ⇒ ψ)     = ¬ φ ∨ ψ
 canonicalize (¬ (φ ⇒ ψ)) = if (equal-f φ ψ) then ⊥ else ((canonicalize φ) ∧ (canonicalize (¬ ψ)))
-canonicalize (¬ ⊤) = ⊥
-canonicalize (¬ ⊥) = ⊤
-canonicalize (¬ (¬ φ)) = canonicalize φ
-canonicalize φ = φ
+canonicalize (¬ ⊤)       = ⊥
+canonicalize (¬ ⊥)       = ⊤
+canonicalize (¬ (¬ φ))   = canonicalize φ
+canonicalize φ           = φ
 
 atp-canonicalize : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ canonicalize φ
-atp-canonicalize {Γ} {Var x} = id
-atp-canonicalize {Γ} {⊤} = id
-atp-canonicalize {Γ} {⊥} = id
-atp-canonicalize {Γ} {φ ∧ φ₁} = id
-atp-canonicalize {Γ} {φ ∨ φ₁} = id
-atp-canonicalize {Γ} {φ ⇒ φ₁} = impl-pos
+atp-canonicalize {Γ} {Var x}      = id
+atp-canonicalize {Γ} {⊤}          = id
+atp-canonicalize {Γ} {⊥}          = id
+atp-canonicalize {Γ} {φ ∧ φ₁}     = id
+atp-canonicalize {Γ} {φ ∨ φ₁}     = id
+atp-canonicalize {Γ} {φ ⇒ φ₁}     = impl-pos
 atp-canonicalize {Γ} {¬ (φ ⇒ φ₁)} = atp-step (λ _ → canonicalize (¬ (φ ⇒ φ₁)))
 
 -- impl-neg
-atp-canonicalize {Γ} {¬ ⊤} = ¬-⊤
-atp-canonicalize {Γ} {¬ ⊥} = ¬-⊥₁
+atp-canonicalize {Γ} {¬ ⊤}   = ¬-⊤
+atp-canonicalize {Γ} {¬ ⊥}   = ¬-⊥₁
 atp-canonicalize {Γ} {φ} seq = id (atp-step (λ _ → canonicalize φ) seq)
 
 -- Negate inference.
@@ -177,64 +177,32 @@ atp-neg φ = ¬ φ
 
 conjunct : Prop → Prop → Prop
 conjunct (φ ∧ ψ) ω with (equal-f φ ω) | (equal-f ψ ω)
-... | true | _ = φ
-... | false | true = ψ
+... | true  | _     = φ
+... | false | true  = ψ
 ... | false | false = conjunct φ ω
 conjunct φ ω = φ
 
 atp-conjunct : ∀ {Γ} {φ} → (ω : Prop) → Γ ⊢ φ → Γ ⊢ conjunct φ ω
 atp-conjunct {Γ} {φ ∧ ψ} ω seq with (equal-f φ ω) | (equal-f ψ ω)
-... | true  | _ = ∧-proj₁ seq
+... | true  | _     = ∧-proj₁ seq
 ... | false | true  = ∧-proj₂ seq
 ... | false | false = atp-conjunct {Γ = Γ} {φ = φ} ω (∧-proj₁ seq)
-atp-conjunct {Γ} {Var x} ω = id
-atp-conjunct {Γ} {⊤} ω = id
-atp-conjunct {Γ} {⊥} ω = id
+atp-conjunct {Γ} {Var x} ω  = id
+atp-conjunct {Γ} {⊤} ω      = id
+atp-conjunct {Γ} {⊥} ω      = id
 atp-conjunct {Γ} {φ ∨ φ₁} ω = id
 atp-conjunct {Γ} {φ ⇒ φ₁} ω = id
 atp-conjunct {Γ} {φ ⇔ φ₁} ω = id
-atp-conjunct {Γ} {¬ φ} ω = id
+atp-conjunct {Γ} {¬ φ} ω    = id
 
 
 -- Resolve theorems.
 
-
-assoc : Prop → Prop
-assoc ((φ ∨ ψ) ∨ ω) = φ ∨ (ψ ∨ ω)
-assoc φ = φ
-
-pick : Prop → Prop → Prop
-pick (φ ∨ ψ) ω with (equal-f φ ω) | (equal-f ψ ω)
-... | true | _ = φ ∨ ψ
-... | false | true = ψ ∨ φ
-... | false | false = (assoc (pick φ ω) ∨ ψ)
-pick φ ω = φ
-
-atp-pick : ∀ {Γ} {φ} → (ω : Prop) → Γ ⊢ φ → Γ ⊢ pick φ ω
-atp-pick {Γ} {φ ∨ ψ} ω with (equal-f φ ω) | (equal-f ψ ω)
-... | true | _ = id
-... | false | true = ∨-comm
-... | false | false with (pick φ ω)
-... | (φ₁ ∨ φ₂) = atp-step (λ _ → assoc (φ₁ ∨ φ₂) ∨ ψ)
-... | ρ = atp-step (λ _ → assoc ρ ∨ ψ)
-{-
-atp-pick {Γ} {φ ∨ ψ} ω seq =
-  (⇒-elim
-    (⇒-intro
-      (∨-elim {Γ = Γ}
-        (atp-pick {Γ = Γ , φ} {φ = φ ∨ ψ} ω (∨-intro₁ ψ (assume {Γ = Γ} φ)))
-        (atp-pick {Γ = Γ , ψ} {φ = φ ∨ ψ} ω (∨-intro₂ φ (assume {Γ = Γ} ψ)))))
-    seq)
--}
-atp-pick {Γ} {Var x} ω seq = id seq
-atp-pick {Γ} {⊤} ω seq = id seq
-atp-pick {Γ} {⊥} ω seq = id seq
-atp-pick {Γ} {φ ∧ φ₁} ω seq = id seq
-atp-pick {Γ} {φ ⇒ φ₁} ω seq = id seq
-atp-pick {Γ} {φ ⇔ φ₁} ω seq = id seq
-atp-pick {Γ} {¬ φ} ω seq = id seq
-
---
+impl : Prop → Prop
+impl (¬ (¬ φ)) = impl φ
+impl (¬ (¬ φ ∧ ¬ ψ)) = (impl (φ)) ∨ (impl (ψ))
+impl (φ ∧ ψ) = ¬ ((impl (¬ φ)) ∨ (impl (¬ ψ)))
+impl φ = φ
 
 atp-resolve₀ : {Γ : Ctxt} {L C D : Prop} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D
 atp-resolve₀ {Γ} {L}{C}{D} seq₁ seq₂ =
