@@ -191,7 +191,8 @@ lem2 {Γ} {φ}{ψ} seq =
 postulate impl-pos   : ∀ {Γ} {φ ψ} → Γ ⊢ φ ⇒ ψ
                                    → Γ ⊢  ¬ φ ∨ ψ
 
-postulate impl-equiv : ∀ {Γ} {φ ψ} → Γ ⊢ (φ ⇒ ψ) ⇔ (¬ φ ∨ ψ)
+postulate impl-equiv : ∀ {Γ} {φ ψ} → Γ ⊢ φ ⇒ ψ
+                                   → Γ ⊢ ¬ φ ∨ ψ
 
 postulate impl-neg   : ∀ {Γ} {φ ψ} → Γ ⊢ ¬ (φ ⇒ ψ)
                                    → Γ ⊢ φ ∧ ¬ ψ
@@ -250,15 +251,22 @@ mutual
 ⇒-free φ       = φ
 
 
-thm-⇒-free : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ ⇒-free φ
-thm-⇒-free {Γ} {¬ φ}       = atp-step (λ _ → ¬ ⇒-free φ)
-thm-⇒-free {Γ} {φ ∧ ψ} seq =
-  ∧-intro
-    (thm-⇒-free $ ∧-proj₁ seq)
-    (thm-⇒-free $ ∧-proj₂ seq)
-thm-⇒-free {Γ} {φ ⇒ ψ} =
-  {! impl-pos  !}
-thm-⇒-free {Γ} {φ} = atp-step (λ _ → ⇒-free φ)
+-- thm-⇒-free : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ ⇒-free φ
+-- thm-⇒-free {Γ} {¬ φ}  = atp-step (λ _ → ¬ ⇒-free φ)
+-- thm-⇒-free {Γ} {φ ∧ ψ} seq =
+--   ∧-intro
+--     (thm-⇒-free $ ∧-proj₁ seq)
+--     (thm-⇒-free $ ∧-proj₂ seq)
+-- thm-⇒-free {Γ} {φ ⇒ ψ} seq =
+--   ⇒-elim
+--     (⇒-intro
+--       (∨-elim {Γ = Γ}
+--         (∨-intro₁ (⇒-free ψ)
+--           (thm-⇒-free (assume {Γ = Γ} (¬ φ))))
+--         (∨-intro₂ (¬ (⇒-free φ))
+--           (thm-⇒-free (assume {Γ = Γ} ψ)))))
+--     (impl-pos seq)
+-- thm-⇒-free {Γ} {φ} = atp-step (λ _ → ⇒-free φ)
 
 -- input φ: a logic formula without implication
 -- output: φ': only propositional atoms in φ' are negated and φ'≡ φ
