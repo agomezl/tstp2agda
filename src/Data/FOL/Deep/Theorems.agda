@@ -10,20 +10,31 @@ open import Function using (_$_)
 id : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ φ
 id x = x
 
-postulate ¬-⊤  : ∀ {Γ} → Γ ⊢ ¬ ⊤ → Γ ⊢ ⊥
-postulate ¬-⊤₂ : ∀ {Γ} → Γ ⊢ ⊤   → Γ ⊢ ¬ ⊥
+postulate ¬-⊤  : ∀ {Γ} → Γ ⊢ ¬ ⊤
+                       → Γ ⊢ ⊥
 
-postulate ¬-⊥₁ : ∀ {Γ} → Γ ⊢ ¬ ⊥ → Γ ⊢ ⊤
-postulate ¬-⊥₂ : ∀ {Γ} → Γ ⊢ ⊥   → Γ ⊢ ¬ ⊤
+postulate ¬-⊤₂ : ∀ {Γ} → Γ ⊢ ⊤
+                       → Γ ⊢ ¬ ⊥
+
+postulate ¬-⊥₁ : ∀ {Γ} → Γ ⊢ ¬ ⊥
+                       → Γ ⊢ ⊤
+
+postulate ¬-⊥₂ : ∀ {Γ} → Γ ⊢ ⊥
+                       → Γ ⊢ ¬ ⊤
 
 
-∧-comm  : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∧ ψ → Γ ⊢ ψ ∧ φ
-∧-comm {Γ} {φ}{ψ} seq = ∧-intro (∧-proj₂ seq) (∧-proj₁ seq)
+∧-comm  : ∀ {Γ} {φ ψ}              → Γ ⊢ φ ∧ ψ
+                                   → Γ ⊢ ψ ∧ φ
+∧-comm {Γ} {φ}{ψ} seq =
+  ∧-intro
+    (∧-proj₂ seq)
+    (∧-proj₁ seq)
 
-postulate ∨-equiv : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∨ ψ
-                                → Γ ⊢ ¬ (¬ φ ∧ ¬ ψ)
+postulate ∨-equiv : ∀ {Γ} {φ ψ}    → Γ ⊢ φ ∨ ψ
+                                   → Γ ⊢ ¬ (¬ φ ∧ ¬ ψ)
 
-postulate ∨-comm  : ∀ {Γ} {φ ψ} → Γ ⊢ φ ∨ ψ → Γ ⊢ ψ ∨ φ
+postulate ∨-comm  : ∀ {Γ} {φ ψ}    → Γ ⊢ φ ∨ ψ
+                                   → Γ ⊢ ψ ∨ φ
 
 postulate ∨-assoc₁ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ ψ) ∨ ρ
                                    → Γ ⊢ φ ∨ (ψ ∨ ρ)
@@ -31,10 +42,11 @@ postulate ∨-assoc₁ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ ψ) ∨ ρ
 postulate ∨-assoc₂ : ∀ {Γ} {φ ψ ρ} → Γ ⊢ φ ∨ (ψ ∨ ρ)
                                    → Γ ⊢ (φ ∨ ψ) ∨ ρ
 
-postulate ∨-pick : ∀ {Γ} {φ ψ ρ} → Γ ⊢ (φ ∨ ψ) ∨ ρ
-                                 → Γ ⊢ ψ ∨ (φ ∨ ρ)
+postulate ∨-pick : ∀ {Γ} {φ ψ ρ}   → Γ ⊢ (φ ∨ ψ) ∨ ρ
+                                   → Γ ⊢ ψ ∨ (φ ∨ ρ)
 
-postulate ¬-equiv : ∀ {Γ} {φ} → Γ ⊢ ¬ φ → Γ ⊢ φ ⇒ ⊥
+postulate ¬-equiv : ∀ {Γ} {φ}      → Γ ⊢ ¬ φ
+                                   → Γ ⊢ φ ⇒ ⊥
 
 -- Distribute Laws.
 
@@ -268,15 +280,38 @@ mutual
 --     (impl-pos seq)
 -- thm-⇒-free {Γ} {φ} = atp-step (λ _ → ⇒-free φ)
 
+{-
+disj : Prop → Prop
+disj (¬ (¬ φ)) = disj φ
+disj (φ ∧ ψ) = disj φ ∨ disj ψ
+disj (φ ∨ ψ) = {!!}
+disj φ = φ
+-}
+
+{-
+thm-disj : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ disj φ
+thm-disj {Γ} {¬ (¬ φ)} seq = thm-disj $ ⇒-elim th244e seq
+thm-disj {Γ} {φ@(¬ φ₁@(¬ ψ₁ ∧ ¬ ψ₂) ∧ ¬ φ₂)}  = {!!}
+thm-disj {Γ} {Var x} = id
+thm-disj {Γ} {⊤} = id
+thm-disj {Γ} {⊥} = id
+thm-disj {Γ} {φ ∧ φ₁} = {!id!}
+thm-disj {Γ} {φ ∨ φ₁} = id
+thm-disj {Γ} {φ ⇒ φ₁} = id
+thm-disj {Γ} {φ ⇔ φ₁} = id
+thm-disj {Γ} {¬ φ} = {!id!}
+-}
+
+
 -- input φ: a logic formula without implication
 -- output: φ': only propositional atoms in φ' are negated and φ'≡ φ
 nnf : Prop → Prop
-nnf (¬ (¬ φ)) = nnf φ
-nnf (φ ∧ ψ) = (nnf φ) ∧ (nnf ψ)
-nnf (φ ∨ ψ) = (nnf φ) ∨ (nnf ψ)
+nnf (¬ (¬ φ))   = nnf φ
+nnf (φ ∧ ψ)     = (nnf φ) ∧ (nnf ψ)
+nnf (φ ∨ ψ)     = (nnf φ) ∨ (nnf ψ)
 nnf (¬ (φ ∧ ψ)) = (nnf (¬ φ)) ∨ (nnf (¬ ψ))
 nnf (¬ (φ ∨ ψ)) = (nnf (¬ φ)) ∧ (nnf (¬ ψ))
-nnf φ = φ
+nnf φ           = φ
 
 thm-nnf : ∀ {Γ} {φ} → Γ ⊢ φ → Γ ⊢ nnf φ
 thm-nnf {Γ} {¬ (¬ φ)} seq = thm-nnf $ ⇒-elim th244e seq

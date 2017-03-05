@@ -1,0 +1,309 @@
+\documentclass[11pt]{article}
+% \usepackage{lineno}
+% \linenumbers
+
+% \usepackage[scaled=0.88]{beraserif}
+% \usepackage[scaled=0.85]{berasans}
+\usepackage[scaled=0.84]{beramono}
+\usepackage{xcolor}
+
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\linespread{1.05}
+\usepackage[T1,small,euler-digits]{eulervm}
+
+\usepackage[utf8x]{inputenc}
+ \usepackage{hyperref}
+\hypersetup{linktocpage}
+\hypersetup{
+    colorlinks,
+    citecolor=amethyst,
+    filecolor=black,
+    linkcolor=blue(munsell),
+    urlcolor=blue(munsell)
+}
+\usepackage[T1]{fontenc}
+\usepackage{changes}
+\usepackage[]{amsmath,amssymb}
+
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{antiquefuchsia}{rgb}{0.57, 0.36, 0.51}
+\definecolor{ballblue}{rgb}{0.13, 0.67, 0.8}
+\definecolor{blue(munsell)}{rgb}{0.0, 0.5, 0.69}
+\definecolor{blue(pigment)}{rgb}{0.2, 0.2, 0.6}
+\definecolor{brightmaroon}{rgb}{0.76, 0.13, 0.28}
+\definecolor{bondiblue}{rgb}{0.0, 0.58, 0.71}
+\definecolor{cadet}{rgb}{0.33, 0.41, 0.47}
+\definecolor{ashgrey}{rgb}{0.7, 0.75, 0.71}
+\definecolor{amber}{rgb}{1.0, 0.75, 0.0}
+\definecolor{aliceblue}{rgb}{0.94, 0.97, 1.0}
+\usepackage{bussproofs}
+\usepackage{listings,chngcntr}
+
+\lstset{
+  % language=Prolog,
+  aboveskip=10pt
+  , backgroundcolor=\color{aliceblue}
+  , basicstyle=\ttfamily
+  , belowskip=10pt
+  , frame=trbl
+  , keywords=[2]{axiom, conjecture,inference, negated_conjecture, plain}
+  , keywords=[3]{fof, cnf}
+  , keywords=[4]{canonicalize, resolve, conjunct, strip, simplify, negate}
+  , keywordstyle=[2]\color{cadet}%\underbar,%\bfseries
+  , keywordstyle=[3]\color{bondiblue}\bfseries
+  , keywordstyle=[4]\bfseries
+  , showstringspaces=false
+}
+% \lstset{emph={%
+%     fof, tof%
+%     },emphstyle={\color{red}\bfseries\underbar}%
+% }
+% %
+% keywordstyle=\color{keywords},
+%     basicstyle=\normalfont\ttfamily,
+%     commentstyle=\color{comments}\ttfamily,
+%     stringstyle=\rmfamily,
+%     numbers=left,
+%     numberstyle=\scriptsize,
+%     stepnumber=1,
+%     numbersep=8pt,
+%     showstringspaces=false,
+%     breaklines=true,
+%     frameround=ftff,
+%     frame=lines,
+%     morekeywords={RequirePackage,ProvidesPackage},
+%     backgroundcolor=\color{background}
+
+\usepackage[]{graphicx}
+
+\usepackage{array}
+\usepackage[]{algorithm2e}
+\usepackage[margin=1in]{geometry}
+
+\usepackage{url}
+\usepackage{float}
+\usepackage{changes}
+\usepackage{syntax}
+% \setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
+\setlength{\grammarindent}{4em} % increase separation between LHS/RHS
+
+
+
+\definechangesauthor[name={Jonahtan Prieto}, color=blue]{jona}
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+% \renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
+\newcommand{\textdf}[1]{\textbf{\textsf{#1}}\index{#1}}
+\newcommand{\agda}[0]{\texttt{Agda}\,}
+\newcommand{\tptp}[0]{\texorpdfstring{\texttt{TPTP}}\ \ }
+\newcommand{\miss}[0]{{\colorbox{amber}{\textdf{?}}}}
+\newcommand{\ttgray}[1]{\texttt{\color{gray} #1}}
+\newcommand{\shell}[1]{\texttt{\color{gray} #1}}
+
+\newcommand{\metis}[0]{\href{http://www.gilith.com/software/metis/}{Metis}}
+
+\newcommand{\problemtptp}[3][c]{\lstinputlisting[caption=#2,firstline=#3, label=custom#1]{#2}}
+\newcommand{\solutiontstp}[2][c]{\lstinputlisting[caption=#2, firstline=5, label=custom#1]{#2}}
+
+\setlength{\topmargin}{-.35 in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textheight}{9.in}
+\setlength{\textwidth}{6.7in}
+
+\begin{document}
+\counterwithin{lstlisting}{section}
+
+\hrulefill\ \ Draft version: \today\\
+{\small
+This document is on progress and its last version is available at
+\href{https://github.com/jonaprieto/tstp2agda}{{\color{blue(munsell)}
+\texttt{https://github.com/jonaprieto/reports/}}}
+}
+
+\vspace{3mm}
+\begin{center}
+{\Large Propositional Problems}\\
+{\large EAFIT University}\\[2.2mm]
+Research Report\\
+\textbf{Jonathan Prieto-Cubides}\\ %You should put your name here
+\href{mailto:jprieto9@eafit.edu.co}{{\color{blue(munsell)}\texttt{jprieto9@eafit.edu.co}}}
+\end{center}
+\vspace{0.1 cm}
+
+% \begin{abstract}
+% This documment keeps a list of problems of propositional logic.\\
+% \paragraph*{Keywords} ATP, automatic theorem prover, \agda, proof reconstruction.
+% \end{abstract}
+
+% \tableofcontents
+% http://www.cs.miami.edu/~tptp/OverviewOfATP.html
+
+\section{\tptp Format}
+
+The \tptp format is a precise and accurate language to describe without ambiguities problems written in a logic. It attempts to be a standard for all ATPs. The syntax is clearly based on the Prolog language and endeavors to be processed with a similar parser. Its specification is currently available on its website\footnote{\tptp v6.4.0~\url{http://www.cs.miami.edu/~tptp/TPTP/SyntaxBNF.html}}.
+Because, we are interested in writing and reading problems in first-order logic and propositional logic for proofs reconstruction, we have only presented here the most relevant aspects of this syntax for that purpose. Then, we can use a subset of \tptp, the language for first-order logic with the keyword \ttgray{fof} or the keyword \ttgray{cnf} for use the only the clause normal form. Their grammars are as follows. The keyword \ttgray{<annotations>} is the only optional parameter.
+
+\label{syntax:fof}
+\begin{grammar}
+<cnf_annotated> ::= \textbf{cnf}(<name>,<formula_role>,<cnf_formula>,<annotations>).
+
+<fof_annotated> ::= \textbf{fof}(<name>,<formula_role>,<fof_formula>,<annotations>).
+\end{grammar}
+
+
+The last parameter \ttgray{annotations} is optional.
+The following are two example of the above syntax from the \tptp
+Problems repository\footnote{\url{http://www.cs.miami.edu/~tptp/cgi-bin/SeeTPTP?Category=Problems}}.
+
+\begin{lstlisting}
+fof(a1,axiom,a).
+cnf(an_2,axiom,( is_a_theorem(or(not(or(X,Y)),or(Y,X))) )).
+\end{lstlisting}
+
+Then, the others parameters: \ttgray{name}, \ttgray{formula_role},
+\ttgray{fof_formula}, \ttgray{cnf_formula} has the following definition.
+\begin{grammar}
+<name> ::= <atomic_word> | <integer>
+
+<formula_role> ::= {\bf axiom} | hypothesis | definition | assumption
+\alt lemma | theorem | corollary | {\bf conjecture}
+\alt {\bf negated_conjecture} | {\bf plain }| type | unknown
+\end{grammar}
+% For the clausal normal form, we have the following excerpt.
+\begin{figure}[!ht]
+\centering
+\label{syntax:cnfformula}
+\begin{grammar}
+<cnf_formula> ::= (<disjunction>) | <disjunction>
+
+<disjunction> ::= <literal> | <disjunction> <vline> <literal>
+
+<literal> ::= <atomic_formula> | ~ <atomic_formula> | <fol_infix_unary>
+\end{grammar}
+\caption{Grammar for CNF formulas}
+\end{figure}
+
+Some of the ATP systems can process problems formatted
+in TPTP syntax for their input and output. In addition, there is an extension
+version of TPTP to present solutions\footnote{\url{http://www.cs.miami.edu/~tptp/TSTP/}},
+the TSTP syntax. Also, the TSTP (Thousands of Solutions from Theorem Provers) is
+for a library of solutions to test problems for automated theorem proving (ATP)
+systems. It has solutions to problems from the TPTP Problem Library.\par
+
+\section{TPTP Problems}
+
+% \minipage{0.5\textwidth}
+% \endminipage
+% \minipage{0.5\textwidth}
+% \begin{prooftree}
+% \end{prooftree}
+% \endminipage\hfill
+
+\problemtptp[prop-000.tptp]{prop-000.tptp}{1}
+\problemtptp[prop-001.tptp]{prop-001.tptp}{1}
+\problemtptp[prop-002.tptp]{prop-002.tptp}{4}
+\problemtptp[prop-003.tptp]{prop-003.tptp}{4}
+\problemtptp[prop-004.tptp]{prop-004.tptp}{4}
+\problemtptp[prop-005.tptp]{prop-005.tptp}{4}
+\problemtptp[prop-006.tptp]{prop-006.tptp}{4}
+\problemtptp[prop-007.tptp]{prop-007.tptp}{4}
+\problemtptp[prop-008.tptp]{prop-008.tptp}{1}
+\problemtptp[prop-009.tptp]{prop-009.tptp}{10}
+\problemtptp[prop-010.tptp]{prop-010.tptp}{10}
+\problemtptp[prop-011.tptp]{prop-011.tptp}{1}
+\problemtptp[prop-012.tptp]{prop-012.tptp}{10}
+\problemtptp[prop-013.tptp]{prop-013.tptp}{1}
+\problemtptp[prop-014.tptp]{prop-014.tptp}{1}
+\problemtptp[prop-015.tptp]{prop-015.tptp}{4}
+\problemtptp[prop-016.tptp]{prop-016.tptp}{1}
+\problemtptp[prop-017.tptp]{prop-017.tptp}{1}
+\problemtptp[prop-018.tptp]{prop-018.tptp}{1}
+\problemtptp[prop-019.tptp]{prop-019.tptp}{1}
+\problemtptp[prop-020.tptp]{prop-020.tptp}{1}
+\problemtptp[prop-021.tptp]{prop-021.tptp}{1}
+\problemtptp[prop-022.tptp]{prop-022.tptp}{1}
+\problemtptp[prop-023.tptp]{prop-023.tptp}{1}
+\problemtptp[prop-024.tptp]{prop-024.tptp}{1}
+\problemtptp[prop-025.tptp]{prop-025.tptp}{1}
+\problemtptp[prop-026.tptp]{prop-026.tptp}{1}
+\problemtptp[prop-027.tptp]{prop-027.tptp}{1}
+\problemtptp[prop-028.tptp]{prop-028.tptp}{1}
+\problemtptp[prop-029.tptp]{prop-029.tptp}{1}
+\problemtptp[prop-030.tptp]{prop-030.tptp}{1}
+\problemtptp[prop-031.tptp]{prop-031.tptp}{1}
+\problemtptp[prop-032.tptp]{prop-032.tptp}{1}
+\problemtptp[prop-033.tptp]{prop-033.tptp}{1}
+\problemtptp[prop-034.tptp]{prop-034.tptp}{1}
+\problemtptp[prop-035.tptp]{prop-035.tptp}{1}
+\problemtptp[prop-036.tptp]{prop-036.tptp}{1}
+\problemtptp[prop-037.tptp]{prop-037.tptp}{1}
+\problemtptp[prop-038.tptp]{prop-038.tptp}{1}
+\problemtptp[prop-039.tptp]{prop-039.tptp}{1}
+\problemtptp[prop-040.tptp]{prop-040.tptp}{1}
+\problemtptp[prop-041.tptp]{prop-041.tptp}{1}
+\problemtptp[prop-042.tptp]{prop-042.tptp}{1}
+\problemtptp[prop-043.tptp]{prop-043.tptp}{1}
+\problemtptp[prop-044.tptp]{prop-044.tptp}{1}
+
+
+
+\section{TSTP Solutions}
+The following listings are proof found using
+\metis{} ATP (version 2.3 (release 20160714)).
+
+\solutiontstp[prop-000.tstp]{prop-000.tstp}
+\solutiontstp[prop-001.tstp]{prop-001.tstp}
+\solutiontstp[prop-002.tstp]{prop-002.tstp}
+\solutiontstp[prop-003.tstp]{prop-003.tstp}
+\solutiontstp[prop-004.tstp]{prop-004.tstp}
+\solutiontstp[prop-005.tstp]{prop-005.tstp}
+\solutiontstp[prop-006.tstp]{prop-006.tstp}
+\solutiontstp[prop-007.tstp]{prop-007.tstp}
+\solutiontstp[prop-008.tstp]{prop-008.tstp}
+\solutiontstp[prop-009.tstp]{prop-009.tstp}
+\solutiontstp[prop-010.tstp]{prop-010.tstp}
+\solutiontstp[prop-011.tstp]{prop-011.tstp}
+\solutiontstp[prop-012.tstp]{prop-012.tstp}
+\solutiontstp[prop-013.tstp]{prop-013.tstp}
+\solutiontstp[prop-014.tstp]{prop-014.tstp}
+\solutiontstp[prop-015.tstp]{prop-015.tstp}
+\solutiontstp[prop-016.tstp]{prop-016.tstp}
+\solutiontstp[prop-017.tstp]{prop-017.tstp}
+\solutiontstp[prop-018.tstp]{prop-018.tstp}
+\solutiontstp[prop-019.tstp]{prop-019.tstp}
+\solutiontstp[prop-020.tstp]{prop-020.tstp}
+\solutiontstp[prop-021.tstp]{prop-021.tstp}
+\solutiontstp[prop-022.tstp]{prop-022.tstp}
+\solutiontstp[prop-023.tstp]{prop-023.tstp}
+\solutiontstp[prop-024.tstp]{prop-024.tstp}
+\solutiontstp[prop-025.tstp]{prop-025.tstp}
+\solutiontstp[prop-026.tstp]{prop-026.tstp}
+\solutiontstp[prop-027.tstp]{prop-027.tstp}
+\solutiontstp[prop-028.tstp]{prop-028.tstp}
+\solutiontstp[prop-029.tstp]{prop-029.tstp}
+\solutiontstp[prop-030.tstp]{prop-030.tstp}
+\solutiontstp[prop-031.tstp]{prop-031.tstp}
+\solutiontstp[prop-032.tstp]{prop-032.tstp}
+\solutiontstp[prop-033.tstp]{prop-033.tstp}
+\solutiontstp[prop-034.tstp]{prop-034.tstp}
+\solutiontstp[prop-035.tstp]{prop-035.tstp}
+\solutiontstp[prop-036.tstp]{prop-036.tstp}
+\solutiontstp[prop-037.tstp]{prop-037.tstp}
+\solutiontstp[prop-038.tstp]{prop-038.tstp}
+\solutiontstp[prop-039.tstp]{prop-039.tstp}
+\solutiontstp[prop-040.tstp]{prop-040.tstp}
+\solutiontstp[prop-041.tstp]{prop-041.tstp}
+\solutiontstp[prop-042.tstp]{prop-042.tstp}
+\solutiontstp[prop-043.tstp]{prop-043.tstp}
+\solutiontstp[prop-044.tstp]{prop-044.tstp}
+
+% \section{Agda Code}
+
+% \bibliographystyle{plain}
+% \bibliography{biblio}
+
+\end{document}

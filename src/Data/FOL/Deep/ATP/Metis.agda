@@ -20,6 +20,7 @@ open import Relation.Binary.PropositionalEquality as PropEq
 open import Relation.Nullary.Decidable using (⌊_⌋)
 
 
+
 $false : Prop
 $false = ⊥
 
@@ -198,12 +199,6 @@ atp-conjunct {Γ} {¬ φ} ω    = id
 
 -- Resolve theorems.
 
-impl : Prop → Prop
-impl (¬ (¬ φ)) = impl φ
-impl (¬ (¬ φ ∧ ¬ ψ)) = (impl (φ)) ∨ (impl (ψ))
-impl (φ ∧ ψ) = ¬ ((impl (¬ φ)) ∨ (impl (¬ ψ)))
-impl φ = φ
-
 atp-resolve₀ : {Γ : Ctxt} {L C D : Prop} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D
 atp-resolve₀ {Γ} {L}{C}{D} seq₁ seq₂ =
   lem1 $ ⇒-elim {Γ = Γ}
@@ -269,14 +264,15 @@ swap-seq seq₁ seq₂ = λ _ → seq₁
 -- Simplify inference.
 
 simplify : Prop → Prop
+simplify (⊥ ∨ φ) = simplify φ
 simplify (φ ∧ ¬ ψ) = if (equal-f φ ψ) then ⊥ else (φ ∧ ¬ ψ)
 simplify (¬ φ ∧ ψ) = if (equal-f φ ψ) then ⊥ else (¬ φ ∧ ψ)
 simplify φ = φ
 
 atp-simplify : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ simplify φ
 atp-simplify {Γ} {Var x} = id
-atp-simplify {Γ} {⊤} = id
-atp-simplify {Γ} {⊥} = id
+atp-simplify {Γ} {⊤}     = id
+atp-simplify {Γ} {⊥}     = id
 atp-simplify {Γ} {φ = φ₁ ∧ ¬ φ₂} seq =
   atp-step (λ _ → simplify (φ₁ ∧ ¬ φ₂)) seq
 atp-simplify {Γ} {¬ φ ∧ ψ} =
@@ -286,11 +282,11 @@ atp-simplify {Γ} {φ} seq = id (atp-step (λ _ → simplify φ) seq)
 -- Strip inference.
 strip : Prop → Prop
 strip (Var x) = (Var x)
-strip (¬ ⊤) = ⊥
-strip (¬ ⊥) = ⊤
-strip (¬ φ) = ¬ φ
-strip (φ₁ ∨ φ₂ ∨ φ₃) = (¬ φ₁) ∧ (¬ φ₂) ⇒ φ₃
-strip (φ ∨ ψ) = (¬ φ) ⇒ ψ
+strip (¬ ⊤)   = ⊥
+strip (¬ ⊥)   = ⊤
+strip (¬ φ)   = ¬ φ
+strip (φ₁ ∨ φ₂ ∨ φ₃)   = (¬ φ₁) ∧ (¬ φ₂) ⇒ φ₃
+strip (φ ∨ ψ)          = (¬ φ) ⇒ ψ
 strip (φ₁ ⇒ (φ₂ ⇒ φ₃)) = φ₁ ∧ (strip (φ₂ ⇒ φ₃))
 strip φ = φ
 
@@ -298,7 +294,6 @@ atp-strip : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ strip φ
 atp-strip {Γ} {Var x} = id
 atp-strip {Γ} {(φ₁ ⇒ (φ₂ ⇒ φ₃))} =
   atp-step (λ _ → φ₁ ∧ strip (φ₂ ⇒ φ₃))
--- atp-strip {Γ} {¬ (φ ⇒ φ₁)} = id
-atp-strip {Γ} {¬ ⊤} = ¬-⊤
-atp-strip {Γ} {¬ ⊥} = ¬-⊥₁
+atp-strip {Γ} {¬ ⊤}   = ¬-⊤
+atp-strip {Γ} {¬ ⊥}   = ¬-⊥₁
 atp-strip {Γ} {φ} seq = id (atp-step (λ _ → strip φ) seq)
