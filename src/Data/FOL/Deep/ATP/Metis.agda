@@ -25,7 +25,7 @@ $false : Prop
 $false = ⊥
 
 -- -----------------------------------------------------------------------------
--- Check if two Prop formulas are equal in the way they are written.
+-- Syntax equality
 
 equal-f : Prop → Prop → Bool
 equal-f (Var x) (Var y) = ⌊ x ≟ y ⌋
@@ -33,14 +33,13 @@ equal-f ⊥ ⊥ = true
 equal-f ⊤ ⊤ = true
 equal-f (¬ φ) (¬ ψ) = equal-f φ ψ
 equal-f (φ₁ ∧ φ₂) (ψ₁ ∧ ψ₂) =
-  ((equal-f φ₁ ψ₁) && (equal-f φ₂ ψ₂)) || ((equal-f φ₁ ψ₂) && (equal-f φ₂ ψ₁))
+  (equal-f φ₁ ψ₁ && equal-f φ₂ ψ₂) || (equal-f φ₁ ψ₂ && equal-f φ₂ ψ₁)
 equal-f (φ₁ ∨ φ₂) (ψ₁ ∨ ψ₂) =
-  ((equal-f φ₁ ψ₁) && (equal-f φ₂ ψ₂)) || ((equal-f φ₁ ψ₂) && (equal-f φ₂ ψ₁))
-equal-f (φ₁ ⇒ φ₂) (ψ₁ ⇒ ψ₂) = (equal-f φ₁ ψ₁) && (equal-f φ₂ ψ₂)
+  (equal-f φ₁ ψ₁ && equal-f φ₂ ψ₂) || (equal-f φ₁ ψ₂ && equal-f φ₂ ψ₁)
+equal-f (φ₁ ⇒ φ₂) (ψ₁ ⇒ ψ₂) = equal-f φ₁ ψ₁ && equal-f φ₂ ψ₂
+equal-f (φ₁ ⇔ φ₂) (ψ₁ ⇔ ψ₂) =
+  (equal-f φ₁ ψ₁ && equal-f φ₂ ψ₂) || (equal-f φ₁ ψ₂ && equal-f φ₂ ψ₁)
 equal-f φ ψ = false
-
-
-postulate thm-equal : ∀ {Γ} {φ ψ} → Γ ⊢ φ → Γ ⊢ ψ
 
 
 -- -----------------------------------------------------------------------------
@@ -271,12 +270,33 @@ isOpposite φ ψ | true  | _ = true
 isOpposite φ ψ | false | y = y
 
 simplify : Prop → Prop
-simplify (⊥ ∧ φ) = ⊥
-simplify (φ ∧ ⊥) = ⊥
-simplify (⊥ ∨ φ) = simplify φ
-simplify (φ ∨ ⊥) = simplify φ
-simplify (⊤ ∧ φ) = simplify φ
-simplify (φ ∧ ⊤) = simplify φ
+simplify (Var x)  = Var x
+simplify ⊤        = ⊤
+simplify ⊥        = ⊥
+simplify (φ ⇒ φ₁) = φ ⇒ φ₁
+simplify ((φ ⇒ ψ) ∧ ω) with equal-f φ ω
+... | true  = simplify ψ
+... | false =  (φ ⇒ ψ) ∧ ω -- simplify ((¬ φ ∨ ψ) ∧ ω)
+simplify ((φ ⇔ (ψ ⇔ ω)) ∧ ρ) with equal-f φ ρ | equal-f ψ ρ | equal-f ω ρ
+... | true | _    | _     = simplify (ψ ⇔ ω)
+... | _    | true | _     = simplify (φ ⇔ ω)
+... | _    | _    | true  = simplify (φ ⇔ ψ)
+... | _    | _    | false with equal-f (φ ⇔ ψ) ρ
+...                       | true  = ω
+...                       | false with equal-f (φ ⇔ ω) ρ
+...                               | true  = ψ
+...                               | false with equal-f (ψ ⇔ ω) ρ
+...                                       | true = φ
+...                                       | false = φ ⇔ (ψ ⇔ ω)
+simplify (φ ⇔ φ₁) = φ ⇔ φ₁
+simplify (¬ ⊥)    = ⊤
+simplify (¬ ⊤)    = ⊥
+simplify (⊥ ∧ φ)  = ⊥
+simplify (φ ∧ ⊥)  = ⊥
+simplify (⊥ ∨ φ)  = simplify φ
+simplify (φ ∨ ⊥)  = simplify φ
+simplify (⊤ ∧ φ)  = simplify φ
+simplify (φ ∧ ⊤)  = simplify φ
 simplify (φ ∧ (ψ ∨ ω)) with isOpposite φ (¬ ψ)
 ... | true  = simplify ω
 ... | false with isOpposite φ (¬ ω)
@@ -288,9 +308,9 @@ simplify ((φ ∨ ψ) ∧ ω) with isOpposite ω (¬ φ)
 ...         | true  = simplify φ
 ...         | false = (φ ∨ ψ) ∧ ω
 simplify ((φ ∨ ψ) ∧ ω ∧ ρ) with isOpposite φ ω | isOpposite ψ ρ
-... | true  | _  = simplify (ψ ∧ ρ)
-... | _ | true   = simplify (φ ∧ ρ)
-... | _ | _      = (φ ∨ ψ) ∧ ω ∧ ρ
+... | true | _    = ψ ∧ ρ
+... | _    | true = φ ∧ ρ
+... | _    | _    = (φ ∨ ψ) ∧ ω ∧ ρ
 simplify (φ ∧ ψ ∧ ω) =
   if isOpposite φ ψ || isOpposite φ ω || isOpposite ψ ω then ⊥
   else φ ∧ ψ ∧ ω
@@ -306,10 +326,11 @@ simplify (φ ∨ ψ) | false | false | false = φ ∨ ψ
 simplify (φ ∨ ψ) | false | _     | _     = ⊤
 simplify φ = φ
 
+
 atp-simplify : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ simplify φ
-atp-simplify {Γ} {Var x} = id
-atp-simplify {Γ} {⊤}     = id
-atp-simplify {Γ} {⊥}     = id
+atp-simplify {Γ} {Var x} = id --id
+atp-simplify {Γ} {⊤}     = id -- id
+atp-simplify {Γ} {⊥}     = id -- id
 atp-simplify {Γ} {φ = φ₁ ∧ ¬ φ₂} seq =
   atp-step (λ _ → simplify (φ₁ ∧ ¬ φ₂)) seq
 atp-simplify {Γ} {¬ φ ∧ ψ} =

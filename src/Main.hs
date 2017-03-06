@@ -207,12 +207,12 @@ showDeepFormula (BinOp f₁ op f₂) = '(' <> sf₁ ▪ op ▪ sf₂ <> ')'
     sf₁, sf₂ ∷ String
     sf₁ = showDeepFormula f₁
     sf₂ = showDeepFormula f₂
-showDeepFormula (InfixPred t₁  r      t₂) = t₁ ▪ r  ▪ t₂
+showDeepFormula (InfixPred t₁  r      t₂) = '(' <> t₁ ▪ r  ▪ t₂ <> ')'
 showDeepFormula (PredApp ρ          []) = show ρ
 showDeepFormula (PredApp (AtomicWord "$false") []) = "⊥"
 showDeepFormula (PredApp (AtomicWord "$true")  []) = "⊤"
 showDeepFormula (PredApp ρ          ϕ ) = '(' <> ρ ▪ ':' ▪ ϕ ▪ "⇒ ⊤" <> ')'
-showDeepFormula ((:~:)              f ) = '¬' ▪ showDeepFormula f
+showDeepFormula ((:~:)              f ) = '(' <> '¬' ▪ showDeepFormula f <> ')'
 showDeepFormula ϕ = show ϕ
 
 printAxiom ∷ F → String
