@@ -1,0 +1,3 @@
+fof(a1, axiom, (p => p) => q).
+fof(goal, conjecture, (q => r) => r).
+

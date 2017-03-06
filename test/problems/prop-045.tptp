@@ -1,0 +1,3 @@
+fof(axiomp, axiom, p).
+fof(axiomq, axiom, q).
+fof(goal, conjecture, p & q).

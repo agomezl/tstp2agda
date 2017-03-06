@@ -1,2 +1,1 @@
-fof(goal, conjecture,
-          ( (s => x) & (s => (x => y)) ) => (s => y) ).
+fof(goal, conjecture, ( (s => x) & (s => (x => y)) ) => (s => y) ).

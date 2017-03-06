@@ -1,6 +1,4 @@
 % exercise 4.2.1.3 from Melvin, First-Order Logic and Automated
 % Theorem Proving, Pag. 91, Ed 2.
 
-fof(goal, conjecture,
-          (~ y => ~ x) => ((~ y => x) => y)
-          ).
+fof(goal, conjecture, (~ y => ~ x) => ((~ y => x) => y) ).
