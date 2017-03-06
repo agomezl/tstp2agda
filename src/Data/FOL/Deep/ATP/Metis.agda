@@ -264,9 +264,19 @@ swap-seq seq₁ seq₂ = λ _ → seq₁
 -- Simplify inference.
 
 simplify : Prop → Prop
+simplify (⊥ ∧ φ) = ⊥
+simplify (φ ∧ ⊥) = ⊥
 simplify (⊥ ∨ φ) = simplify φ
-simplify (φ ∧ ¬ ψ) = if (equal-f φ ψ) then ⊥ else (φ ∧ ¬ ψ)
-simplify (¬ φ ∧ ψ) = if (equal-f φ ψ) then ⊥ else (¬ φ ∧ ψ)
+simplify (φ ∨ ⊥) = simplify φ
+simplify (⊤ ∧ φ) = simplify φ
+simplify (φ ∧ ⊤) = simplify φ
+simplify (φ ∧ ψ) with equal-f φ ψ
+simplify (φ ∧ ψ) | true  = simplify φ
+simplify (φ ∧ ψ) | false with equal-f φ (¬ ψ) | equal-f (¬ φ) ψ
+simplify (φ ∧ ψ) | false | false | false = {!!}
+simplify (φ ∧ ψ) | false | false | true = {!!}
+simplify (φ ∧ ψ) | false | true  | false = {!!}
+simplify (φ ∧ ψ) | false | true  | true = {!!}
 simplify φ = φ
 
 atp-simplify : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ simplify φ
@@ -297,3 +307,5 @@ atp-strip {Γ} {(φ₁ ⇒ (φ₂ ⇒ φ₃))} =
 atp-strip {Γ} {¬ ⊤}   = ¬-⊤
 atp-strip {Γ} {¬ ⊥}   = ¬-⊥₁
 atp-strip {Γ} {φ} seq = id (atp-step (λ _ → strip φ) seq)
+
+
