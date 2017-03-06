@@ -263,6 +263,13 @@ swap-seq seq₁ seq₂ = λ _ → seq₁
 
 -- Simplify inference.
 
+isOpposite : Prop → Prop → Bool
+isOpposite (¬ (¬ φ)) ψ  = isOpposite φ ψ
+isOpposite φ (¬ (¬ ψ))  = isOpposite φ ψ
+isOpposite φ ψ with equal-f φ (¬ ψ) | equal-f (¬ φ) ψ
+isOpposite φ ψ | true  | _ = true
+isOpposite φ ψ | false | y = y
+
 simplify : Prop → Prop
 simplify (⊥ ∧ φ) = ⊥
 simplify (φ ∧ ⊥) = ⊥
@@ -270,13 +277,33 @@ simplify (⊥ ∨ φ) = simplify φ
 simplify (φ ∨ ⊥) = simplify φ
 simplify (⊤ ∧ φ) = simplify φ
 simplify (φ ∧ ⊤) = simplify φ
+simplify (φ ∧ (ψ ∨ ω)) with isOpposite φ (¬ ψ)
+... | true  = simplify ω
+... | false with isOpposite φ (¬ ω)
+...         | true  = simplify ψ
+...         | false = φ ∧ (ψ ∨ ω)
+simplify ((φ ∨ ψ) ∧ ω) with isOpposite ω (¬ φ)
+... | true  = simplify ψ
+... | false with isOpposite ω (¬ ψ)
+...         | true  = simplify φ
+...         | false = (φ ∨ ψ) ∧ ω
+simplify ((φ ∨ ψ) ∧ ω ∧ ρ) with isOpposite φ ω | isOpposite ψ ρ
+... | true  | _  = simplify (ψ ∧ ρ)
+... | _ | true   = simplify (φ ∧ ρ)
+... | _ | _      = (φ ∨ ψ) ∧ ω ∧ ρ
+simplify (φ ∧ ψ ∧ ω) =
+  if isOpposite φ ψ || isOpposite φ ω || isOpposite ψ ω then ⊥
+  else φ ∧ ψ ∧ ω
 simplify (φ ∧ ψ) with equal-f φ ψ
 simplify (φ ∧ ψ) | true  = simplify φ
 simplify (φ ∧ ψ) | false with equal-f φ (¬ ψ) | equal-f (¬ φ) ψ
-simplify (φ ∧ ψ) | false | false | false = {!!}
-simplify (φ ∧ ψ) | false | false | true = {!!}
-simplify (φ ∧ ψ) | false | true  | false = {!!}
-simplify (φ ∧ ψ) | false | true  | true = {!!}
+simplify (φ ∧ ψ) | false | false | false = φ ∧ ψ
+simplify (φ ∧ ψ) | false | _     | _     = ⊥
+simplify (φ ∨ ψ) with equal-f φ ψ
+simplify (φ ∨ ψ) | true = simplify φ
+simplify (φ ∨ ψ) | false with equal-f φ (¬ ψ) | equal-f (¬ φ) ψ
+simplify (φ ∨ ψ) | false | false | false = φ ∨ ψ
+simplify (φ ∨ ψ) | false | _     | _     = ⊤
 simplify φ = φ
 
 atp-simplify : ∀ {Γ : Ctxt} {φ : Prop} → Γ ⊢ φ → Γ ⊢ simplify φ
@@ -309,3 +336,5 @@ atp-strip {Γ} {¬ ⊥}   = ¬-⊥₁
 atp-strip {Γ} {φ} seq = id (atp-step (λ _ → strip φ) seq)
 
 
+-- clausify : Prop → Prop
+-- clausify x = ?

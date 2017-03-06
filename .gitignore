@@ -129,6 +129,7 @@ test/problems/problems.fls
 test/problems/problems.log
 test/problems/problems.out
 test/problems/problems.pdf
+test/problems/problems.dvi
 test/problems/problems.soc
 test/problems/problems.synctex.gz
 test/problems/problems.lol
