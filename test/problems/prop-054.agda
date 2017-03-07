@@ -50,30 +50,3 @@ proof₁ =
             weaken (atp-neg subgoal₁) $
               (assume {Γ = ∅} a1)
 
-proof₂ : Γ ⊢ subgoal₂
-proof₂ =
-  RAA $
-    id -- resolve 4.
-      (
-              atp-canonicalize $  -- Γ ⊢ ({ p : Set} → p)
-          ∧-proj₁ $ -- 3: p
-            ? -- inference rule no supported yet $  -- Γ ⊢ (p ∧ (¬ q ∨ p))
-              atp-canonicalize $  -- Γ ⊢ (p ∨ (¬ q ∧ p))
-                weaken (atp-neg subgoal₂) $
-                  (assume {Γ = ∅} a1)
-      )
-      (
-              atp-canonicalize $  -- Γ ⊢ ({ p : Set} → ¬ p)
-          ∧-proj₁ $ -- 5: ¬ p
-            atp-canonicalize $  -- Γ ⊢ (¬ p ∧ q)
-              atp-strip $  -- Γ ⊢ (q ⇒ p)
-                assume {Γ = Γ} $  -- Γ ⊢ ¬ (q ⇒ p)
-                  atp-neg subgoal₂
-      )
-
-proof : Γ ⊢ goal
-proof =
-  ⇒-elim
-    atp-splitGoal
-    proof₀
-
