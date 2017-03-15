@@ -175,27 +175,6 @@ atp-neg : Prop → Prop
 atp-neg φ = ¬ φ
 
 
-conjunct : Prop → Prop → Prop
-conjunct (φ ∧ ψ) ω with (equal-f φ ω) | (equal-f ψ ω)
-... | true  | _     = φ
-... | false | true  = ψ
-... | false | false = conjunct φ ω
-conjunct φ ω = φ
-
-atp-conjunct : ∀ {Γ} {φ} → (ω : Prop) → Γ ⊢ φ → Γ ⊢ conjunct φ ω
-atp-conjunct {Γ} {φ ∧ ψ} ω seq with (equal-f φ ω) | (equal-f ψ ω)
-... | true  | _     = ∧-proj₁ seq
-... | false | true  = ∧-proj₂ seq
-... | false | false = atp-conjunct {Γ = Γ} {φ = φ} ω (∧-proj₁ seq)
-atp-conjunct {Γ} {Var x} ω  = id
-atp-conjunct {Γ} {⊤} ω      = id
-atp-conjunct {Γ} {⊥} ω      = id
-atp-conjunct {Γ} {φ ∨ φ₁} ω = id
-atp-conjunct {Γ} {φ ⇒ φ₁} ω = id
-atp-conjunct {Γ} {φ ⇔ φ₁} ω = id
-atp-conjunct {Γ} {¬ φ} ω    = id
-
-
 -- Resolve theorems.
 
 atp-resolve₀ : {Γ : Ctxt} {L C D : Prop} → Γ ⊢ L ∨ C → Γ ⊢ ¬ L ∨ D → Γ ⊢ C ∨ D
@@ -355,7 +334,3 @@ atp-strip {Γ} {(φ₁ ⇒ (φ₂ ⇒ φ₃))} =
 atp-strip {Γ} {¬ ⊤}   = ¬-⊤
 atp-strip {Γ} {¬ ⊥}   = ¬-⊥₁
 atp-strip {Γ} {φ} seq = id (atp-step (λ _ → strip φ) seq)
-
-
--- clausify : Prop → Prop
--- clausify x = ?

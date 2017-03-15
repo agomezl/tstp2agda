@@ -1,3 +1,27 @@
+y
+~ x | y
+x
+
+$false
+(~ x | ~ y | z)
+x
+y
+~ z
+
+~ x
+~ x | y
+~ y
+
+$false
+x | y
+~ x
+~ y
+
+$false
+~ x | y
+x
+~ y
+
 $false
 (p | q)
 ~ p
@@ -23,6 +47,24 @@ $false
 (~ p)
 (~ q)
 
+$false
+~ p | (q & r)
+p
+~ q
+
+
+$false
+~ p <=> ~ q
+p
+~ q
+
+# CHECK 20
+$false
+~ r | (p & q)
+r
+~ p
+q
+
 r
 (~ q | r)
 (q)
@@ -33,6 +75,7 @@ $false
 (q)
 (~ r)
 
+# CHECK PROP-022
 $false
 (~ p <=> (~ q <=> ~ r)
 (p)
@@ -55,6 +98,7 @@ $false
 (~ p <=> ~ q)
 (~ r)
 
+# CHECK PROP-022
 $false
 (~ p <=> (~ q <=> ~ r))
 (p)
@@ -71,6 +115,3 @@ $false
 (p | (q & r))
 (~ p)
 (~ q)
-
-
-
