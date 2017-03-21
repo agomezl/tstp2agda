@@ -545,6 +545,7 @@ file_name : single_quoted {stripQuotes '\'' $1}
 
 lower_word_ :: {String}
 lower_word_ : cnf {"cnf"}
+            | dollarCnf {"$cnf"}
             | fof {"fof"}
             | include_ {"include"} -- "fof" is a perfectly cromulent lower_word, but it is interpreted as a "fof" token
             | lower_word {$1}
@@ -625,6 +626,10 @@ fof                : tok_fof                 comment_list { $1 }
 
 cnf                :: {Token}
 cnf                : tok_cnf                 comment_list { $1 }
+
+
+dollarCnf           :: {Token}
+dollarCnf          : tok_fd_cnf             comment_list { $1 }
 
 include_           :: {Token}
 include_           : tok_include_            comment_list { $1 }

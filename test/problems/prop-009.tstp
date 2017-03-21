@@ -1,0 +1,58 @@
+---------------------------------------------------------------------------
+SZS status Theorem for test/problems//prop-009.tptp
+
+SZS output start CNFRefutation for test/problems//prop-009.tptp
+fof(goal, conjecture, (((p => r) & (~ p => ~ q) & (p | q)) => (p & r))).
+
+fof(subgoal_0, plain, (((p => r) & (~ p => ~ q) & (p | q)) => p),
+    inference(strip, [], [goal])).
+
+fof(subgoal_1, plain, ((((p => r) & (~ p => ~ q) & (p | q)) & p) => r),
+    inference(strip, [], [goal])).
+
+fof(negate_0_0, plain, (~ (((p => r) & (~ p => ~ q) & (p | q)) => p)),
+    inference(negate, [], [subgoal_0])).
+
+fof(normalize_0_0, plain, (~ p & (~ p | r) & (~ q | p) & (p | q)),
+    inference(canonicalize, [], [negate_0_0])).
+
+fof(normalize_0_1, plain, (p | q),
+    inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_2, plain, (~ p), inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_3, plain, (~ q | p),
+    inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_4, plain, (~ q),
+    inference(simplify, [], [normalize_0_3, normalize_0_2])).
+
+fof(normalize_0_5, plain, ($false),
+    inference(simplify, [],
+              [normalize_0_1, normalize_0_2, normalize_0_4])).
+
+cnf(refute_0_0, plain, ($false),
+    inference(canonicalize, [], [normalize_0_5])).
+
+fof(negate_1_0, plain,
+    (~ ((((p => r) & (~ p => ~ q) & (p | q)) & p) => r)),
+    inference(negate, [], [subgoal_1])).
+
+fof(normalize_1_0, plain, (~ r & p & (~ p | r) & (~ q | p) & (p | q)),
+    inference(canonicalize, [], [negate_1_0])).
+
+fof(normalize_1_1, plain, (~ p | r),
+    inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_2, plain, (p), inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_3, plain, (~ r), inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_4, plain, ($false),
+    inference(simplify, [],
+              [normalize_1_1, normalize_1_2, normalize_1_3])).
+
+cnf(refute_1_0, plain, ($false),
+    inference(canonicalize, [], [normalize_1_4])).
+SZS output end CNFRefutation for test/problems//prop-009.tptp
+

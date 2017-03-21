@@ -1,0 +1,117 @@
+y
+~ x | y
+x
+
+$false
+(~ x | ~ y | z)
+x
+y
+~ z
+
+~ x
+~ x | y
+~ y
+
+$false
+x | y
+~ x
+~ y
+
+$false
+~ x | y
+x
+~ y
+
+$false
+(p | q)
+~ p
+~ q
+
+$false
+(p | r | (~ p & ~ q)
+(~ p)
+(~ r)
+(q)
+
+$false
+(p | (~ q & p))
+(~ p)
+(~ p)
+
+(~ p)
+(~ p | q)
+(~ q)
+
+$false
+(p | q)
+(~ p)
+(~ q)
+
+$false
+~ p | (q & r)
+p
+~ q
+
+
+$false
+~ p <=> ~ q
+p
+~ q
+
+# CHECK 20
+$false
+~ r | (p & q)
+r
+~ p
+q
+
+r
+(~ q | r)
+(q)
+
+$false
+(~ p <=> (~ q <=> ~ r))
+(p)
+(q)
+(~ r)
+
+# CHECK PROP-022
+$false
+(~ p <=> (~ q <=> ~ r)
+(p)
+(~ q)
+(r)
+
+$false
+(~ p <=> (~ q <=> ~ r))
+(~ q <=> ~ r)
+(~ p)
+
+$false
+(~ p <=> (~ q <=> ~ r))
+(~ p <=> ~ q)
+(~ r)
+
+
+$false
+(~ p <=> (~ q <=> ~ r))
+(~ p <=> ~ q)
+(~ r)
+
+# CHECK PROP-022
+$false
+(~ p <=> (~ q <=> ~ r))
+(p)
+(~ q)
+(r)
+
+$false
+(~ p <=> (~ q <=> ~ r))
+(~ p)
+(q)
+(r)
+
+$false
+(p | (q & r))
+(~ p)
+(~ q)

@@ -1,0 +1,26 @@
+% Isabell rules for Propositional Logic.
+% source: http://www.phil.cmu.edu/~avigad/formal/FormalCheatSheet.pdf
+fof(introT, theorem, $true).
+fof(notI, theorem, (a => $false) => (~ a)).
+fof(notE, theorem, ((~ a)| a)  => b).
+fof(conjunct1, theorem, (p & q) => p).
+fof(conjunct2, theorem, (p & q) => q).
+fof(context_conjI, theorem, (p & (p => q)) => (p & q)).
+fof(disjI1, theorem, a => (a | b)).
+fof(disjI2, theorem, a => (b | a)).
+fof(excluded_middle, theorem, ~ p | p).
+fof(disjE, theorem, ((a | b)&( a => c)&(b => c)) => c ).
+% fof(implI, theorem, (a=>b) => (a=>b)).
+fof(impE, theorem, ((a=>b)&(a)&(b=>c))=> c).
+fof(impCE, theorem, ((p=>q) & ((~ p) => r) & (q=>r)) => r).
+fof(mp, theorem, ((a => b) & a) => b).
+fof(iffI, theorem, ((a => b) & (b => c)) => (a <=> b)).
+fof(iffE, theorem, ((a <=> b) & (( (a => b) & (b => a)) => c)) => c).
+fof(classical,theorem, (~ a => a) => a).
+fof(notnotD, theorem, ~ ~ p => p).
+fof(de_Morgan_disj, theorem, (~ (p | q)) <=> (~ p & ~ q)).
+fof(de_Morgan_conj, theorem, (~ (p & q)) <=> (~ p | ~ q)).
+fof(disj_not1, theorem, (~ p | q) <=> (p => q)).
+fof(disj_not2, theorem, (p | ~ q) <=> (q => p)).
+
+fof(goal, conjecture, a).

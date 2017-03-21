@@ -41,12 +41,16 @@ import Data.TSTP
       , Unknown
       )
   , Rule
-      ( Canonicalize
-      , Negate
-      , NewRule
-      , Simplify
-      , Strip
-      )
+    ( Canonicalize
+    , Conjunct
+    , Negate
+    , NewRule
+    , Resolve
+    , Simplify
+    , Skolemize
+    , Specialize
+    , Strip
+    )
   , Status (..)
   , V
   )
@@ -81,8 +85,12 @@ binOp op f1 = BinOp f1 op
 
 readRule ∷ String → Rule
 readRule "canonicalize" = Canonicalize
+readRule "conjunct"     = Conjunct
 readRule "negate"       = Negate
+readRule "resolve"      = Resolve
 readRule "simplify"     = Simplify
+readRule "skolemize"    = Skolemize
+readRule "specialize"   = Specialize
 readRule "strip"        = Strip
 readRule str            = NewRule str
 

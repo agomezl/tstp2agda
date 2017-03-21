@@ -1,0 +1,10 @@
+% -----------------------------------------------------------------------------
+% Name: LOGICPROOF_1996
+%
+% Collection: nonequality
+% Description: Problems without equality from various sources
+%
+% -----------------------------------------------------------------------------
+
+
+fof(goal, conjecture, (((p => r) & (~ p => ~ q) & (p | q)) => (p & r)) ).

@@ -20,7 +20,7 @@ import           Data.TSTP.AtomicWord (AtomicWord (..))
 import           Data.TSTP.BinOp      (BinOp (..))
 import           Data.TSTP.InfixPred  (InfixPred (..))
 import           Data.TSTP.Quant      (Quant (..))
-import           Data.TSTP.Term       (Term (..))
+import           Data.TSTP.Term       (Term (..)) 
 import           Data.TSTP.V          (V (..))
 import           Utils.Functions      (βshow, (▪), (<>))
 

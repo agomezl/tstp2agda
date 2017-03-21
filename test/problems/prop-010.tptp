@@ -1,0 +1,10 @@
+% -----------------------------------------------------------------------------
+% Name: MATHS4_EXAMPLE
+%
+% Collection: nonequality
+% Description: Problems without equality from various sources
+%
+% -----------------------------------------------------------------------------
+
+
+fof(goal, conjecture, ((((a | ~ k) => g) & (g => q) & ~ q) => k) ).

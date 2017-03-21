@@ -1,2 +1,8 @@
-name: tstp2agda
-include: src
+name : tstp2agda
+depend:
+  standard-library
+include:
+  src
+  notes/
+  test/deep
+  test/problems

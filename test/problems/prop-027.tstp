@@ -1,0 +1,117 @@
+---------------------------------------------------------------------------
+SZS status Theorem for test/problems//prop-027.tptp
+
+SZS output start CNFRefutation for test/problems//prop-027.tptp
+fof(goal, conjecture,
+    (((p & (q => r)) => s) <=> ((~ p | q | s) & (~ p | ~ r | s)))).
+
+fof(subgoal_0, plain, ((((p & (q => r)) => s) & ~ ~ p & ~ q) => s),
+    inference(strip, [], [goal])).
+
+fof(subgoal_1, plain,
+    ((((p & (q => r)) => s) & (~ p | q | s) & ~ ~ p & ~ ~ r) => s),
+    inference(strip, [], [goal])).
+
+fof(subgoal_2, plain,
+    ((((~ p | q | s) & (~ p | ~ r | s)) & p & (q => r)) => s),
+    inference(strip, [], [goal])).
+
+fof(negate_0_0, plain, (~ ((((p & (q => r)) => s) & ~ ~ p & ~ q) => s)),
+    inference(negate, [], [subgoal_0])).
+
+fof(normalize_0_0, plain, (~ q & ~ s & p & (~ p | s | (~ r & q))),
+    inference(canonicalize, [], [negate_0_0])).
+
+fof(normalize_0_1, plain, (~ p | s | (~ r & q)),
+    inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_2, plain, (p), inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_3, plain, (~ s), inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_4, plain, (~ q), inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_5, plain, ($false),
+    inference(simplify, [],
+              [normalize_0_1, normalize_0_2, normalize_0_3,
+               normalize_0_4])).
+
+cnf(refute_0_0, plain, ($false),
+    inference(canonicalize, [], [normalize_0_5])).
+
+fof(negate_1_0, plain,
+    (~ ((((p & (q => r)) => s) & (~ p | q | s) & ~ ~ p & ~ ~ r) => s)),
+    inference(negate, [], [subgoal_1])).
+
+fof(normalize_1_0, plain,
+    (~ s & p & r & (~ p | q | s) & (~ p | s | (~ r & q))),
+    inference(canonicalize, [], [negate_1_0])).
+
+fof(normalize_1_1, plain, (~ p | s | (~ r & q)),
+    inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_2, plain, (p), inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_3, plain, (~ s), inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_4, plain, (r), inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_5, plain, (~ p | q | s),
+    inference(conjunct, [], [normalize_1_0])).
+
+fof(normalize_1_6, plain, (q),
+    inference(simplify, [],
+              [normalize_1_5, normalize_1_2, normalize_1_3])).
+
+fof(normalize_1_7, plain, ($false),
+    inference(simplify, [],
+              [normalize_1_1, normalize_1_2, normalize_1_3, normalize_1_4,
+               normalize_1_6])).
+
+cnf(refute_1_0, plain, ($false),
+    inference(canonicalize, [], [normalize_1_7])).
+
+fof(negate_2_0, plain,
+    (~ ((((~ p | q | s) & (~ p | ~ r | s)) & p & (q => r)) => s)),
+    inference(negate, [], [subgoal_2])).
+
+fof(normalize_2_0, plain,
+    (~ s & p & (~ q | r) & (~ p | ~ r | s) & (~ p | q | s)),
+    inference(canonicalize, [], [negate_2_0])).
+
+fof(normalize_2_1, plain, (~ q | r),
+    inference(conjunct, [], [normalize_2_0])).
+
+fof(normalize_2_2, plain, (~ p | q | s),
+    inference(conjunct, [], [normalize_2_0])).
+
+fof(normalize_2_3, plain, (p), inference(conjunct, [], [normalize_2_0])).
+
+fof(normalize_2_4, plain, (~ s), inference(conjunct, [], [normalize_2_0])).
+
+fof(normalize_2_5, plain, (q),
+    inference(simplify, [],
+              [normalize_2_2, normalize_2_3, normalize_2_4])).
+
+fof(normalize_2_6, plain, (~ p | ~ r | s),
+    inference(conjunct, [], [normalize_2_0])).
+
+fof(normalize_2_7, plain, (~ r),
+    inference(simplify, [],
+              [normalize_2_6, normalize_2_3, normalize_2_4])).
+
+cnf(refute_2_0, plain, (~ q | r),
+    inference(canonicalize, [], [normalize_2_1])).
+
+cnf(refute_2_1, plain, (q), inference(canonicalize, [], [normalize_2_5])).
+
+cnf(refute_2_2, plain, (r),
+    inference(resolve, [$cnf(q)], [refute_2_1, refute_2_0])).
+
+cnf(refute_2_3, plain, (~ r),
+    inference(canonicalize, [], [normalize_2_7])).
+
+cnf(refute_2_4, plain, ($false),
+    inference(resolve, [$cnf(r)], [refute_2_2, refute_2_3])).
+SZS output end CNFRefutation for test/problems//prop-027.tptp
+

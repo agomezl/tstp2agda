@@ -1,7 +1,7 @@
 name:          tstp2agda
 version:       0.1.1.0
 build-type:    Simple
-cabal-version: >= 1.8
+cabal-version: >= 1.18
 author:        Alejandro Gómez-Londoño with contributions by Jonathan Prieto-Cubides
 license:       MIT
 license-file:  LICENSE
@@ -10,7 +10,6 @@ category:      Language
 homepage:      https://github.com/agomezl/tstp2agda
 bug-reports:   https://github.com/agomezl/tstp2agda/issues/
 synopsis:      Proof-term reconstruction from TSTP to Agda
-tested-with:   GHC == 7.6.3, GHC == 7.8.4, GHC == 7.10.3, GHC == 8.0.1
 description:
   A haskell program for translating <http://www.cs.miami.edu/~tptp/TSTP/ TSTP>
   proofs into <http://wiki.portal.chalmers.se/agda/pmwiki.php Agda> code.
@@ -23,6 +22,8 @@ source-repository head
   location: git://github.com/agomezl/tstp2agda.git
 
 executable tstp2agda
+  default-language: Haskell2010
+
   main-is:        Main.hs
   hs-source-dirs: src
   include-dirs:   src/Data
@@ -30,6 +31,7 @@ executable tstp2agda
                   src/TSTP
                   src/Utils
 
+-- TODO : sort the imports
   build-depends:  array >= 0.4 && < 1.0
                 , base >= 4.6.0.1 && < 4.10
                 , bytestring >= 0.10.0.2 && < 0.11
@@ -37,6 +39,7 @@ executable tstp2agda
                 , mtl >= 2.2.1 && < 2.3
                 , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
                 , text >= 0.11.3.1 && < 1.3
+                , split >= 0.2.3.1 && < 0.3
 
   build-tools: cpphs >= 1.19
 
@@ -145,8 +148,9 @@ executable tstp2agda
                  -Wunrecognised-warning-flags
                  -Wunused-foralls
 
-
+-- TODO fix the order
 library
+  default-language: Haskell2010
   hs-source-dirs: src
   build-depends:  array >= 0.4 && < 1.0
                 , base >= 4.6.0.1 && < 4.10
@@ -154,8 +158,11 @@ library
                 , containers >= 0.5.0.0 && < 0.6
                 , mtl >= 2.2.1 && < 2.3
                 , pretty >= 1.1.1.0 && < 1.1.1.2 || >= 1.1.2 && < 1.2
+                , pretty-show >= 1.5 && < 1.7
+                , pretty-show >= 1.5 && < 1.7
                 , text >= 0.11.3.1 && < 1.3
-  other-modules:
+                , split >= 0.2.3.1 && < 0.3
+  exposed-modules:
     Data.Proof
     Data.Proof.ProofTreeGen
     Data.TSTP
@@ -175,8 +182,6 @@ library
     Data.TSTP.Term
     Data.TSTP.Theory
     Data.TSTP.V
-    Options
-    Paths_tstp2agda
     T2A
     T2A.Core
     T2A.Tactics
@@ -188,11 +193,13 @@ library
     Utils.Monad
     Utils.PrettyPrint
     Utils.Version
+    Options
+    Paths_tstp2agda
 
 test-suite tstp2agda-test
   type:             exitcode-stdio-1.0
   main-is:          Test/Main.hs
-  hs-source-dirs:   test
+  hs-source-dirs:   test/shallow
   build-depends:    array >= 0.4 && < 1.0
                   , base >= 4.6.0.1 && < 4.10
                   , bytestring >= 0.10.0.2 && < 0.11

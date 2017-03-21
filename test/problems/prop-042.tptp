@@ -1,0 +1,3 @@
+fof(a1, axiom, x).
+fof(a2, axiom, y).
+fof(goal, conjecture, x | y).

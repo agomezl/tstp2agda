@@ -1,0 +1,37 @@
+---------------------------------------------------------------------------
+SZS status Theorem for test/problems//prop-003.tptp
+
+SZS output start CNFRefutation for test/problems//prop-003.tptp
+fof(goal, conjecture, ((x => (y => z)) => ((x => y) => (x => z)))).
+
+fof(subgoal_0, plain, (((x => (y => z)) & (x => y) & x) => z),
+    inference(strip, [], [goal])).
+
+fof(negate_0_0, plain, (~ (((x => (y => z)) & (x => y) & x) => z)),
+    inference(negate, [], [subgoal_0])).
+
+fof(normalize_0_0, plain, (~ z & x & (~ x | y) & (~ x | ~ y | z)),
+    inference(canonicalize, [], [negate_0_0])).
+
+fof(normalize_0_1, plain, (~ x | ~ y | z),
+    inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_2, plain, (x), inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_3, plain, (~ x | y),
+    inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_4, plain, (y),
+    inference(simplify, [], [normalize_0_3, normalize_0_2])).
+
+fof(normalize_0_5, plain, (~ z), inference(conjunct, [], [normalize_0_0])).
+
+fof(normalize_0_6, plain, ($false),
+    inference(simplify, [],
+              [normalize_0_1, normalize_0_2, normalize_0_4,
+               normalize_0_5])).
+
+cnf(refute_0_0, plain, ($false),
+    inference(canonicalize, [], [normalize_0_6])).
+SZS output end CNFRefutation for test/problems//prop-003.tptp
+

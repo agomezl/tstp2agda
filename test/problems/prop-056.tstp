@@ -1,0 +1,50 @@
+---------------------------------------------------------------------------
+SZS status Theorem for test/problems//prop-056.tptp
+
+SZS output start CNFRefutation for test/problems//prop-056.tptp
+fof(a1, axiom, (p => (q => r))).
+
+fof(a2, axiom, (p => q)).
+
+fof(goal, conjecture, (p => r)).
+
+fof(subgoal_0, plain, (p => r), inference(strip, [], [goal])).
+
+fof(negate_0_0, plain, (~ (p => r)), inference(negate, [], [subgoal_0])).
+
+fof(normalize_0_0, plain, (~ p | ~ q | r),
+    inference(canonicalize, [], [a1])).
+
+fof(normalize_0_1, plain, (~ r & p),
+    inference(canonicalize, [], [negate_0_0])).
+
+fof(normalize_0_2, plain, (p), inference(conjunct, [], [normalize_0_1])).
+
+fof(normalize_0_3, plain, (~ p | q), inference(canonicalize, [], [a2])).
+
+fof(normalize_0_4, plain, (~ r), inference(conjunct, [], [normalize_0_1])).
+
+cnf(refute_0_0, plain, (~ p | ~ q | r),
+    inference(canonicalize, [], [normalize_0_0])).
+
+cnf(refute_0_1, plain, (p), inference(canonicalize, [], [normalize_0_2])).
+
+cnf(refute_0_2, plain, (~ q | r),
+    inference(resolve, [$cnf(p)], [refute_0_1, refute_0_0])).
+
+cnf(refute_0_3, plain, (~ p | q),
+    inference(canonicalize, [], [normalize_0_3])).
+
+cnf(refute_0_4, plain, (q),
+    inference(resolve, [$cnf(p)], [refute_0_1, refute_0_3])).
+
+cnf(refute_0_5, plain, (r),
+    inference(resolve, [$cnf(q)], [refute_0_4, refute_0_2])).
+
+cnf(refute_0_6, plain, (~ r),
+    inference(canonicalize, [], [normalize_0_4])).
+
+cnf(refute_0_7, plain, ($false),
+    inference(resolve, [$cnf(r)], [refute_0_5, refute_0_6])).
+SZS output end CNFRefutation for test/problems//prop-056.tptp
+

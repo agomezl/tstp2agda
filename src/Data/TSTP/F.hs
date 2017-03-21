@@ -4,7 +4,8 @@
 {-# LANGUAGE UnicodeSyntax        #-}
 
 
-module Data.TSTP.F where
+module Data.TSTP.F
+  where
 
 
 import           Data.TSTP.Formula    (Formula (..))

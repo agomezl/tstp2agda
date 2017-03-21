@@ -1,28 +1,31 @@
-module Data.FOL.Deep where
+open import Data.Nat using (ℕ)
 
-open import Data.FOL.Shallow
-open import Data.Nat.Base
-open import Data.Vec
+------------------------------------------------------------------------------
+-- Deep Embedding : Propositional Logic
+------------------------------------------------------------------------------
 
-infixl 5 _▴_ _▾_ _⇒_
+-- This module requires the number of atoms in the formula.
+-- This number is the parameter n
+module Data.FOL.Deep (n : ℕ) where
 
-constrains : ℕ → Set₁
-constrains zero    = Set
-constrains (suc n) = {A : Set} → constrains n
+-- Definition of connectives and ⊢ relation.
 
-data Fol : (n : ℕ) → Set where
-  _▴_ : {n : ℕ}   → Fol n → Fol n → Fol n
-  _▾_ : {n : ℕ}   → Fol n → Fol n → Fol n
-  _⇒_ : {n : ℕ}   → Fol n → Fol n → Fol n
-  ν   : {n : ℕ} → (m : ℕ) → {less : m ≤ n} →  Fol n
-  ∼   : {n : ℕ }  → Fol n → Fol n
+open import Data.FOL.Deep.Syntax n public
 
-δ : {n : ℕ } → Fol n → ℕ → constrains n
-δ (a ▴ b)  n = {!(δ a n) ∧ (δ b n)!}
-δ (a ▾ a₁) n = {!!}
-δ (a ⇒ a₁) n = {!!}
-δ (ν m)    n = {!!}
-δ (∼ a)    n = {!!}
+-- Valuation and ⊨ relation.
+-- open import Data.FOL.Deep.Semantics n public
 
-getN : {n : ℕ} → Fol n → ℕ
-getN {n} _ = n
+-- Some lemmas and common theorems.
+open import Data.FOL.Deep.Theorems n public
+
+------------------------------------------------------------------------------
+
+open import Data.Bool public using (Bool; true; false; not)
+open import Data.Bool public renaming (_∧_ to _&&_; _∨_ to _||_)
+open import Data.Fin  public using (Fin; zero; suc; #_)
+open import Data.List public using (List; []; _∷_; _++_; [_])
+open import Data.Vec  public using (Vec; lookup)
+
+open import Function  public using (_$_)
+
+------------------------------------------------------------------------------
